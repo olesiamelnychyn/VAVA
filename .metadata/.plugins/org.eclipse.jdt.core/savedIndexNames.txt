@@ -1,0 +1,11 @@
+INDEX VERSION 1.131+/Users/olesia/eclipse-workspace1/VAVA/.metadata/.plugins/org.eclipse.jdt.core
+3123880795.index
+2042623503.index
+3569378888.index
+3098715504.index
+3164890570.index
+490486376.index
+1089821463.index
+2386382346.index
+1216143950.index
+289185749.index

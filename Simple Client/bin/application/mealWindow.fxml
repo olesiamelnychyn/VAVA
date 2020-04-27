@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.mealController">
+  <children>
+    <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" style="-fx-background-color: #afb5e8;" VBox.vgrow="ALWAYS">
+         <children>
+            <TextField fx:id="txt_title" layoutX="115.0" layoutY="204.0" prefHeight="25.0" prefWidth="139.0" promptText="Enter title.." />
+            <Label layoutX="21.0" layoutY="208.0" text="Title" />
+            <Label layoutX="23.0" layoutY="240.0" text="Price" />
+            <Label layoutX="297.0" layoutY="309.0" text="Restaurant" />
+            <Label layoutX="297.0" layoutY="52.0" text="Products" />
+            <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
+              <items>
+                  <Button fx:id="btn_back" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Back" />
+                <Button fx:id="btn_add" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Add" />
+                  <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
+                  <Button fx:id="btn_undo" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Undo all" />
+                  <SplitMenuButton fx:id="btn_export" mnemonicParsing="false" text="Export as">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                  </SplitMenuButton>
+                  <Button fx:id="btn_help" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Help">
+                     <tooltip>
+                        <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
+                     </tooltip>
+                  </Button>
+              </items>
+            </ToolBar>
+            <Spinner fx:id="spin_price" layoutX="114.0" layoutY="236.0" prefHeight="25.0" prefWidth="139.0" >
+              <valueFactory>
+                <SpinnerValueFactory.DoubleSpinnerValueFactory min="0.00" max="140.00" initialValue="5.00" amountToStepBy="0.05"/>
+              </valueFactory>
+            </Spinner>
+            <Label layoutX="23.0" layoutY="272.0" text="Preperation time" />
+            <ListView fx:id="list_prod" layoutX="297.0" layoutY="87.0" prefHeight="206.0" prefWidth="250.0" />
+            <Label layoutX="23.0" layoutY="309.0" text="Reservations" />
+            <ImageView fx:id="img_view" fitHeight="150.0" fitWidth="200.0" layoutX="34.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" />
+            <Spinner fx:id="spint_time" layoutX="115.0" layoutY="268.0" prefHeight="25.0" prefWidth="139.0">
+              
+            </Spinner>
+            <ComboBox fx:id="cmbox_prod" layoutX="374.0" layoutY="48.0" prefWidth="150.0" />
+            <Button fx:id="btn_add_prod" layoutX="570.0" layoutY="87.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Add" />
+            <Button fx:id="btn_del_prod" layoutX="570.0" layoutY="132.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Delete" />
+            <ListView fx:id="list_rest" layoutX="297.0" layoutY="339.0" prefHeight="86.0" prefWidth="250.0" />
+            <ListView fx:id="list_reserv" layoutX="21.0" layoutY="339.0" prefHeight="86.0" prefWidth="250.0" />
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>
