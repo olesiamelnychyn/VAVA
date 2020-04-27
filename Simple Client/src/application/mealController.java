@@ -31,7 +31,7 @@ public class mealController {
     private Button btn_back;
 
     @FXML
-    private Button btn_add;
+    private Button btn_save;
 
     @FXML
     private Button btn_delete;
@@ -80,7 +80,7 @@ public class mealController {
     void initialize() {    
         assert txt_title != null : "fx:id=\"txt_title\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'mealWindow.fxml'.";
-        assert btn_add != null : "fx:id=\"btn_add\" was not injected: check your FXML file 'mealWindow.fxml'.";
+        assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_undo != null : "fx:id=\"btn_undo\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_export != null : "fx:id=\"btn_export\" was not injected: check your FXML file 'mealWindow.fxml'.";

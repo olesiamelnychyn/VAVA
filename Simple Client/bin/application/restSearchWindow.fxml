@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitMenuButton?>
@@ -11,21 +12,23 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.suppSearchController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.restSearchController">
   <children>
     <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" style="-fx-background-color: #afb5e8;" VBox.vgrow="ALWAYS">
          <children>
-            <TextField fx:id="txt_search" layoutX="14.0" layoutY="43.0" prefHeight="25.0" prefWidth="468.0" promptText="Enter title.." />
-            <TableView fx:id="table" layoutX="14.0" layoutY="83.0" prefHeight="352.0" prefWidth="468.0" />
+            <TableView fx:id="table" layoutX="14.0" layoutY="45.0" prefHeight="390.0" prefWidth="468.0" />
             <Button fx:id="btn_search" layoutX="504.0" layoutY="410.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="139.0" text="Search" />
-            <Label layoutX="499.0" layoutY="49.0" text="Title" />
-            <Label layoutX="498.0" layoutY="85.0" text="Phone" />
-            <Label layoutX="498.0" layoutY="119.0" text="E-mail" />
-            <TextField fx:id="txt_title" layoutX="547.0" layoutY="43.0" prefHeight="25.0" prefWidth="96.0" />
-            <TextField fx:id="txt_email" layoutX="547.0" layoutY="117.0" prefHeight="25.0" prefWidth="96.0" />
+            <Label layoutX="504.0" layoutY="45.0" text="Amount of visitors" />
+            <Label layoutX="506.0" layoutY="74.0" text="from" />
+            <Label layoutX="506.0" layoutY="108.0" text="to" />
+            <TextField fx:id="txt_from" layoutX="547.0" layoutY="71.0" prefHeight="25.0" prefWidth="96.0" />
+            <TextField fx:id="txt_to" layoutX="547.0" layoutY="106.0" prefHeight="25.0" prefWidth="96.0" />
+            <ComboBox fx:id="cmbox_zip" layoutX="500.0" layoutY="175.0" prefHeight="25.0" prefWidth="147.0" />
+            <Label layoutX="503.0" layoutY="146.0" text="Zip" />
             <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
               <items>
                   <Button fx:id="btn_home" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Home" />
+                <Button fx:id="btn_new" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="New" />
                   <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
                   <SplitMenuButton fx:id="btn_export" mnemonicParsing="false" text="Export as">
                     <items>
@@ -33,6 +36,11 @@
                       <MenuItem mnemonicParsing="false" text="Action 2" />
                     </items>
                   </SplitMenuButton>
+                  <Button fx:id="btn_stat" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Statistic">
+                     <tooltip>
+                        <Tooltip fx:id="tool_tip1" text="Empty Tooltip" />
+                     </tooltip>
+                  </Button>
                   <Button fx:id="btn_help" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Help">
                      <tooltip>
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
@@ -40,8 +48,11 @@
                   </Button>
               </items>
             </ToolBar>
-            <TextField fx:id="txt_phone" layoutX="547.0" layoutY="79.0" prefHeight="25.0" prefWidth="96.0" />
-          <Button fx:id="btn_new" layoutX="504.0" layoutY="160.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="127.0" text="Add new" />
+            <Label layoutX="498.0" layoutY="211.0" text="Amount of employees:" />
+            <Label layoutX="505.0" layoutY="243.0" text="from" />
+            <Label layoutX="505.0" layoutY="277.0" text="to" />
+            <TextField fx:id="txt_from_emp" layoutX="546.0" layoutY="240.0" prefHeight="25.0" prefWidth="96.0" />
+            <TextField fx:id="txt_to_emp" layoutX="546.0" layoutY="275.0" prefHeight="25.0" prefWidth="96.0" />
          </children>
     </AnchorPane>
   </children>

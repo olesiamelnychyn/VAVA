@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.suppSearchController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.suppSearchController">
   <children>
     <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" style="-fx-background-color: #afb5e8;" VBox.vgrow="ALWAYS">
          <children>

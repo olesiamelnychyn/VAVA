@@ -1,16 +1,52 @@
 package ejb;
-import java.util.List;
-
-
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+//import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.sql.Connection;
+//import java.sql.PreparedStatement;
+//import java.sql.SQLException;
+//import java.util.List;
+//
+//
+//import org.hibernate.Session;
+//import org.hibernate.query.Query;
 
 public class Main {
 
 	public static void main(String[] args) {
 		JDBCUtil util=new JDBCUtil();
 		util.getConnection();
-		util.executeQuery("Select * from product limit 20");
+//		Connection connection = null;
+//        PreparedStatement statement = null;
+//        FileInputStream inputStream = null;
+// 
+//        try {
+//            File image = new File("../img/caesar.jpg");
+//            inputStream = new FileInputStream(image);
+// 
+//            connection = util.getConnection();
+//            statement = connection.prepareStatement("insert into meal(image) " + "values(?)");
+//            statement.setBinaryStream(1, (InputStream) inputStream, (int)(image.length()));
+// 
+//            statement.executeUpdate();
+// 
+//        } catch (FileNotFoundException e) {
+//            System.out.println("FileNotFoundException: - " + e);
+//        } catch (SQLException e) {
+//            System.out.println("SQLException: - " + e);
+//        } finally {
+//        	 try {
+//                 connection.close();
+//                 statement.close();
+//             } catch (SQLException e) {
+//                 System.out.println("SQLException Finally: - " + e);
+//             }
+//         }
+//        }
+		util.executeQuery("Select * from meal ");
+		
 	
 	}
 		

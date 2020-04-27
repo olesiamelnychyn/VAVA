@@ -5,7 +5,7 @@ import java.sql.*;
 public class JDBCUtil {
 	
 //    String className="com.mysql.jdbc.Driver";
-    String URL ="jdbc:mysql://localhost:3306/restaurant_net?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", user="rest_manager", password="best_rest";
+    String URL ="jdbc:mysql://localhost:3306/rest_chain_vava?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", user="manager", password="123456";
     
     Connection connection;
     public JDBCUtil() {
@@ -15,7 +15,7 @@ public class JDBCUtil {
 //        this.password = password;
         this.connection = null;
     }
-    public void getConnection() {
+    public Connection getConnection() {
 //        //Load the driver class
 //        try {
 //            Class.forName(className);
@@ -26,6 +26,7 @@ public class JDBCUtil {
         //get the connection
         try {
             connection = DriverManager.getConnection(URL, user, password);
+//            return connection;
         } catch (SQLException ex) {
             System.out.println("Error getting connection: " + ex.getMessage());
             System.exit(-1);
@@ -33,6 +34,8 @@ public class JDBCUtil {
             System.out.println("Error: " + ex.getMessage());
             System.exit(-1);
         }
+		return connection;
+        
     }
     
     public void executeQuery(String query)
