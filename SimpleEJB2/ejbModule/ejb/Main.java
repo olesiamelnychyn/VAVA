@@ -13,22 +13,40 @@ package ejb;
 //import org.hibernate.Session;
 //import org.hibernate.query.Query;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
 
+//	@Resource(lookup = "java:jboss/datasources/mysqlDS")
+//    private DataSource dataSource;
+	
 	public static void main(String[] args) {
-		List la = new ArrayList();
-//		
-		JDBCUtil util = JDBCUtil.getInstance();
-		util.getConnection();
-//		
-		la = util.executeQuery("select * from meal");
-		System.out.print(la);
-		
+//		List la = new ArrayList();
+////		
+//		JDBCUtil util = JDBCUtil.getInstance();
+//		util.getConnection();
+////		
+//		la = util.executeQuery("select * from meal");
+//		System.out.print(la);
+//		List <List<String>> result = new ArrayList <List<String>>();
+//		try {
+//			Connection con = dataSource.getConnection();
+//			Statement stmt = con.createStatement();
+//			ResultSet resultSet = stmt.executeQuery("select * from meal limit 10");
+//			
+//			if(resultSet.next()) {
+//				List<String> item = new ArrayList <String>();
+//				
+////				System.out.println(resultSet.getObject(1));
+//				item.add(String.valueOf(resultSet.getObject(1)));
+//
+////				System.out.println(resultSet.getObject(2));
+//				item.add(String.valueOf(resultSet.getObject(2)));
+//				
+//				result.add(item);
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
 //		JDBCUtil util=new JDBCUtil();
 //		util.getConnection();
 //		Connection connection = null;

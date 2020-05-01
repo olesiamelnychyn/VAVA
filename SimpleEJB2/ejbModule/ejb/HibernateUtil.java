@@ -1,4 +1,4 @@
-//package ejb;
+package ejb;
 ////import java.util.Properties;
 //
 //import org.hibernate.SessionFactory;
@@ -8,7 +8,7 @@
 //import org.hibernate.cfg.Configuration;
 //
 //
-//public class HibernateUtil {
+public class HibernateUtil {
 //
 //    //XML based configuration
 //    private static final SessionFactory sessionFactory;
@@ -117,4 +117,4 @@
 ////        return sessionJavaConfigFactory;
 ////    }
 ////
-//}
+}

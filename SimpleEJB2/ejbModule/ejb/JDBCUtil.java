@@ -55,10 +55,10 @@ public class JDBCUtil {
 //            return connection;
         } catch (SQLException ex) {
             System.out.println("Error getting connection: " + ex.getMessage());
-            System.exit(-1);
+//            System.exit(-1);
         } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage());
-            System.exit(-1);
+//            System.exit(-1);
         }
 		return connection;
         
