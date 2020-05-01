@@ -1,28 +1,54 @@
 package ejb;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JDBCUtil {
 	
-//    String className="com.mysql.jdbc.Driver";
-    String URL ="jdbc:mysql://localhost:3306/rest_chain_vava?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", user="manager", password="123456";
-    
-    Connection connection;
-    public JDBCUtil() {
-////        this.className = className;
-//        this.URL = URL;
-//        this.user = user;
-//        this.password = password;
-        this.connection = null;
+	private static JDBCUtil util_instance;
+	private String URL = "jdbc:mysql://localhost:3306/rest_chain_vava?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", user="manager", password="123456";
+	Connection connection;
+    String className="com.mysql.cj.jdbc.Driver";
+	
+	private JDBCUtil(){ 
+		this.connection = null;
+		
     }
+    
+	public static JDBCUtil  getInstance(){ 
+        if (util_instance == null) 
+        	util_instance  = new JDBCUtil (); 
+  
+        return util_instance; 
+    } 
+	
+    
+//    public JDBCUtil() {
+//////        this.className = className;
+////        this.URL = URL;
+////        this.user = user;
+////        this.password = password;
+//        
+//    }
     public Connection getConnection() {
 //        //Load the driver class
-//        try {
-//            Class.forName(className);
-//        } catch (ClassNotFoundException ex) {
-//            System.out.println("Unable to load the class. Terminating the program");
-//            System.exit(-1);
-//        }
+        try {
+            Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+        	try {
+  		    FileWriter myWriter = new FileWriter("filename.txt");
+            myWriter.write("Unable to load the class. Terminating the program");
+            myWriter.close();
+        	} catch (IOException e) {
+  		      System.out.println("An error occurred.");
+  		      e.printStackTrace();
+  		    }
+            System.exit(-1);
+        }
+        	
         //get the connection
         try {
             connection = DriverManager.getConnection(URL, user, password);
@@ -38,9 +64,11 @@ public class JDBCUtil {
         
     }
     
-    public void executeQuery(String query)
+    public List<List <String>> executeQuery(String query)
     
     {
+    	
+    	List<List<String>> whole = new ArrayList <List<String>>();
         ResultSet resultSet = null;
         try
         {
@@ -51,13 +79,17 @@ public class JDBCUtil {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnsNumber = metaData.getColumnCount();
             //Printing the results
+            
             while(resultSet.next())
             {
-                for(int i = 1; i <= columnsNumber; i++)
+            	List<String> inner = new ArrayList <String>();
+            	for(int i = 1; i <= columnsNumber; i++)
                 {
                     System.out.printf("%-25s", (resultSet.getObject(i) != null)?resultSet.getObject(i).toString(): null );
+                    inner.add((resultSet.getObject(i) != null)?resultSet.getObject(i).toString(): null);
                 }
                 System.out.printf("\n");
+                whole.add(inner);
             }
         }
         catch (SQLException ex)
@@ -69,5 +101,9 @@ public class JDBCUtil {
         	ex.printStackTrace();
             System.out.println("General exception while executing query. Terminating the program..." + ex.getMessage());
         }
+        return whole;
     }
+    
+    
+    
 }

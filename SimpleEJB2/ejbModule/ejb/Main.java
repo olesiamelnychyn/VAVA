@@ -13,11 +13,24 @@ package ejb;
 //import org.hibernate.Session;
 //import org.hibernate.query.Query;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
 
 	public static void main(String[] args) {
-		JDBCUtil util=new JDBCUtil();
+		List la = new ArrayList();
+//		
+		JDBCUtil util = JDBCUtil.getInstance();
 		util.getConnection();
+//		
+		la = util.executeQuery("select * from meal");
+		System.out.print(la);
+		
+//		JDBCUtil util=new JDBCUtil();
+//		util.getConnection();
 //		Connection connection = null;
 //        PreparedStatement statement = null;
 //        FileInputStream inputStream = null;
@@ -45,10 +58,10 @@ public class Main {
 //             }
 //         }
 //        }
-		util.executeQuery("Select * from meal ");
+//		util.executeQuery("Select * from meal ");
 		
 	
-	}
+//	}
 		
 		
 //		try (Session session = HibernateUtil.getSession()){
@@ -86,4 +99,5 @@ public class Main {
 //			}
 //		}
 //	}
+}
 }

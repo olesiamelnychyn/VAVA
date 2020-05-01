@@ -18,7 +18,7 @@ import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import ejb.CalcRemote;
+//import ejb.CalcRemote;
 import ejb.MealRemote;
 import ejb.MyExeception;
 public class mealSearchController {
@@ -89,8 +89,8 @@ public class mealSearchController {
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
 
         btn_search.setOnMouseClicked(e -> {
-        	Dictionary args = new Hashtable ();
-        	args.put("here", new String("here"));
+        	Dictionary <String, String> args = new Hashtable <String, String> ();
+        	args.put("here", "here");
         	
         	try {
                 doRequest(args);
@@ -102,27 +102,18 @@ public class mealSearchController {
         });
     }
     
-    private void doRequest(Dictionary args) throws NamingException, MyExeception {
-        Properties props = new Properties();
-        props.put(Context.INITIAL_CONTEXT_FACTORY, "org.wildfly.naming.client.WildFlyInitialContextFactory");
-//        props.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
-//        props.put(Context.PROVIDER_URL, "remote+http://localhost:8080");
-        props.put(Context.PROVIDER_URL, "http-remoting://localhost:8080");
-//        props.put("jboss.naming.client.ejb.context", "true");
-//        props.put(Context.SECURITY_PRINCIPAL, "admin");
-//        props.put(Context.SECURITY_CREDENTIALS, "123");
-        Context ctx = new InitialContext(props);
-        //System.out.println(ctx.getEnvironment());
-
+    private void doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
+    
+        Context ctx = new InitialContext();
         MealRemote MealRemote = (MealRemote) ctx.lookup("ejb:/SimpleEJB2//MealSessionEJB!ejb.MealRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
         process(MealRemote, args);
     }
     
-    private void process(MealRemote mealRemote, Dictionary args) throws MyExeception {
+    private void process(MealRemote mealRemote, Dictionary <String, String> args) throws MyExeception {
 //        
     	System.out.print("process");
-
-    	List la = mealRemote.searchMeal(args);
+    	List <List<String>> la = mealRemote.searchMeal(args);
+    	System.out.print("here");
     	System.out.print(la);
     }
 }
