@@ -6,6 +6,10 @@ import java.time.LocalTime;
 //import javafx.scene.image.Image;
 
 public class Meal implements Serializable  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String title;
 	private Double price;
 	private LocalTime prep_time;

@@ -1,12 +1,14 @@
-package ejb;
+package objects;
 
-import javax.persistence.Entity;
+import java.io.Serializable;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name="zip")
-public class Zip {
+
+public class Zip implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String code;
 	private String state;
 	

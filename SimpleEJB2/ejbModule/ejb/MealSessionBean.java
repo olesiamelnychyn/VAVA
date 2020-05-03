@@ -65,7 +65,7 @@ public class MealSessionBean implements MealRemote{
 
 	@Override
 	public int addMeal(Dictionary <String, String> args) {
-
+		Integer id=-1;
 		try {
 			Connection con = dataSource.getConnection();
 			String sql = "INSERT INTO meal (title, price, prep_time) Values (?, ?, ?)";
@@ -78,15 +78,22 @@ public class MealSessionBean implements MealRemote{
 	        if(image != null) {
 	        	System.out.println("Will be implemented latter");
 	        }
+	        sql="SELECT MAX(id) FROM meal";
+	        Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			resultSet.next();
+			
+			while(resultSet.next()) {
+				id = resultSet.getInt("id");
+			}
+			
 	        
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
 		}
 		
-
-		
-		return 0;
+		return id;
 	}
 
 	@Override
@@ -106,7 +113,7 @@ public class MealSessionBean implements MealRemote{
 	public void updateMeal(Dictionary <String, String>  args) {
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="Update column ?=? where id = ?";
+			String sql="Update meal set ?=? where id = ?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setString(3, args.get("id"));
 			if(args!=null){
@@ -115,7 +122,7 @@ public class MealSessionBean implements MealRemote{
 		            String k = e.nextElement();
 		            preparedStatement.setString(1, k);
 		            preparedStatement.setString(2, args.get(k));
-					preparedStatement.executeUpdate();
+		            preparedStatement.executeUpdate();
 		        }
 		    }
 			
