@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
 //import java.time.format.DateTimeFormatter;
@@ -16,6 +17,10 @@ import javax.naming.NamingException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.SplitMenuButton;
@@ -24,6 +29,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import objects.Meal;
 //import ejb.CalcRemote;
 import ejb.MealRemote;
@@ -53,7 +60,7 @@ public class mealSearchController {
     private TextField txt_to;
 
     @FXML
-    private ComboBox<?> cmbox_rest;
+    private ComboBox<String> cmbox_rest;
 
     @FXML
     private Button btn_home;
@@ -79,6 +86,9 @@ public class mealSearchController {
     @FXML
     private Tooltip tool_tip;
 
+    List<Dictionary<Integer, Meal>> result;
+    ObservableList<Meal> data ;
+    
     @FXML
     void initialize() {
         assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
@@ -102,46 +112,151 @@ public class mealSearchController {
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
         TableColumn <Meal, LocalTime> prepCol = new TableColumn <Meal, LocalTime> ("Preparation");
         prepCol.setCellValueFactory(new PropertyValueFactory<>("prep_time"));
-//        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
-        ObservableList<Meal> data = FXCollections.observableArrayList();
-         
+        data = FXCollections.observableArrayList();
+        table.getColumns().add(titleCol);
+        table.getColumns().add(priceCol);
+        table.getColumns().add(prepCol);
+        table.setEditable(true);
+       
         
-        btn_search.setOnMouseClicked(e -> {
-        	Dictionary <String, String> args = new Hashtable <String, String> ();
-        	args.put("here", "here");
-        	
-        	try {
-        		List<Dictionary<Integer, Meal>> result = doRequest(args);
-        		for (int i=0; i<result.size(); i++) { 
-        			Enumeration<Meal> enu = result.get(i).elements();
-        			data.add(enu.nextElement());
-        		}
-            } catch (NamingException ex) {
-                ex.printStackTrace();
-            } catch (MyExeception ex) {
-               System.out.print(ex.getMessage());
-            }
-        	table.setItems(data);
-            table.getColumns().add(titleCol);
-            table.getColumns().add(priceCol);
-            table.getColumns().add(prepCol);
-            table.setEditable(true);
-        });
+    	//TODO get list of restaurants for the combo box
+        ObservableList<String> rests = FXCollections.observableArrayList();
+        rests.add("Choose restaurant");
+        for (int i =1; i< 10; i++) {
+    		rests.add(String.valueOf(i));
+    	}
+    	cmbox_rest.setItems(rests);
+    	cmbox_rest.getSelectionModel().select(0);
+    	txt_from.setText("0.0");
+    	txt_to.setText("50.0");
+    	search();
+    	
+    	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
+    	
+    	btn_new.setOnMouseClicked(e -> {openWindow("mealWindow.fxml", e);});
+    	
+    	btn_export.setOnMouseClicked(e -> {
+    		//TODO
+    	});
+    	btn_stat.setOnMouseClicked(e -> {
+    		//TODO open window where charts are shown and pass suitable data
+    	});
+    	
+    	btn_help.setOnMouseClicked(e->{
+    		//TODO open window with info about the meals and the work with them
+    	});
+    	
+    	btn_delete.setOnMouseClicked(e->{
+    		
+    		
+    		ObservableList <Meal> selectedItems = table.getSelectionModel().getSelectedItems();
+    		for (Meal meal_del : selectedItems) {
+    		int break1=0;
+			for (Dictionary<Integer, Meal> dict : result) {
+				if(dict == null) {
+	    	        System.out.println("dict is null");
+	    	    } else {
+	    	        Enumeration<Integer> enam = dict.keys();
+	    	        while(enam.hasMoreElements()) {
+	    	            Integer k = enam.nextElement();
+	    	            if(dict.get(k).equals(meal_del)) {
+	    	            	System.out.println("Gonna delete this one"+k);
+	    	            	try {
+								delete(k);
+							} catch (MyExeception | NamingException e1) {
+								e1.printStackTrace();
+							}
+	    	            	break1=1;
+	    	            	break;
+	    	            }
+	    	            
+	    	        }
+	    	        if (break1==1)
+	    	        	break;
+	    	    	}
+				}
+    		}
+    		search();
+    	});
+    	
+        btn_search.setOnMouseClicked(e ->{search();});
+        
     }
     
 	private List<Dictionary<Integer, Meal>> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
     
         Context ctx = new InitialContext();
         MealRemote MealRemote = (MealRemote) ctx.lookup("ejb:/SimpleEJB2//MealSessionEJB!ejb.MealRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
-        return process(MealRemote, args);
+    	List<Dictionary<Integer, Meal>> la = MealRemote.searchMeal(args);
+    	return la;
     }
     
-    private List<Dictionary<Integer, Meal>> process(MealRemote mealRemote, Dictionary <String, String> args) throws MyExeception {
+	private void search() {
+		if(result!=null) {
+			result.clear();
+			data.clear();
+		}
+		Dictionary <String, String> args = new Hashtable <String, String> ();
+    	args.put("title", txt_search.getText());
+		if(cmbox_rest.getValue()!="Choose restaurant") {
+			args.put("rest_id", cmbox_rest.getValue());
+		} else {
+			args.put("rest_id", "");
+		}
+    	try {
+    		args.put("price_from", Double.valueOf(txt_from.getText()).toString());
+    		txt_from.setText(Double.valueOf(txt_from.getText()).toString());
+    	} catch (NumberFormatException ex) {
+    		txt_from.setText("0.0");
+    		args.put("price_from", String.valueOf(0.0));
+    	}
+    	try {
+    		args.put("price_to", Double.valueOf(txt_to.getText()).toString());
+    		txt_to.setText(Double.valueOf(txt_to.getText()).toString());
+    	} catch (NumberFormatException ex) {
+    		txt_to.setText("50.0");
+    		args.put("price_to", String.valueOf(50.0));
+    	}
+    	
+//    System.out.println(args);
+//      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
+       
+    	try {
+    		final List<Dictionary<Integer, Meal>> result1 = doRequest(args);
+    		result=result1;
+    		
+    		for (int i=0; i<result1.size(); i++) { 
+    			Enumeration<Meal> enu = result1.get(i).elements();
+    			data.add(enu.nextElement());
+    		}
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        } catch (MyExeception ex) {
+           System.out.print(ex.getMessage());
+        }
+    	table.setItems(data);
+    }
+	
+    private void delete(Integer id) throws MyExeception, NamingException {
 //        
-    	System.out.print("process");
-    	List<Dictionary<Integer, Meal>> la = mealRemote.searchMeal(args);
-    	System.out.print("here");
-    	System.out.print(la);
-    	return la;
+    	Context ctx = new InitialContext();
+        MealRemote MealRemote = (MealRemote) ctx.lookup("ejb:/SimpleEJB2//MealSessionEJB!ejb.MealRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        System.out.print("process");
+        MealRemote.deleteMeal(id);
+    }
+    
+    private void openWindow(String window, MouseEvent e) {
+    	try {
+			Parent root = FXMLLoader.load(getClass().getResource(window));
+	        Scene scene = new Scene(root);
+	        Stage stage = new Stage();
+	        stage.setTitle("New Window");
+	        stage.setScene(scene);
+	        stage.show();
+	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
+	        
+    	} catch (IOException ex) {
+    		ex.printStackTrace();
+    	}
     }
 }

@@ -58,7 +58,7 @@ public class mainController {
     
     private void openWindow(String window, MouseEvent event) {
     	
-		try {
+    	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
@@ -67,8 +67,8 @@ public class mainController {
 	        stage.show();
 	        ((Node)(event.getSource())).getScene().getWindow().hide(); 
 	        
-    } catch (IOException e) {
-		e.printStackTrace();
-	}
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
 }
 }

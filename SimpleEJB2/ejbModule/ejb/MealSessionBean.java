@@ -31,8 +31,19 @@ public class MealSessionBean implements MealRemote{
 		
 		try {
 			Connection con = dataSource.getConnection();
+			String sql="select m.id, m.title, m.price, m.prep_time from meal m";
+			if(args.get("rest_id")!="") {
+				sql+=" join meal_rest mr on m.id=mr.meal_id where mr.rest_id="+args.get("rest_id")+
+						" and m.price between "+args.get("price_from")+" and "+args.get("price_to");
+			} else {
+				sql+=" where m.price between "+args.get("price_from")+" and "+args.get("price_to");
+			}
+			if(args.get("title")!="") {
+				sql+= " and m.title like \"%"+args.get("title")+"%\"";
+			}
+			System.out.println(sql);
 			Statement stmt = con.createStatement();
-			ResultSet resultSet = stmt.executeQuery("select id, title, price, prep_time from meal");
+			ResultSet resultSet = stmt.executeQuery(sql);
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
 			while(resultSet.next()) {
 				Integer id = resultSet.getInt("id");
@@ -82,7 +93,7 @@ public class MealSessionBean implements MealRemote{
 	public void deleteMeal(int id) {
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="Delete from meals where id=?";
+			String sql="Delete from meal where id=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
