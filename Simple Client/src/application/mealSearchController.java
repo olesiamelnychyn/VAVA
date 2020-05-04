@@ -7,13 +7,10 @@ import java.time.LocalTime;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.ResourceBundle;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,7 +29,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import objects.Meal;
-//import ejb.CalcRemote;
 import ejb.MealRemote;
 import ejb.MyExeception;
 
@@ -86,7 +82,7 @@ public class mealSearchController {
     @FXML
     private Tooltip tool_tip;
 
-    List<Dictionary<Integer, Meal>> result;
+    Dictionary<Integer, Meal> result;
     ObservableList<Meal> data ;
     
     @FXML
@@ -152,14 +148,13 @@ public class mealSearchController {
     		ObservableList <Meal> selectedItems = table.getSelectionModel().getSelectedItems();
     		for (Meal meal_del : selectedItems) {
     		int break1=0;
-			for (Dictionary<Integer, Meal> dict : result) {
-				if(dict == null) {
+				if(result == null) {
 	    	        System.out.println("dict is null");
 	    	    } else {
-	    	        Enumeration<Integer> enam = dict.keys();
+	    	        Enumeration<Integer> enam = result.keys();
 	    	        while(enam.hasMoreElements()) {
 	    	            Integer k = enam.nextElement();
-	    	            if(dict.get(k).equals(meal_del)) {
+	    	            if(result.get(k).equals(meal_del)) {
 	    	            	System.out.println("Gonna delete this one"+k);
 	    	            	try {
 								delete(k);
@@ -175,7 +170,6 @@ public class mealSearchController {
 	    	        	break;
 	    	    	}
 				}
-    		}
     		search();
     	});
     	
@@ -183,17 +177,17 @@ public class mealSearchController {
         
     }
     
-	private List<Dictionary<Integer, Meal>> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
+	private Dictionary<Integer, Meal> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
     
         Context ctx = new InitialContext();
         MealRemote MealRemote = (MealRemote) ctx.lookup("ejb:/SimpleEJB2//MealSessionEJB!ejb.MealRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
-    	List<Dictionary<Integer, Meal>> la = MealRemote.searchMeal(args);
+    	Dictionary<Integer, Meal> la = MealRemote.searchMeal(args);
     	return la;
     }
     
 	private void search() {
 		if(result!=null) {
-			result.clear();
+			((Hashtable<Integer, Meal>) result).clear();
 			data.clear();
 		}
 		Dictionary <String, String> args = new Hashtable <String, String> ();
@@ -222,12 +216,13 @@ public class mealSearchController {
 //      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
        
     	try {
-    		final List<Dictionary<Integer, Meal>> result1 = doRequest(args);
+    		final Dictionary<Integer, Meal> result1 = doRequest(args);
     		result=result1;
     		
-    		for (int i=0; i<result1.size(); i++) { 
-    			Enumeration<Meal> enu = result1.get(i).elements();
-    			data.add(enu.nextElement());
+    		Enumeration<Integer> enam = result.keys();
+	        while(enam.hasMoreElements()) {
+	            Integer k = enam.nextElement();
+	            data.add(result.get(k));
     		}
         } catch (NamingException ex) {
             ex.printStackTrace();

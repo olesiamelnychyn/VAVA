@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SimpleEJB2"/>
 	<classpathentry kind="lib" path="/Users/olesia/eclipse-workspace1/wildfly-18.0.1.Final/bin/client/jboss-client.jar"/>
-	<classpathentry kind="lib" path="/Users/olesia/eclipse-workspace1/VAVA/objects.jar"/>
 	<classpathentry kind="lib" path="/Users/olesia/eclipse-workspace1/VAVA/ejb.jar"/>
+	<classpathentry kind="lib" path="/Users/olesia/eclipse-workspace1/VAVA/objects.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

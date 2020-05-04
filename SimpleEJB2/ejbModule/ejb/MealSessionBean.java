@@ -7,16 +7,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
-
 import objects.Meal;
 
 @Stateless(name = "MealSessionEJB")
@@ -26,8 +22,8 @@ public class MealSessionBean implements MealRemote{
     private DataSource dataSource;
 	
 	@Override
-	public List<Dictionary<Integer, Meal>> searchMeal(Dictionary <String, String>  args) {
-		List<Dictionary<Integer, Meal>>result = new ArrayList <Dictionary<Integer, Meal>>();
+	public Dictionary<Integer, Meal> searchMeal(Dictionary <String, String>  args) {
+		Dictionary<Integer, Meal>result = new Hashtable <Integer, Meal>();
 		
 		try {
 			Connection con = dataSource.getConnection();
@@ -50,11 +46,11 @@ public class MealSessionBean implements MealRemote{
                 String title = resultSet.getString("title");
                 Double price = resultSet.getDouble("price");
                 LocalTime prep_time = LocalTime.parse(resultSet.getString("prep_time"), dateFormat);
-				Dictionary <Integer, Meal> item = new Hashtable <Integer, Meal> ();
+//				Dictionary <Integer, Meal> item = new Hashtable <Integer, Meal> ();
 				Meal meal = new Meal(title, price, prep_time);
-				item.put(id, meal);
-				System.out.println(item);
-				result.add(item);
+				result.put(id, meal);
+//				System.out.println(item);
+//				result.add(item);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

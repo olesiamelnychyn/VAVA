@@ -8,7 +8,7 @@ public class Employee implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Restaurant restaurant;
+	private Integer rest_id;
 	private String first_name;
 	private String last_name;
 	private String gender; //"M" for male and "F" for female
@@ -26,12 +26,7 @@ public class Employee implements Serializable {
 	public void setWage(Double wage) {
 		this.wage = wage;
 	}
-	public Restaurant getRestaurant() {
-		return restaurant;
-	}
-	public void setRestaurant(Restaurant restaurant) {
-		this.restaurant = restaurant;
-	}
+
 	public String getPosition() {
 		return position;
 	}
@@ -73,6 +68,12 @@ public class Employee implements Serializable {
 	}
 	public void setE_mail(String e_mail) {
 		this.e_mail = e_mail;
+	}
+	public Integer getRest_id() {
+		return rest_id;
+	}
+	public void setRest_id(Integer rest_id) {
+		this.rest_id = rest_id;
 	}
 	
 	
