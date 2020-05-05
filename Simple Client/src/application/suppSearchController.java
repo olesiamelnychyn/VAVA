@@ -2,6 +2,8 @@ package application;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -112,10 +114,13 @@ public class suppSearchController {
     	
     	btn_new.setOnMouseClicked(e -> {
     		Dictionary <String, String>  args = new Hashtable <>();
-    		if(txt_title.getText()!="" && txt_phone.getText()!="" && txt_email.getText()!="") {
-    			args.put("title", "\""+txt_title.getText()+"\"");
-    			args.put("phone", "\""+txt_phone.getText()+"\"");
-    			args.put("e_mail", "\""+txt_email.getText()+"\"");
+    		if(txt_title.getText()!="" && txt_phone.getText()!="" && txt_email.getText()!=""
+    				&& txt_title.getText().toString().length()<=30 
+    				&& txt_phone.getText().toString().length()<=13
+    				&& txt_email.getText().toString().length()<=320) {
+    			args.put("title", txt_title.getText());
+    			args.put("phone", txt_phone.getText());
+    			args.put("e_mail", txt_email.getText());
     			try {
 					this.addSupp(args);
 				} catch (MyExeception e1) {
@@ -127,6 +132,7 @@ public class suppSearchController {
     		txt_title.setText("");
     		txt_phone.setText("");
     		txt_email.setText("");
+    		search();
     	});
     	
     	btn_export.setOnMouseClicked(e -> {
