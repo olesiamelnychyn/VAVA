@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -159,6 +160,26 @@ public class EmployeeSessionBean implements EmployeeRemote{
 		
 		return wage;
 		
+	}
+
+	@Override
+	public ArrayList<String> getPositions() {
+		ArrayList<String>positions = new ArrayList<String>();
+		try {
+			Connection con = dataSource.getConnection();
+			String sql="select distinct position from employee";
+	        Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			resultSet.next();
+			
+			while(resultSet.next()) {
+				positions.add(resultSet.getString("position"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return positions;
 	}
 
 	

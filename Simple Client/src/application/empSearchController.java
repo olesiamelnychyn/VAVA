@@ -2,6 +2,7 @@ package application;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -115,13 +116,28 @@ public class empSearchController {
         
         ObservableList<String> poss = FXCollections.observableArrayList();
         poss.add("Choose position");
-        for (int i =1; i< 10; i++) {
-    		poss.add(String.valueOf(i));
-    	}
+        
+        try {
+			for (String p : this.getPositions()) { 		      
+				poss.add(p);		
+			}
+		} catch (MyExeception e2) {
+			e2.printStackTrace();
+		} catch (NamingException e2) {
+			e2.printStackTrace();
+		}
     	cmbox_pos.setItems(poss);
     	cmbox_pos.getSelectionModel().select(0);
     	txt_from.setText("0.0");
-    	txt_to.setText("5000.0");
+    	int wage;
+		try {
+			wage = this.getMaxWage();
+			txt_to.setText(String.valueOf(wage));
+		} catch (MyExeception e) {
+			e.printStackTrace();
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
     	
     	search();
     	
@@ -242,13 +258,20 @@ public class empSearchController {
     	return wage;
     }
     
+    private ArrayList<String> getPositions() throws MyExeception, NamingException {
+    	Context ctx = new InitialContext();
+        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        ArrayList<String> pos = EmployeeRemote.getPositions();
+    	return pos;
+    }
+    
     private void delete(Integer id) throws MyExeception, NamingException {
 //      
       Context ctx = new InitialContext();
       EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
       System.out.print("process");
       EmployeeRemote.deleteEmployee(id);
-  }
+    }
     
     private void openWindow(String window, MouseEvent e) {
     	try {

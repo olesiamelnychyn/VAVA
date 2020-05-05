@@ -11,6 +11,12 @@ public class Supplier  implements Serializable{
 	private String phone;
 	private String e_mail;
 	
+	public Supplier(String title, String phone, String e_mail) {
+		this.title=title;
+		this.phone=phone;
+		this.e_mail=e_mail;
+	}
+	
 	public String getTitle() {
 		return title;
 	}

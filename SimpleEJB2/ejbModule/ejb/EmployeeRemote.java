@@ -1,6 +1,8 @@
 package ejb;
 
 import java.util.Dictionary;
+import java.util.ArrayList;
+
 import javax.ejb.Remote;
 import objects.Employee;
 
@@ -14,5 +16,6 @@ public interface EmployeeRemote {
 	void deleteEmployee(int id);
 	void updateEmployee(Dictionary <String, String>  args);
 	int getMaxWage();
+	ArrayList<String> getPositions();
 
 }
