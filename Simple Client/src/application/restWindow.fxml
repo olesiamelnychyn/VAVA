@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.restController">
+  <children>
+    <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" style="-fx-background-color: #afb5e8;" VBox.vgrow="ALWAYS">
+         <children>
+            <Label layoutX="363.0" layoutY="213.0" text="Employees" />
+            <Label layoutX="25.0" layoutY="54.0" text="Zip" />
+            <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
+              <items>
+                  <Button fx:id="btn_back" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Back" />
+                <Button fx:id="btn_save" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Save" />
+                  <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
+                  <Button fx:id="btn_undo" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Undo all" />
+                  <SplitMenuButton fx:id="btn_export" mnemonicParsing="false" text="Export as">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                  </SplitMenuButton>
+                  <Button fx:id="btn_help1" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Help">
+                     <tooltip>
+                        <Tooltip fx:id="tool_tip1" text="Empty Tooltip" />
+                     </tooltip>
+                  </Button>
+              </items>
+            </ToolBar>
+            <Spinner fx:id="spin_cap" editable="true" layoutX="102.0" layoutY="89.0" prefHeight="25.0" prefWidth="150.0">
+              <valueFactory>
+                <SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.05" initialValue="5.00" max="140.00" min="0.00" />
+              </valueFactory>
+            </Spinner>
+            <Label layoutX="25.0" layoutY="93.0" text="Capacity" />
+            <Label layoutX="25.0" layoutY="213.0" text="Meals" />
+            <ComboBox fx:id="cmbox_zip" layoutX="102.0" layoutY="50.0" prefWidth="150.0" />
+            <Button fx:id="btn_add_meal" layoutX="64.0" layoutY="404.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Add" />
+            <Button fx:id="btn_del_meal" layoutX="151.0" layoutY="404.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Delete" />
+            <ListView fx:id="list_emp" layoutX="363.0" layoutY="247.0" prefHeight="144.0" prefWidth="250.0" />
+            <ListView fx:id="list_meal" layoutX="25.0" layoutY="247.0" prefHeight="144.0" prefWidth="250.0" />
+            <ComboBox fx:id="cmb_meal" layoutX="97.0" layoutY="209.0" prefHeight="25.0" prefWidth="174.0" />
+            <ComboBox fx:id="cmb_emp" layoutX="446.0" layoutY="209.0" prefHeight="25.0" prefWidth="174.0" />
+            <Button fx:id="btn_add_emp" layoutX="411.0" layoutY="404.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Add" />
+            <Button fx:id="btn_del_emp" layoutX="498.0" layoutY="404.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Delete" />
+            <Label layoutX="27.0" layoutY="148.0" text="Orders" />
+            <ComboBox fx:id="cmb_order" layoutX="99.0" layoutY="144.0" prefHeight="25.0" prefWidth="174.0" />
+            <Button fx:id="btn_add_meal_to_order" layoutX="296.0" layoutY="67.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Add" />
+            <Button fx:id="btn_del_meal_to_order" layoutX="296.0" layoutY="106.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Delete" />
+            <Button fx:id="btn_confirm_order" layoutX="296.0" layoutY="144.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Confirm" />
+            <ListView fx:id="list_orders" layoutX="370.0" layoutY="50.0" prefHeight="136.0" prefWidth="250.0" />
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>
