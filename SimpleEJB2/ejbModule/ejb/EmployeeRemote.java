@@ -13,6 +13,6 @@ public interface EmployeeRemote {
 	int addEmployee(Dictionary <String, String>  args);
 	void deleteEmployee(int id);
 	void updateEmployee(Dictionary <String, String>  args);
-	
+	int getMaxWage();
 
 }

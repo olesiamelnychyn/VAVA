@@ -3,16 +3,18 @@ package application;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.Hashtable;
 import java.util.ResourceBundle;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import ejb.MyExeception;
+
 import ejb.ReservationRemote;
+import ejb.MyExeception;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -86,8 +88,9 @@ public class reservSearchController {
     @FXML
     private DatePicker date_to;
     
-    List<Dictionary<Integer, Reservation>> result;
+    Dictionary<Integer, Reservation> result;
     ObservableList<Reservation> data ;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     
     @FXML
     void initialize() {
@@ -109,12 +112,12 @@ public class reservSearchController {
         
         TableColumn <Reservation, Integer> restCol = new TableColumn <Reservation, Integer> ("Restaurant");
         restCol.setCellValueFactory(new PropertyValueFactory<>("rest_id"));
-        TableColumn <Reservation, LocalDate> fromCol = new TableColumn <Reservation, LocalDate> ("Date From");
+        TableColumn <Reservation, LocalDateTime> fromCol = new TableColumn <Reservation, LocalDateTime> ("Date From");
         fromCol.setCellValueFactory(new PropertyValueFactory<>("date_start"));
-        TableColumn <Reservation, LocalDate> toCol = new TableColumn <Reservation, LocalDate> ("Date To");
-        toCol.setCellValueFactory(new PropertyValueFactory<>("date_to"));
-        TableColumn <Reservation, Integer> visCol = new TableColumn <Reservation, Integer> ("Date To");
-        visCol.setCellValueFactory(new PropertyValueFactory<>("date_to"));
+        TableColumn <Reservation, LocalDateTime> toCol = new TableColumn <Reservation, LocalDateTime> ("Date To");
+        toCol.setCellValueFactory(new PropertyValueFactory<>("date_end"));
+        TableColumn <Reservation, Integer> visCol = new TableColumn <Reservation, Integer> ("Visitors");
+        visCol.setCellValueFactory(new PropertyValueFactory<>("visitors"));
         data = FXCollections.observableArrayList();
         table.getColumns().add(restCol);
         table.getColumns().add(fromCol);
@@ -127,10 +130,14 @@ public class reservSearchController {
         for (int i =1; i< 10; i++) {
     		rests.add(String.valueOf(i));
     	}
+        
         cmbox_rest.setItems(rests);
     	cmbox_rest.getSelectionModel().select(0);
-    	txt_from.setText("2018-01-01 0:00:00");
-    	txt_from.setText("2021-12-31 23:59:59");
+    	date_from.setValue(LocalDate.parse("01.01.2019", formatter));
+    	date_to.setValue(LocalDate.parse("31.12.2021",  formatter));
+    	txt_from.setText("0");
+    	txt_to.setText("100");
+    	search();
     	
         btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
     	
@@ -139,28 +146,38 @@ public class reservSearchController {
     	btn_export.setOnMouseClicked(e -> {
     		//TODO
     	});
+    	
     	btn_stat.setOnMouseClicked(e -> {
-    		//TODO open window where charts are shown and pass suitable data
+    		try {
+                //Load second scene
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("statisticsRes.fxml"));
+                Parent root = loader.load();
+                statisticsController scene2Controller = loader.getController();
+                scene2Controller.transferMessage(Integer.valueOf(1));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Second Window");
+                stage.show();
+                ((Node)(e.getSource())).getScene().getWindow().hide(); 
+            } catch (IOException ex) {
+                System.err.println(ex);
+            }
     	});
     	
-    	btn_help.setOnMouseClicked(e->{
-    		//TODO open window with info about the Reservations and the work with them
-    	});
+    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
     	
-btn_delete.setOnMouseClicked(e->{
-    		
+    	btn_delete.setOnMouseClicked(e->{
     		
     		ObservableList <Reservation> selectedItems = table.getSelectionModel().getSelectedItems();
     		for (Reservation Reservation_del : selectedItems) {
     		int break1=0;
-			for (Dictionary<Integer, Reservation> dict : result) {
-				if(dict == null) {
+				if(result == null) {
 	    	        System.out.println("dict is null");
 	    	    } else {
-	    	        Enumeration<Integer> enam = dict.keys();
+	    	        Enumeration<Integer> enam = result.keys();
 	    	        while(enam.hasMoreElements()) {
 	    	            Integer k = enam.nextElement();
-	    	            if(dict.get(k).equals(Reservation_del)) {
+	    	            if(result.get(k).equals(Reservation_del)) {
 	    	            	
 	    	            	try {
 	    	            		System.out.println("Gonna delete this one"+k);
@@ -177,26 +194,80 @@ btn_delete.setOnMouseClicked(e->{
 	    	        	break;
 	    	    	}
 				}
-    		}
     		search();
     	});
     	
 	btn_search.setOnMouseClicked(e ->{search();});
     }
     
-//    private List<Dictionary<Integer,Reservation>> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
-//        
-//        Context ctx = new InitialContext();
-//        ReservationRemote reservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
-//    	List<Dictionary<Integer, Reservation>> la = reservationRemote.searchReserv(args);
-//    	return la;
-//    }
+    
+    private Dictionary<Integer, Reservation> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
+        
+        Context ctx = new InitialContext();
+        ReservationRemote ReservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+    	Dictionary<Integer, Reservation> la = ReservationRemote.searchReserv(args);
+    	return la;
+    }
     
     private void search() {
-		if(result!=null) {
-			result.clear();
+    	if(result!=null) {
+			((Hashtable<Integer, Reservation>) result).clear();
 			data.clear();
 		}
+		Dictionary <String, String> args = new Hashtable <String, String> ();
+		if(cmbox_rest.getValue()!="Choose restaurant") {
+			args.put("rest_id", cmbox_rest.getValue());
+		} else {
+			args.put("rest_id", "");
+		}
+		
+    	try {
+    		args.put("vis_from", Integer.valueOf(txt_from.getText()).toString());
+    		
+    	} catch (NumberFormatException ex) {
+    		txt_from.setText("0");
+    		args.put("vis_from", "0");
+    		
+    	}
+    	
+    	try {
+    		args.put("vis_to", Integer.valueOf(txt_to.getText()).toString());
+    		
+    	} catch (NumberFormatException ex) {
+    		args.put("vis_to", "100");
+    		txt_to.setText("100");
+    	}
+    	
+    	try {
+    		args.put("date_from", date_from.getValue().toString());
+    	} catch (NumberFormatException ex) {
+    		args.put("date_from","01.01.2019");
+    		date_from.setValue(LocalDate.parse("01.01.2019", formatter));
+    	}
+    	
+    	try {
+    		args.put("date_to", date_to.getValue().toString());
+    		
+    	} catch (NumberFormatException ex) {
+    		args.put("date_to","31.12.2021");
+    		date_to.setValue(LocalDate.parse("31.12.2021",  formatter));
+    	}
+    	
+    	try {
+    		final Dictionary<Integer, Reservation> result1 = doRequest(args);
+    		result=result1;
+    		
+    		Enumeration<Integer> enam = result.keys();
+	        while(enam.hasMoreElements()) {
+	            Integer k = enam.nextElement();
+	            data.add(result.get(k));
+    		}
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        } catch (MyExeception ex) {
+           System.out.print(ex.getMessage());
+        }
+    	table.setItems(data);
 		
     }
     

@@ -10,9 +10,7 @@ import javafx.scene.Scene;
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
-//		System.out.println("here");
 		Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
-//		System.out.println(root);
 	
         primaryStage.setTitle("Main");
         primaryStage.setScene(new Scene(root));

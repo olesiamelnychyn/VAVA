@@ -18,7 +18,17 @@ public class Employee implements Serializable {
 	private String position;
 	private Double wage;
 	
-	
+	public Employee(Integer r_id, String f_n, String l_n, String g, LocalDate birth, String p, String e_m, String pos, Double w) {
+		this.rest_id=r_id;
+		this.first_name=f_n;
+		this.last_name=l_n;
+		this.gender=g;
+		this.birthdate=birth;
+		this.phone=p;
+		this.e_mail=e_m;
+		this.position=pos;
+		this.wage=w;
+	}
 	
 	public Double getWage() {
 		return wage;

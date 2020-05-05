@@ -196,8 +196,18 @@ public class empSearchController {
     		args.put("wage_to", Double.valueOf(txt_to.getText()).toString());
     		txt_to.setText(Double.valueOf(txt_to.getText()).toString());
     	} catch (NumberFormatException ex) {
-    		txt_to.setText("5000.0");
-    		args.put("wage_to", String.valueOf(50.0));
+    		int wage;
+			try {
+				wage = this.getMaxWage();
+				txt_to.setText(String.valueOf(wage));
+				args.put("wage_to", String.valueOf(wage));
+			} catch (MyExeception e) {
+				e.printStackTrace();
+				args.put("wage_to", String.valueOf(50.0));
+			} catch (NamingException e) {
+				e.printStackTrace();
+				args.put("wage_to", String.valueOf(50.0));
+			}
     	}
     	if(cmbox_pos.getValue()!="Choose position") {
     		args.put("position", cmbox_pos.getValue());
@@ -223,6 +233,13 @@ public class empSearchController {
            System.out.print(ex.getMessage());
         }
     	table.setItems(data);
+    }
+    
+    private int getMaxWage() throws MyExeception, NamingException {
+    	Context ctx = new InitialContext();
+        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        int wage = EmployeeRemote.getMaxWage();
+    	return wage;
     }
     
     private void delete(Integer id) throws MyExeception, NamingException {

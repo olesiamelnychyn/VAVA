@@ -30,4 +30,9 @@ public class Zip implements Serializable{
 	public String toString() {
 		return "Zipcode " + this.code + ", state "+this.state;
 	}
+	
+	public Zip(String c, String st) {
+		code=c;
+		state=st;
+	}
 }

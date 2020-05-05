@@ -5,8 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -22,8 +25,41 @@ public class EmployeeSessionBean implements EmployeeRemote{
 	
 	@Override
 	public Dictionary<Integer, Employee> searchEmployee(Dictionary<String, String> args) {
-		// TODO Auto-generated method stub
-		return null;
+		Dictionary<Integer, Employee>result = new Hashtable <Integer, Employee>();
+		
+		try {
+			Connection con = dataSource.getConnection();
+			String sql="select e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e";
+			sql+=" where e.wage between "+args.get("wage_from")+" and "+args.get("wage_to");
+			if(args.get("name")!="") {
+				sql+=" and(e.first_name like \"%"+args.get("name")+"%\" or e.last_name like \"%"+args.get("name")+"%\")";
+			}
+			
+				
+			
+			System.out.println(sql);
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			while(resultSet.next()) {
+				Integer id = resultSet.getInt("id");
+				Integer rest_id = resultSet.getInt("rest_id");
+                String first_name = resultSet.getString("first_name");
+                String last_name = resultSet.getString("last_name");
+                String gender = resultSet.getString("gender");
+                LocalDate birthdate = LocalDate.parse(resultSet.getString("birthdate"), dateFormat);
+                String position = resultSet.getString("position");
+                String phone = resultSet.getString("phone");
+                String e_mail = resultSet.getString("e_mail");
+                Double wage = resultSet.getDouble("wage");
+                Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, position, phone, e_mail, wage);
+				result.put(id, emp);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println(result);
+		return result;
 	}
 
 	@Override
@@ -101,6 +137,27 @@ public class EmployeeSessionBean implements EmployeeRemote{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+	}
+
+	@Override
+	public int getMaxWage() {
+		int wage = 0;
+		try {
+			Connection con = dataSource.getConnection();
+			String sql="SELECT MAX(wage) FROM employee";
+	        Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			resultSet.next();
+			
+			while(resultSet.next()) {
+				wage = resultSet.getInt("wage");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return wage;
 		
 	}
 

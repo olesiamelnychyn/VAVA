@@ -1,6 +1,5 @@
 package application;
 
-import ejb.MyExeception;
 
 public class Calculator {
     private String buffer = "", operator, operand1, operand2;
@@ -25,13 +24,14 @@ public class Calculator {
     public String[] getResult() {
         isOperator = false;
         buffer = "";
-        int check;
+        int check=0;
         try {
             check = Integer.parseInt(operand1);
             check = Integer.parseInt(operand2);
         } catch (NumberFormatException ex) {
            
         }
+        System.out.println(check);
         return new String[]{operand1, operand2, operator};
     }
 }

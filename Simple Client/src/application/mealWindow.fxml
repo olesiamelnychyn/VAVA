@@ -53,7 +53,7 @@
             <Label layoutX="23.0" layoutY="309.0" text="Reservations" />
             <ImageView fx:id="img_view" fitHeight="150.0" fitWidth="200.0" layoutX="34.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" />
             <Spinner fx:id="spint_time" layoutX="115.0" layoutY="268.0" prefHeight="25.0" prefWidth="139.0">
-              
+             
             </Spinner>
             <ComboBox fx:id="cmbox_prod" layoutX="374.0" layoutY="48.0" prefWidth="150.0" />
             <Button fx:id="btn_add_prod" layoutX="570.0" layoutY="87.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Add" />
