@@ -48,11 +48,6 @@
                   </Button>
               </items>
             </ToolBar>
-            <Label layoutX="498.0" layoutY="211.0" text="Amount of employees:" />
-            <Label layoutX="505.0" layoutY="243.0" text="from" />
-            <Label layoutX="505.0" layoutY="277.0" text="to" />
-            <TextField fx:id="txt_from_emp" layoutX="546.0" layoutY="240.0" prefHeight="25.0" prefWidth="96.0" />
-            <TextField fx:id="txt_to_emp" layoutX="546.0" layoutY="275.0" prefHeight="25.0" prefWidth="96.0" />
          </children>
     </AnchorPane>
   </children>

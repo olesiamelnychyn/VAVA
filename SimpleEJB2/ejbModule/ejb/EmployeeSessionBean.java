@@ -35,6 +35,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			if(args.get("name")!="") {
 				sql+=" and(e.first_name like \"%"+args.get("name")+"%\" or e.last_name like \"%"+args.get("name")+"%\")";
 			}
+			sql+=" order by e.id";
 			
 				
 			

@@ -5,14 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import objects.Restaurant;
+import objects.Zip;
 
 @Stateless(name = "RestaurantSessionEJB")
 public class RestaurantSessionBean implements RestaurantRemote {
@@ -23,8 +29,32 @@ public class RestaurantSessionBean implements RestaurantRemote {
 
 	@Override
 	public Dictionary<Integer, Restaurant> searchRestaurant(Dictionary<String, String> args) {
-		// TODO Auto-generated method stub
-		return null;
+		Dictionary<Integer, Restaurant>result = new Hashtable <Integer, Restaurant>();
+		
+		try {
+			Connection con = dataSource.getConnection();
+			String sql="select r.id, r.capacity, r.zip, z.state from restaurant r ";
+			sql+="where r.capacity between "+args.get("vis_from")+" and "+args.get("vis_to");
+			if(args.get("zip")!="") {
+				sql+= " and r.zip ="+args.get("zip");
+			}
+			sql+=" join zip z on z.code=r.zip order by r.id";
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			while(resultSet.next()) {
+				Integer id = resultSet.getInt("id");
+                Integer capacity = resultSet.getInt("capacity");
+                String code = resultSet.getString("zip");
+                String state = resultSet.getString("state");
+                Zip z = new Zip(code, state);
+                Restaurant rest = new Restaurant(z, capacity);
+				result.put(id, rest);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(result);
+		return result;
 	}
 
 	@Override
@@ -60,13 +90,45 @@ public class RestaurantSessionBean implements RestaurantRemote {
 	public void deleteRestaurant(int id) {
 		try {
 			Connection con = dataSource.getConnection();
-//			String sql="Delete from emp_reserv where emp_id=?";
-//			PreparedStatement preparedStatement = con.prepareStatement(sql);
-//			preparedStatement.setInt(1, id);
-//			preparedStatement.executeUpdate();
+			String sql="select r.id from reservation r where r.rest_id="+String.valueOf(id);
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			try {
+				Context ctx;
+				ctx = new InitialContext();
+				ReservationRemote ReservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservationSessionEJB!ejb.ReservationRemote");
+				while(resultSet.next()) {
+					ReservationRemote.deleteReserv(resultSet.getInt("id"));
+				}
+			} catch (NamingException e) {				
+				e.printStackTrace();
+			}
 			
-			String sql="Delete from restaurant where id=?";
+			sql="select e.id from employee e where e.rest_id="+String.valueOf(id);
+			stmt = con.createStatement();
+			resultSet = stmt.executeQuery(sql);
+			try {
+				Context ctx;
+				ctx = new InitialContext();
+				EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");
+				while(resultSet.next()) {
+					EmployeeRemote.deleteEmployee(resultSet.getInt("id"));
+				}
+			} catch (NamingException e) {				
+				e.printStackTrace();
+			}
+			
+			sql="Delete from meal_rest where rest_id=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			preparedStatement.executeUpdate();
+			sql="Delete from cheque where rest_id=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			preparedStatement.executeUpdate();
+			
+			sql="Delete from restaurant where id=?";
+			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
@@ -96,6 +158,48 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public ArrayList<Zip> getZip() {
+		ArrayList<Zip>result = new ArrayList<Zip>();
+		
+		try {
+			Connection con = dataSource.getConnection();
+			String sql="select z.code, z.state from zip z ";
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			while(resultSet.next()) {
+                String code = resultSet.getString("code");
+                String state = resultSet.getString("state");
+                Zip z = new Zip(code, state);
+				result.add(z);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(result);
+		return result;
+	}
+
+	@Override
+	public int getMaxCapacity() {
+		int capacity = 0;
+		try {
+			Connection con = dataSource.getConnection();
+			String sql="SELECT MAX(capacity) FROM restaurant";
+	        Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			resultSet.next();
+			
+			while(resultSet.next()) {
+				capacity = resultSet.getInt("capacity");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return capacity;
 	}
 
 }

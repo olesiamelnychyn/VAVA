@@ -11,5 +11,6 @@ public interface SupplierRemote {
 	Dictionary<Integer, Supplier> searchSupplier(Dictionary<String, String> args);
 	int addSupplier(Dictionary <String, String>  args);
 	void deleteSupplier(int id);
+	Supplier getSupplierById(int id);
 
 }

@@ -2,6 +2,7 @@ package application;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,6 +18,7 @@ import ejb.ReservationRemote;
 import ejb.MyExeception;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -34,6 +36,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import objects.Reservation;
+import objects.Restaurant;
 
 public class reservSearchController {
 
@@ -91,6 +94,8 @@ public class reservSearchController {
     Dictionary<Integer, Reservation> result;
     ObservableList<Reservation> data ;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    Context ctx;
+    ReservationRemote ReservationRemote ; 
     
     @FXML
     void initialize() {
@@ -109,6 +114,13 @@ public class reservSearchController {
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert date_from != null : "fx:id=\"date_from\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert date_to != null : "fx:id=\"date_to\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
+       
+        try {
+			ctx = new InitialContext();
+			ReservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote");
+		} catch (NamingException e3) {
+			e3.printStackTrace();
+		}
         
         TableColumn <Reservation, Integer> restCol = new TableColumn <Reservation, Integer> ("Restaurant");
         restCol.setCellValueFactory(new PropertyValueFactory<>("rest_id"));
@@ -125,13 +137,61 @@ public class reservSearchController {
         table.getColumns().add(visCol);
         table.setEditable(true);
         
-        ObservableList<String> rests = FXCollections.observableArrayList();
-        rests.add("Choose restaurant");
-        for (int i =1; i< 10; i++) {
-    		rests.add(String.valueOf(i));
-    	}
-        
-        cmbox_rest.setItems(rests);
+        table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+       	 @Override
+       	 public void handle(MouseEvent e) {
+       	  if (e.getClickCount() == 2) {
+       		ObservableList <Reservation> selectedItems = table.getSelectionModel().getSelectedItems();
+         		Dictionary <Integer, Reservation> transferedData = new Hashtable <Integer, Reservation>();
+         		
+         		try {
+         			if(selectedItems.size()>0) {
+         				Reservation res=selectedItems.get(0);
+         				if(result == null) {
+         					//System.out.println("dict is null");
+         				} else {
+         					Enumeration<Integer> enam = result.keys();
+         					while(enam.hasMoreElements()) {
+         						Integer k = enam.nextElement();
+         						if(result.get(k).equals(res)) {
+         							//System.out.println("Gonna open this one"+k);
+         							transferedData.put(k, res);
+         							break;
+         						}
+         					}
+         				}
+         			}
+                   FXMLLoader loader = new FXMLLoader(getClass().getResource("reservWindow.fxml"));
+                   Parent root = loader.load();
+                   reservController scene2Controller = loader.getController();
+                   scene2Controller.setReserv(transferedData);
+                   Stage stage = new Stage();
+                   stage.setScene(new Scene(root));
+                   stage.setTitle("Meal");
+                   stage.show();
+                   ((Node)(e.getSource())).getScene().getWindow().hide(); 
+                 } catch (IOException ex) {
+                     System.err.println(ex);
+                 }
+       	  }
+       	 }
+       	});
+
+		try {
+			ObservableList<String> rests = FXCollections.observableArrayList();
+			rests.add("Choose restaurant");
+			Dictionary<Integer, Restaurant> la = ReservationRemote.getRestReserv(0);
+			Enumeration<Integer> enam1 = la.keys();
+	        while(enam1.hasMoreElements()) {
+	            Integer k = enam1.nextElement();
+	            String rest = k+", cap: "+la.get(k).getCapacity()+ ","+la.get(k).getZip().getState();
+	            rests.add(rest);
+	        }
+	        cmbox_rest.setItems(rests);
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
+	
     	cmbox_rest.getSelectionModel().select(0);
     	date_from.setValue(LocalDate.parse("01.01.2019", formatter));
     	date_to.setValue(LocalDate.parse("31.12.2021",  formatter));
@@ -141,7 +201,22 @@ public class reservSearchController {
     	
         btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
     	
-    	btn_new.setOnMouseClicked(e -> {openWindow("reservWindow.fxml", e);});
+    	btn_new.setOnMouseClicked(e -> {
+    		Dictionary <Integer, Reservation> transferedData = new Hashtable <Integer, Reservation>();
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("reservWindow.fxml"));
+			Parent root = loader.load();
+			reservController scene2Controller = loader.getController();
+			scene2Controller.setReserv(transferedData);
+			Stage stage = new Stage();
+			stage.setScene(new Scene(root));
+            stage.setTitle("Meal");
+            stage.show();
+            ((Node)(e.getSource())).getScene().getWindow().hide(); 
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
+		});
     	
     	btn_export.setOnMouseClicked(e -> {
     		//TODO
@@ -202,9 +277,7 @@ public class reservSearchController {
     
     
     private Dictionary<Integer, Reservation> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
-        
-        Context ctx = new InitialContext();
-        ReservationRemote ReservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+       
     	Dictionary<Integer, Reservation> la = ReservationRemote.searchReserv(args);
     	return la;
     }
@@ -215,8 +288,9 @@ public class reservSearchController {
 			data.clear();
 		}
 		Dictionary <String, String> args = new Hashtable <String, String> ();
-		if(cmbox_rest.getValue()!="Choose restaurant") {
-			args.put("rest_id", cmbox_rest.getValue());
+		if(!cmbox_rest.getValue().equals("Choose restaurant")) {
+			System.out.println(cmbox_rest.getValue().split(",")[0]);
+			args.put("rest_id", cmbox_rest.getValue().split(",")[0]);
 		} else {
 			args.put("rest_id", "");
 		}
@@ -271,10 +345,8 @@ public class reservSearchController {
 		
     }
     
-    private void delete(Integer id) throws MyExeception, NamingException {
-//      
-  	Context ctx = new InitialContext();
-      ReservationRemote ReservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+    private void delete(Integer id) throws MyExeception, NamingException {     
+
       System.out.print("process");
       ReservationRemote.deleteReserv(id);
   }

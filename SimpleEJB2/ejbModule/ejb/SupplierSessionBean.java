@@ -10,6 +10,9 @@ import java.util.Hashtable;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import objects.Supplier;
@@ -83,12 +86,22 @@ public class SupplierSessionBean implements SupplierRemote{
 	public void deleteSupplier(int id) {
 		try {
 			Connection con = dataSource.getConnection();
-//			String sql="Delete from emp_reserv where emp_id=?";
-//			PreparedStatement preparedStatement = con.prepareStatement(sql);
-//			preparedStatement.setInt(1, id);
-//			preparedStatement.executeUpdate();
-//			
-			String sql="Delete from supplier where id=?";
+			String sql="select p.id from product where p.supp_id="+String.valueOf(id);
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			try {
+				Context ctx;
+				ctx = new InitialContext();
+				ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");
+				while(resultSet.next()) {
+					ProductRemote.deleteProduct(resultSet.getInt("id"));
+				}
+			} catch (NamingException e) {				
+				e.printStackTrace();
+			}
+			
+			
+			sql="Delete from supplier where id=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
@@ -96,6 +109,31 @@ public class SupplierSessionBean implements SupplierRemote{
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public Supplier getSupplierById(int supp_id) {
+		
+		try {
+			Connection con = dataSource.getConnection();
+			String sql="select s.id, s.title, s.phone, s.e_mail from supplier s";
+			sql+= " where s.id=?";
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, supp_id);
+			while(resultSet.next()) {
+                String title = resultSet.getString("title");
+                String phone = resultSet.getString("phone");
+                String e_mail = resultSet.getString("e_mail");
+                Supplier supp = new Supplier(title, phone, e_mail);
+				return supp;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(result);
+		return null;
 	}
 	
 }

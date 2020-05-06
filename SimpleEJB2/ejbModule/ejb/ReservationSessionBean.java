@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -15,8 +17,13 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
+
+import objects.Employee;
+import objects.Meal;
 import objects.Reservation;
+import objects.Restaurant;
 import objects.StatisticData;
+import objects.Zip;
 
 @Stateless(name = "ReservSessionEJB")
 public class ReservationSessionBean implements ReservationRemote {
@@ -112,6 +119,7 @@ public class ReservationSessionBean implements ReservationRemote {
 	@Override
 	public void updateReserv(Dictionary<String, String> args) {
 		try {
+			System.out.println(args.get("menu")+" "+ args.get("id"));
 			Connection con = dataSource.getConnection();
 			String sql="Update reservation set ?=? where id = ?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -120,41 +128,50 @@ public class ReservationSessionBean implements ReservationRemote {
 		        Enumeration<String> e = args.keys();
 		        while(e.hasMoreElements()) {
 		            String k = e.nextElement();
-		            if (k!="staff" &&  k!="menu") {
+		            if (k.equals("staff") &&  k.equals("menu")) {
 		            	preparedStatement.setString(1, k);
 		            	preparedStatement.setString(2, args.get(k));
 		            	preparedStatement.executeUpdate();
+		            	
 		            }
 		        } 
-		        if(args.get("staff")!="") {
-		        	sql="DELETE FROM emp_reserv where reserv_id=?";
+		        if(args.get("staff")!=null) {
+		        	sql="delete from emp_reserv where reserv_id = ?";
 		        	preparedStatement = con.prepareStatement(sql);
-					preparedStatement.setString(1, args.get("id"));
+		        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
 		        	preparedStatement.executeUpdate();
-		        	sql="INSERT INTO emp_reserv (reserv_id, emp_id) VALUES(?,?)";
-		        	preparedStatement.setString(1, args.get("id")); 
-		            String[] arrOfStr = args.get("staff").split(" ", 0);
-		            for(String str : arrOfStr) {
-		            	preparedStatement.setString(2, str);
-		            	preparedStatement.executeUpdate();
-		            }
-					
-		        }
-		        if(args.get("menu")!="") {
-		        	sql="DELETE FROM meal_reserv where reserv_id=?";
-		        	preparedStatement = con.prepareStatement(sql);
-					preparedStatement.setString(1, args.get("id"));
-		        	preparedStatement.executeUpdate();
-		        	sql="INSERT INTO meal_reserv (reserv_id, meal_id) VALUES(?,?)";
-		        	preparedStatement.setString(1, args.get("id")); 
-		            String[] arrOfStr = args.get("meal").split(" ", 0);
-		            for(String str : arrOfStr) {
-		            	preparedStatement.setString(2, str);
-		            	preparedStatement.executeUpdate();
-		            }
+		        	String [] staff = args.get("staff").split(",");
+		        	for (int i =0; i<staff.length; i++) {
+		        		if(staff[i]!=null) {
+		        			sql="INSERT INTO emp_reserv (reserv_id, emp_id) VALUES(?,?)";
+				        	preparedStatement = con.prepareStatement(sql);
+				        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+				        	preparedStatement.setInt(2, Integer.valueOf(staff[i]));
+				        	preparedStatement.executeUpdate();
+		        		}
+		        	}
 		        	
 		        }
-		    }
+					
+		        
+		        if(args.get("menu")!=null) {
+		        	
+		        	sql="delete from meal_reserv where reserv_id = ?";
+		        	preparedStatement = con.prepareStatement(sql);
+		        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+		        	preparedStatement.executeUpdate();
+		        	String [] menu = args.get("menu").split(",");
+		        	for (int i =0; i<menu.length; i++) {
+		        		if(menu[i] !=null) {
+		        		sql="INSERT INTO meal_reserv (reserv_id, meal_id) VALUES(?,?)";
+		        		preparedStatement = con.prepareStatement(sql);
+		        		preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+		        		preparedStatement.setInt(2, Integer.valueOf(menu[i]));
+		        		preparedStatement.executeUpdate();
+		        		}
+		        	}
+		        }
+			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -209,5 +226,111 @@ public class ReservationSessionBean implements ReservationRemote {
 		}
 		return stat;
 	}
+
+	@Override
+	public Dictionary<Integer, Restaurant> getRestReserv(Integer id) throws SQLException {
+		Dictionary<Integer, Restaurant> rests = new Hashtable <Integer, Restaurant>();
+		try {
+		Connection con = dataSource.getConnection();
+		
+		String sql;
+		ResultSet resultSet;
+		
+		sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code order by r.id desc";
+		Statement stmt = con.createStatement();
+		resultSet = stmt.executeQuery(sql);
+		
+		while(resultSet.next()) {
+			Integer r_id = resultSet.getInt("r.id");
+            String code = resultSet.getString("z.code");
+            String state = resultSet.getString("z.state");
+            Integer r_cap = resultSet.getInt("r.capacity");
+            Zip zip = new Zip(code, state);
+            Restaurant rest = new Restaurant(zip, r_cap);
+			rests.put(r_id, rest);
+		}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(rests);
+		return rests;
+	}
+
+	@Override
+	public Dictionary<Integer, Meal> getMealReserv(Integer id) {
+		Dictionary<Integer, Meal> meals = new Hashtable <Integer, Meal>();
+		String sql;
+		ResultSet resultSet;
+		try {
+		Connection con = dataSource.getConnection();
+		
+		if(id==0) {
+			sql="SELECT m.id, m.title, m.prep_time, m.price FROM meal m";
+			Statement stmt = con.createStatement();
+			resultSet = stmt.executeQuery(sql);
+		}else {
+			sql="SELECT  m.id, m.title,  m.prep_time, m.price FROM meal m join meal_reserv mr on mr.meal_id=m.id where mr.reserv_id=?";
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			resultSet = preparedStatement.executeQuery();
+		}
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
+		while(resultSet.next()) {
+			Integer r_id = resultSet.getInt("m.id");
+			String title = resultSet.getString("m.title");
+			Double price = resultSet.getDouble("m.price");
+            LocalTime prep_time = LocalTime.parse(resultSet.getString("m.prep_time"), dateFormat);
+            
+            Meal meal = new Meal(title, price, prep_time);
+			meals.put(r_id, meal);
+		}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return meals;
+	}
+
+	@Override
+	public Dictionary<Integer, Employee> getEmpReserv(Integer id) {
+		Dictionary<Integer, Employee> emps = new Hashtable <Integer, Employee>();
+		String sql;
+		ResultSet resultSet;
+		try {
+		Connection con = dataSource.getConnection();
+		
+		if(id==0) {
+			sql="SELECT e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e";
+			Statement stmt = con.createStatement();
+			resultSet = stmt.executeQuery(sql);
+		}else {
+			sql="SELECT  e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e join emp_reserv er on e.id=er.emp_id where er.reserv_id=?";
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			resultSet = preparedStatement.executeQuery();
+		}
+
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		while(resultSet.next()) {
+			Integer e_id = resultSet.getInt("id");
+			Integer rest_id = resultSet.getInt("rest_id");
+            String first_name = resultSet.getString("first_name");
+            String last_name = resultSet.getString("last_name");
+            String gender = resultSet.getString("gender");
+            LocalDate birthdate = LocalDate.parse(resultSet.getString("birthdate"), dateFormat);
+            String position = resultSet.getString("position");
+            String phone = resultSet.getString("phone");
+            String e_mail = resultSet.getString("e_mail");
+            Double wage = resultSet.getDouble("wage");
+            Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, position, phone, e_mail, wage);
+			emps.put(e_id, emp);
+		}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return emps;
+	}
+	
 
 }

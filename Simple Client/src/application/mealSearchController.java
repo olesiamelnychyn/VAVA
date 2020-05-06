@@ -116,9 +116,7 @@ public class mealSearchController {
         table.getColumns().add(priceCol);
         table.getColumns().add(prepCol);
         table.setEditable(true);
-       
-        
-    	//TODO get list of restaurants for the combo box
+
         ObservableList<String> rests = FXCollections.observableArrayList();
         rests.add("Choose restaurant");
 		
@@ -140,7 +138,6 @@ public class mealSearchController {
 		} catch (NamingException | SQLException e) {
 			e.printStackTrace();
 		}
-    	;
     	cmbox_rest.getSelectionModel().select(0);
     	txt_from.setText("0.0");
     	txt_to.setText("50.0");
