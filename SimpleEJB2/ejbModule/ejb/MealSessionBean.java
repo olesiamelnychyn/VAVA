@@ -13,12 +13,15 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
-
-import objects.Employee;
 import objects.Meal;
+import objects.Product;
 import objects.Reservation;
 import objects.Restaurant;
+import objects.Supplier;
 import objects.Zip;
 
 @Stateless(name = "MealSessionEJB")
@@ -91,6 +94,23 @@ public class MealSessionBean implements MealRemote{
 				id = resultSet.getInt("id");
 				System.out.print("heer"+id);
 			}
+			if(args.get("ingr")!=null) {
+	        	sql="delete from meal_product where meal_id = ?";
+	        	preparedStatement = con.prepareStatement(sql);
+	        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+	        	preparedStatement.executeUpdate();
+	        	String [] ingr = args.get("ingr").split(",");
+	        	for (int i =0; i<ingr.length; i++) {
+	        		if(ingr[i]!=null) {
+	        			sql="INSERT INTO meal_product (meal_id, prod_id) VALUES(?,?)";
+			        	preparedStatement = con.prepareStatement(sql);
+			        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+			        	preparedStatement.setInt(2, Integer.valueOf(ingr[i]));
+			        	preparedStatement.executeUpdate();
+	        		}
+	        	}
+	        	
+	        }
 			
 	        
 		} catch (SQLException e) {
@@ -130,13 +150,30 @@ public class MealSessionBean implements MealRemote{
 		        Enumeration<String> e = args.keys();
 		        while(e.hasMoreElements()) {
 		            String k = e.nextElement();
-		            if(k!="meal_reserv" && k!="meal_prod" && k!="meal_rest" && !k.equals("id")) {
+		            if(k!="ingr" && !k.equals("id")) {
 		            	String sql="Update meal set "+k+"="+args.get(k)+" where id=?";
 //		            	System.out.println(sql);
 		            	PreparedStatement preparedStatement = con.prepareStatement(sql);
 		            	preparedStatement.setInt(1, Integer.valueOf(args.get("id")));
 		            	preparedStatement.executeUpdate();
 		            }
+		        }
+		        if(args.get("ingr")!=null) {
+		        	String sql="delete from meal_product where meal_id = ?";
+		        	PreparedStatement preparedStatement = con.prepareStatement(sql);
+		        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+		        	preparedStatement.executeUpdate();
+		        	String [] ingr = args.get("ingr").split(",");
+		        	for (int i =0; i<ingr.length; i++) {
+		        		if(ingr[i]!=null) {
+		        			sql="INSERT INTO meal_product (meal_id, prod_id) VALUES(?,?)";
+				        	preparedStatement = con.prepareStatement(sql);
+				        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+				        	preparedStatement.setInt(2, Integer.valueOf(ingr[i]));
+				        	preparedStatement.executeUpdate();
+		        		}
+		        	}
+		        	
 		        }
 		    }
 			
@@ -210,16 +247,50 @@ public class MealSessionBean implements MealRemote{
 			reserv.put(r_id, res);
 		}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return reserv;
 	}
 
 	@Override
-	public Dictionary<Integer, Employee> getEmpMeal(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Dictionary<Integer, Product> getProdMeal(Integer id) {
+		Dictionary<Integer, Product> prods = new Hashtable <Integer, Product>();
+		String sql;
+		ResultSet resultSet;
+		try {
+			Connection con = dataSource.getConnection();
+			if(id==0) {
+				sql="select p.id, p.title, p.price, p.supp_id from product p";
+				Statement stmt = con.createStatement();
+				resultSet = stmt.executeQuery(sql);
+			}else {
+				sql="select p.id, p.title, p.price, p.supp_id from product p join meal_product mp on mp.prod_id=p.id where mp.meal_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
+			}
+			while(resultSet.next()) {
+				Integer p_id = resultSet.getInt("id");
+                String title = resultSet.getString("title");
+                Double price = resultSet.getDouble("price");
+                Integer supp_id = resultSet.getInt("supp_id");
+                try {
+					Context ctx;
+					ctx = new InitialContext();
+					SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");
+					Supplier supp = SupplierRemote.getSupplierById(supp_id);
+	                Product prod = new Product(title, price, supp);
+					prods.put(p_id, prod);
+                } catch (NamingException e) {				
+					e.printStackTrace();
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return prods;
 	}
 
 }

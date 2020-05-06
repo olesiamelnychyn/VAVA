@@ -3,9 +3,8 @@ package ejb;
 import java.sql.SQLException;
 import java.util.Dictionary;
 import javax.ejb.Remote;
-
-import objects.Employee;
 import objects.Meal;
+import objects.Product;
 import objects.Reservation;
 import objects.Restaurant;
 
@@ -18,6 +17,6 @@ public interface MealRemote {
 	void updateMeal(Dictionary <String, String>  args);
 	Dictionary<Integer, Restaurant> getRestMeal(Integer id) throws SQLException;
 	Dictionary<Integer, Reservation> getReservMeal(Integer id);
-	Dictionary<Integer, Employee> getEmpMeal(Integer id);
+	Dictionary<Integer, Product> getProdMeal(Integer id);
 
 }

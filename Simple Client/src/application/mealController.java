@@ -15,7 +15,6 @@ import java.util.ResourceBundle;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import ejb.MealRemote;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +28,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-//import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -38,9 +36,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalTimeStringConverter;
 import objects.Meal;
+import objects.Product;
 import objects.Reservation;
 import objects.Restaurant;
-//import javafx.util.converter.LocalTime StringConverter;
 
 public class mealController {
 
@@ -78,7 +76,7 @@ public class mealController {
     private Spinner<Double> spin_price;
 
     @FXML
-    private ListView<?> list_prod;
+    private ListView<String>list_prod;
 
     @FXML
     private ImageView img_view;
@@ -87,7 +85,7 @@ public class mealController {
     private Spinner<LocalTime> spint_time;
 
     @FXML
-    private ComboBox<?> cmbox_prod;
+    private ComboBox<String> cmbox_prod;
 
     @FXML
     private Button btn_add_prod;
@@ -153,10 +151,16 @@ public class mealController {
         		}
         		args.put("prep_time", time);
         	}
-        		
+  	
         	if(meal==null || spin_price.getValue()!=meal.getPrice()) {
         		args.put("price", spin_price.getValue().toString());
         	}
+        	ObservableList<String> prods = list_prod.getItems();
+        	String ingr="";
+        	for(int i =0; i<prods.size(); i++) {
+        		ingr+=prods.get(i).split(",")[0]+",";
+        	}
+        	args.put("ingr", ingr);
         	MealRemote.updateMeal(args);
 	        openWindow("mealSearchWindow.fxml",e);
 			
@@ -165,12 +169,29 @@ public class mealController {
         btn_delete.setOnMouseClicked(e ->{
 			MealRemote.deleteMeal(id);
 	        openWindow("mealSearchWindow.fxml",e);
-
-
         });
         
         btn_undo.setOnMouseClicked(e ->{
         	fill();
+        });
+        
+        btn_add_prod.setOnMouseClicked(e ->{
+        	if(cmbox_prod.getSelectionModel().getSelectedItem()!=null) {
+//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
+        		ObservableList<String> prods= list_prod.getItems();
+        		prods.remove(cmbox_prod.getSelectionModel().getSelectedItem());
+        		prods.add(cmbox_prod.getSelectionModel().getSelectedItem());
+        		list_prod.setItems(prods);
+        	}   
+        });
+        
+        btn_del_prod.setOnMouseClicked(e ->{
+        	String i = list_prod.getSelectionModel().getSelectedItem();
+        	if(i!=null) {
+        		ObservableList<String> prods = list_prod.getItems();
+        		prods.remove(i);
+        		list_prod.setItems(prods);
+        	}
         });
         
     }
@@ -182,11 +203,6 @@ public class mealController {
         	id = enam.nextElement();
         	meal=dict.get(id);
         }
-//        if(id!=0) {
-//        	//System.out.println(meal.getTitle() +" "+id);
-//        } else {
-//        	//System.out.println("New meal");
-//        }
         fill();
     }
     
@@ -232,6 +248,19 @@ public class mealController {
         };
         spint_time.setValueFactory(value);
         spint_time.setEditable(true);
+        
+        ObservableList<String> prods = FXCollections.observableArrayList();
+ 	   Dictionary<Integer, Product> la2 = MealRemote.getProdMeal(0);
+		
+ 	  Enumeration<Integer>  enam = la2.keys();
+        while(enam.hasMoreElements()) {
+            Integer k = enam.nextElement();
+            String rest = k+", "+la2.get(k).getTitle()+ " "+la2.get(k).getPrice();
+            prods.add(rest);
+        }
+            
+        cmbox_prod.setItems(prods);
+        
     	if(id!=0) {
     		txt_title.setText(meal.getTitle());
     		spin_price.getValueFactory().setValue(meal.getPrice());
@@ -242,15 +271,14 @@ public class mealController {
     		try {
     			Dictionary<Integer, Restaurant> la = MealRemote.getRestMeal(id);
     			
-    			Enumeration<Integer> enam = la.keys();
+    			enam = la.keys();
     	        while(enam.hasMoreElements()) {
     	            Integer k = enam.nextElement();
     	            String rest = k+", cap: "+la.get(k).getCapacity()+ ","+la.get(k).getZip().getState();
-    	            //System.out.println(rest);
+   
     	            rests.add(rest);
     	            
         		}
-    	        //System.out.println(rests);
     	        list_rest.getItems().addAll(rests);
 			} catch ( SQLException e) {
 				e.printStackTrace();
@@ -259,7 +287,7 @@ public class mealController {
     		ObservableList<String> reserv = FXCollections.observableArrayList();
     		Dictionary<Integer, Reservation> la = MealRemote.getReservMeal(id);
     			
-    			Enumeration<Integer> enam = la.keys();
+    			enam = la.keys();
     	        while(enam.hasMoreElements()) {
     	            Integer k = enam.nextElement();
     	            String res = k+", rest: "+la.get(k).getRest_id()+ ", "+la.get(k).getDate_start()+"-"+la.get(k).getDate_end();
@@ -270,7 +298,16 @@ public class mealController {
     	        //System.out.println(rests);
     	        list_reserv.getItems().addAll(reserv);
 			
-            
+    	   prods = FXCollections.observableArrayList();
+    	   la2 = MealRemote.getProdMeal(id);
+    			
+    	   enam = la2.keys();
+    	   while(enam.hasMoreElements()) {
+    	        Integer k = enam.nextElement();
+    	        String rest = k+", "+la2.get(k).getTitle()+ " "+la2.get(k).getPrice();
+    	            prods.add(rest);
+    	        }
+    	   list_prod.setItems(prods);
   
     			
     	} else {
@@ -280,6 +317,5 @@ public class mealController {
     	}
     	
     }
-    
     
 }

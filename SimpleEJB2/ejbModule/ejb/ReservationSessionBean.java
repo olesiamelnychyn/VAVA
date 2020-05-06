@@ -86,6 +86,42 @@ public class ReservationSessionBean implements ReservationRemote {
 			while(resultSet.next()) {
 				id = resultSet.getInt("id");
 			}
+			if(args.get("staff")!=null) {
+	        	sql="delete from emp_reserv where reserv_id = ?";
+	        	preparedStatement = con.prepareStatement(sql);
+	        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+	        	preparedStatement.executeUpdate();
+	        	String [] staff = args.get("staff").split(",");
+	        	for (int i =0; i<staff.length; i++) {
+	        		if(staff[i]!=null) {
+	        			sql="INSERT INTO emp_reserv (reserv_id, emp_id) VALUES(?,?)";
+			        	preparedStatement = con.prepareStatement(sql);
+			        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+			        	preparedStatement.setInt(2, Integer.valueOf(staff[i]));
+			        	preparedStatement.executeUpdate();
+	        		}
+	        	}
+	        	
+	        }
+				
+	        
+	        if(args.get("menu")!=null) {
+	        	
+	        	sql="delete from meal_reserv where reserv_id = ?";
+	        	preparedStatement = con.prepareStatement(sql);
+	        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+	        	preparedStatement.executeUpdate();
+	        	String [] menu = args.get("menu").split(",");
+	        	for (int i =0; i<menu.length; i++) {
+	        		if(menu[i] !=null) {
+	        		sql="INSERT INTO meal_reserv (reserv_id, meal_id) VALUES(?,?)";
+	        		preparedStatement = con.prepareStatement(sql);
+	        		preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+	        		preparedStatement.setInt(2, Integer.valueOf(menu[i]));
+	        		preparedStatement.executeUpdate();
+	        		}
+	        	}
+	        }
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -119,7 +155,12 @@ public class ReservationSessionBean implements ReservationRemote {
 	@Override
 	public void updateReserv(Dictionary<String, String> args) {
 		try {
+			
 			System.out.println(args.get("menu")+" "+ args.get("id"));
+			if(args.get("id")=="0") {
+				addReserv(args);
+				return;
+			}
 			Connection con = dataSource.getConnection();
 			String sql="Update reservation set ?=? where id = ?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);

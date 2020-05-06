@@ -118,10 +118,9 @@ public class SupplierSessionBean implements SupplierRemote{
 			Connection con = dataSource.getConnection();
 			String sql="select s.id, s.title, s.phone, s.e_mail from supplier s";
 			sql+= " where s.id=?";
-			Statement stmt = con.createStatement();
-			ResultSet resultSet = stmt.executeQuery(sql);
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, supp_id);
+			ResultSet resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
                 String title = resultSet.getString("title");
                 String phone = resultSet.getString("phone");
