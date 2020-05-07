@@ -34,4 +34,8 @@ public class Product implements Serializable{
 		this.price=price;
 		this.supp=supp_;
 	}
+	@Override
+	public String toString() {
+		return this.title + ": "+this.price + " " + this.supp.toString();
+	}
 }

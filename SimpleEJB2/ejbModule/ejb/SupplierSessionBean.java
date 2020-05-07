@@ -68,10 +68,9 @@ public class SupplierSessionBean implements SupplierRemote{
 	        sql="SELECT MAX(id) FROM supplier";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
 			
 			while(resultSet.next()) {
-				id = resultSet.getInt("id");
+				id = resultSet.getInt("MAX(id)");
 				System.out.print("here"+id);
 			}
 			
@@ -88,9 +87,20 @@ public class SupplierSessionBean implements SupplierRemote{
 	public void deleteSupplier(int id) {
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="select p.id from product where p.supp_id="+String.valueOf(id);
+			String sql="select id from product where supp_id="+String.valueOf(id);
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
+//			while(resultSet.next()) {
+//				sql="Delete from meal_product where prod_id=?";
+//				PreparedStatement preparedStatement = con.prepareStatement(sql);
+//				preparedStatement.setInt(1, id);
+//				preparedStatement.executeUpdate();
+//				
+//				sql="Delete from product where id=?";
+//				preparedStatement = con.prepareStatement(sql);
+//				preparedStatement.setInt(1, id);
+//				preparedStatement.executeUpdate();
+//			}
 			try {
 				Context ctx;
 				ctx = new InitialContext();

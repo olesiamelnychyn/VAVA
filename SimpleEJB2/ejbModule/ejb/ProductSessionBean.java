@@ -11,9 +11,6 @@ import java.util.Hashtable;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import objects.Product;
 import objects.Reservation;
@@ -32,13 +29,13 @@ public class ProductSessionBean implements ProductRemote {
 		try {
 			Connection con = dataSource.getConnection();
 			String sql="select p.id, p.title, p.price, p.supp_id from product p";
-			if(args.get("supp_id")!="") {
+			if(args!=null && args.get("supp_id")!="") {
 				sql+=" join supplier s on s.id=p.supp_id where p.supp_id="+args.get("supp_id")+
 						" and p.price between "+args.get("price_from")+" and "+args.get("price_to");
 			} else {
 				sql+=" where p.price between "+args.get("price_from")+" and "+args.get("price_to");
 			}
-			if(args.get("title")!="") {
+			if(args!=null && args.get("title")!="") {
 				sql+= " and p.title like \"%"+args.get("title")+"%\"";
 			}
 			sql+=" order by p.id";
@@ -49,16 +46,21 @@ public class ProductSessionBean implements ProductRemote {
                 String title = resultSet.getString("title");
                 Double price = resultSet.getDouble("price");
                 Integer supp_id = resultSet.getInt("supp_id");
-				try {
-					Context ctx;
-					ctx = new InitialContext();
-					SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");
-					Supplier supp = SupplierRemote.getSupplierById(supp_id);
-	                Product prod = new Product(title, price, supp);
+				sql="select s.id, s.title, s.phone, s.e_mail from supplier s where s.id=" + supp_id;
+				stmt = con.createStatement();
+				ResultSet resultSet1 = stmt.executeQuery(sql);
+				while(resultSet1.next()) {
+				    String title_s = resultSet1.getString("title");
+				    String phone_s = resultSet1.getString("phone");
+				    String e_mail_s = resultSet1.getString("e_mail");
+				    Supplier supp = new Supplier(title_s, phone_s, e_mail_s);
+				    Product prod = new Product(title, price, supp);
 					result.put(id, prod);
-				} catch (NamingException e) {				
-					e.printStackTrace();
 				}
+//					Context ctx;
+//					ctx = new InitialContext();
+//					SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");
+//					Supplier supp = SupplierRemote.getSupplierById(supp_id);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -81,10 +83,9 @@ public class ProductSessionBean implements ProductRemote {
 	        sql="SELECT MAX(id) FROM product";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
 			
 			while(resultSet.next()) {
-				id = resultSet.getInt("id");
+				id = resultSet.getInt("MAX(id)");
 			}
 			
 	        

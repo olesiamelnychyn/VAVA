@@ -35,7 +35,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			Connection con = dataSource.getConnection();
 			String sql="select r.id, r.capacity, r.zip, z.state from restaurant r join zip z on z.code=r.zip ";
 			sql+="where r.capacity between "+args.get("vis_from")+" and "+args.get("vis_to");
-			if(args.get("zip")!="") {
+			if(args!=null && args.get("zip")!="") {
 				sql+= " and r.zip ="+args.get("zip");
 			}
 			sql+=" order by r.id";
@@ -60,27 +60,28 @@ public class RestaurantSessionBean implements RestaurantRemote {
 	@Override
 	public int addRestaurant(Dictionary<String, String> args) {
 		Integer id=-1;
-		try {
-			Connection con = dataSource.getConnection();
-			String sql = "INSERT INTO restaurant (capacity, zip) VALUES (?,?)";
-	        PreparedStatement preparedStatement = con.prepareStatement(sql);
-	        preparedStatement.setString(1, args.get("capacity"));
-	        preparedStatement.setString(2, args.get("zip"));
-	        preparedStatement.executeUpdate();
-	        
-	        sql="SELECT MAX(id) FROM restaurant";
-	        Statement stmt = con.createStatement();
-			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
-			
-			while(resultSet.next()) {
-				id = resultSet.getInt("id");
+		if(args!=null) {
+			try {
+				Connection con = dataSource.getConnection();
+				String sql = "INSERT INTO restaurant (capacity, zip) VALUES (?,?)";
+		        PreparedStatement preparedStatement = con.prepareStatement(sql);
+		        preparedStatement.setString(1, args.get("capacity"));
+		        preparedStatement.setString(2, args.get("zip"));
+		        preparedStatement.executeUpdate();
+		        
+		        sql="SELECT MAX(id) FROM restaurant";
+		        Statement stmt = con.createStatement();
+				ResultSet resultSet = stmt.executeQuery(sql);
+				
+				while(resultSet.next()) {
+					id = resultSet.getInt("MAX(id)");
+				}
+				
+		        
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return -1;
 			}
-			
-	        
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return -1;
 		}
 		
 		return id;

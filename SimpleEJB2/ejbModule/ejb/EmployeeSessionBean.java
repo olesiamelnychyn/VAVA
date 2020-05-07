@@ -85,10 +85,9 @@ public class EmployeeSessionBean implements EmployeeRemote{
 	        sql="SELECT MAX(id) FROM employee";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
 			
 			while(resultSet.next()) {
-				id = resultSet.getInt("id");
+				id = resultSet.getInt("MAX(id)");
 			}
 			
 	        
@@ -153,7 +152,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			resultSet.next();
 			
 			while(resultSet.next()) {
-				wage = resultSet.getInt("wage");
+				wage = resultSet.getInt("MAX(wage)");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
