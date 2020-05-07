@@ -90,27 +90,27 @@ public class SupplierSessionBean implements SupplierRemote{
 			String sql="select id from product where supp_id="+String.valueOf(id);
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-//			while(resultSet.next()) {
-//				sql="Delete from meal_product where prod_id=?";
-//				PreparedStatement preparedStatement = con.prepareStatement(sql);
-//				preparedStatement.setInt(1, id);
-//				preparedStatement.executeUpdate();
-//				
-//				sql="Delete from product where id=?";
-//				preparedStatement = con.prepareStatement(sql);
-//				preparedStatement.setInt(1, id);
-//				preparedStatement.executeUpdate();
-//			}
-			try {
-				Context ctx;
-				ctx = new InitialContext();
-				ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");
-				while(resultSet.next()) {
-					ProductRemote.deleteProduct(resultSet.getInt("id"));
-				}
-			} catch (NamingException e) {				
-				e.printStackTrace();
+			while(resultSet.next()) {
+				sql="Delete from meal_product where prod_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, resultSet.getInt("id"));
+				preparedStatement.executeUpdate();
+				
+				sql="Delete from product where id=?";
+				preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, resultSet.getInt("id"));
+				preparedStatement.executeUpdate();
 			}
+//			try {
+//				Context ctx;
+//				ctx = new InitialContext();
+//				ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");
+//				while(resultSet.next()) {
+//					ProductRemote.deleteProduct(resultSet.getInt("id"));
+//				}
+//			} catch (NamingException e) {				
+//				e.printStackTrace();
+//			}
 			
 			
 			sql="Delete from supplier where id=?";

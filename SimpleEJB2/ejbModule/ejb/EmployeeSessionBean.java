@@ -149,7 +149,6 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			String sql="SELECT MAX(wage) FROM employee";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
 			
 			while(resultSet.next()) {
 				wage = resultSet.getInt("MAX(wage)");
