@@ -127,6 +127,7 @@ public class prodSearchController {
 	            supps.add(supp);
 	            
     		}
+	        System.out.println(supps);
 	        cmbox_supp.setItems(supps);
 		} catch (NamingException e) {
 			e.printStackTrace();

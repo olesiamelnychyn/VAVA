@@ -30,24 +30,26 @@ public class SupplierSessionBean implements SupplierRemote{
 		try {
 			Connection con = dataSource.getConnection();
 			String sql="select s.id, s.title, s.phone, s.e_mail from supplier s";
-			if(args.get("title")!="") {
+			if(args.get("title")!=null && args.get("title")!="") {
 				sql+= " where s.title like \"%"+args.get("title")+"%\"";
 			}
+			System.out.println(sql);
 			sql+=" order by s.id";
+			
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
 			while(resultSet.next()) {
-				Integer id = resultSet.getInt("id");
-                String title = resultSet.getString("title");
-                String phone = resultSet.getString("phone");
-                String e_mail = resultSet.getString("e_mail");
+				Integer id = resultSet.getInt("s.id");
+                String title = resultSet.getString("s.title");
+                String phone = resultSet.getString("s.phone");
+                String e_mail = resultSet.getString("s.e_mail");
                 Supplier supp = new Supplier(title, phone, e_mail);
 				result.put(id, supp);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		//System.out.println(result);
+		System.out.println(result);
 		return result;
 	}
 

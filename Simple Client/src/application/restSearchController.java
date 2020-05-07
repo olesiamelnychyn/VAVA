@@ -198,7 +198,7 @@ public class restSearchController {
     	}
     	try {
     		args.put("vis_to", Integer.valueOf(txt_to.getText()).toString());
-    		txt_to.setText(Double.valueOf(txt_to.getText()).toString());
+    		txt_to.setText(Integer.valueOf(txt_to.getText()).toString());
     	} catch (NumberFormatException ex) {
     		int cap;
 			try {

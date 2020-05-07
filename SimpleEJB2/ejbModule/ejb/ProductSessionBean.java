@@ -159,13 +159,12 @@ public class ProductSessionBean implements ProductRemote {
 		double price = 0;
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="SELECT MAX(price) as m FROM product";
+			String sql="SELECT MAX(price) FROM product";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
 			
 			while(resultSet.next()) {
-				price = resultSet.getInt("m");
+				price = resultSet.getInt("MAX(price)");
 				System.out.print("here "+price);
 			}
 		} catch (SQLException e) {

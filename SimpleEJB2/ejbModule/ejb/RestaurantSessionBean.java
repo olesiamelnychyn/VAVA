@@ -190,10 +190,9 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			String sql="SELECT MAX(capacity) FROM restaurant";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
 			
 			while(resultSet.next()) {
-				capacity = resultSet.getInt("capacity");
+				capacity = resultSet.getInt("MAX(capacity)");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
