@@ -118,11 +118,12 @@ public class prodSearchController {
 			Dictionary <String, String> args = new Hashtable <String, String> ();
 	    	args.put("", "");
 			Dictionary<Integer, Supplier> la = SupplierRemote.searchSupplier(args);
+			System.out.println(la);
 			
 			Enumeration<Integer> enam = la.keys();
 	        while(enam.hasMoreElements()) {
 	            Integer k = enam.nextElement();
-	            String supp = k+": "+la.get(k).getTitle();
+	            String supp = String.valueOf(k)+": "+la.get(k).toString();
 	            supps.add(supp);
 	            
     		}
@@ -255,6 +256,7 @@ public class prodSearchController {
     	Context ctx = new InitialContext();
     	ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
     	double price = ProductRemote.getMaxPrice();
+    	System.out.println(price);
     	return price;
     }
     

@@ -88,17 +88,12 @@ public class MealSessionBean implements MealRemote{
 	        sql="SELECT MAX(id) FROM meal";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
 			
 			while(resultSet.next()) {
-				id = resultSet.getInt("id");
+				id = resultSet.getInt(" MAX(id)");
 				System.out.print("heer"+id);
 			}
-			if(args.get("ingr")!=null) {
-	        	sql="delete from meal_product where meal_id = ?";
-	        	preparedStatement = con.prepareStatement(sql);
-	        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
-	        	preparedStatement.executeUpdate();
+			if(args.get("ingr")!=null && args.get("ingr")!="") {
 	        	String [] ingr = args.get("ingr").split(",");
 	        	for (int i =0; i<ingr.length; i++) {
 	        		if(ingr[i]!=null) {
@@ -150,7 +145,7 @@ public class MealSessionBean implements MealRemote{
 		        Enumeration<String> e = args.keys();
 		        while(e.hasMoreElements()) {
 		            String k = e.nextElement();
-		            if(k!="ingr" && !k.equals("id")) {
+		            if(!k.equals("ingr") && !k.equals("id")) {
 		            	String sql="Update meal set "+k+"="+args.get(k)+" where id=?";
 //		            	System.out.println(sql);
 		            	PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -158,7 +153,7 @@ public class MealSessionBean implements MealRemote{
 		            	preparedStatement.executeUpdate();
 		            }
 		        }
-		        if(args.get("ingr")!=null) {
+		        if(args.get("ingr")!=null && args.get("ingr")!="") {
 		        	String sql="delete from meal_product where meal_id = ?";
 		        	PreparedStatement preparedStatement = con.prepareStatement(sql);
 		        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 

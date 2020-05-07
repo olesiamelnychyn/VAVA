@@ -109,7 +109,7 @@ public class reservController {
     private Spinner<LocalTime> spin_time_to;
 
     Reservation reservation=null;
-    String rest_res;
+    String rest_res="";
     Integer id=0;
     Context ctx;
 	ReservationRemote ReservRemote;
@@ -156,20 +156,20 @@ public class reservController {
         	DateTimeFormatter formatte2 = DateTimeFormatter.ofPattern("HH:mm:ss");
         	Dictionary <String, String> args = new Hashtable<String, String> ();
         	args.put("id", id.toString());
-        	if(spin_vis.getValueFactory().getValue()!=reservation.getVisitors()) {
+        	if(reservation==null || spin_vis.getValueFactory().getValue()!=reservation.getVisitors()) {
         		args.put("visitors", spin_vis.getValueFactory().getValue().toString());
         	}
         	
-        	if(!date_start.getValue().toString().equals(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1).toString()) ||
+        	if(reservation==null || !date_start.getValue().toString().equals(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1).toString()) ||
         			!spin_time_from.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2).toString())) {
-        		args.put("date_start", date_start.getValue().toString()+" "+spin_time_from.getValueFactory().getValue());
+        		args.put("date_start", "\""+date_start.getValue().toString()+" "+spin_time_from.getValueFactory().getValue()+"\"");
         	}
         		
-        	if(!date_end.getValue().toString().equals(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1).toString()) ||
+        	if(reservation==null || !date_end.getValue().toString().equals(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1).toString()) ||
         		!spin_time_to.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2).toString())) {
-        		args.put("date_end", date_end.getValue()+" "+spin_time_to.getValueFactory().getValue());
+        		args.put("date_end", "\""+date_end.getValue()+" "+spin_time_to.getValueFactory().getValue()+"\"");
         	}
-        	if(cmbox_rest.getSelectionModel().getSelectedItem()!=rest_res) {
+        	if(reservation==null || cmbox_rest.getSelectionModel().getSelectedItem()!=rest_res) {
         		args.put("rest_id", cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]);
         	}
         	ObservableList<String> meals = list_meal.getItems();
@@ -328,13 +328,17 @@ public class reservController {
 	            Integer k = enam.nextElement();
 	            
 	            String rest = k+", cap: "+la.get(k).getCapacity()+ ","+la.get(k).getZip().getState();
-	            if (k==reservation.getRest_id()) {
+	            if (reservation!=null && k==reservation.getRest_id()) {
 	            	rest_res=rest;
 	            }
 	            rests.add(rest);
 	        }
 	        cmbox_rest.setItems(rests);
-	        cmbox_rest.getSelectionModel().select(rest_res);
+	        if(rest_res!="")
+	        	cmbox_rest.getSelectionModel().select(rest_res);
+	        else {
+	        	cmbox_rest.getSelectionModel().select(0);
+	        }
 	        
 	        ObservableList<String> emps = FXCollections.observableArrayList();
 			Dictionary<Integer, Employee> la2 = ReservRemote.getEmpReserv(0);

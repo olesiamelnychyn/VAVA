@@ -149,7 +149,7 @@ public class mealController {
         		if(spint_time.getValue().toString().length()<8) {
         			time+=":00";
         		}
-        		args.put("prep_time", time);
+        		args.put("prep_time", "\""+time+"\"");
         	}
   	
         	if(meal==null || spin_price.getValue()!=meal.getPrice()) {

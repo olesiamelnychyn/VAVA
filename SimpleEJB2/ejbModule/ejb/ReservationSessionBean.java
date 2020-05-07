@@ -78,25 +78,23 @@ public class ReservationSessionBean implements ReservationRemote {
 	        preparedStatement.setString(3, args.get("prep_time"));
 	        preparedStatement.setString(4, args.get("visitors"));
 	        preparedStatement.executeUpdate();
+	        
 	        sql="SELECT MAX(id) FROM reservation";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-			resultSet.next();
+//			resultSet.next();
 			
 			while(resultSet.next()) {
-				id = resultSet.getInt("id");
+				id = resultSet.getInt("MAX(id)");
 			}
-			if(args.get("staff")!=null) {
-	        	sql="delete from emp_reserv where reserv_id = ?";
-	        	preparedStatement = con.prepareStatement(sql);
-	        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
-	        	preparedStatement.executeUpdate();
+			System.out.println("Id new: "+id);
+			if(args.get("staff")!=null && args.get("staff")!="") {
 	        	String [] staff = args.get("staff").split(",");
 	        	for (int i =0; i<staff.length; i++) {
 	        		if(staff[i]!=null) {
 	        			sql="INSERT INTO emp_reserv (reserv_id, emp_id) VALUES(?,?)";
 			        	preparedStatement = con.prepareStatement(sql);
-			        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+			        	preparedStatement.setInt(1, id); 
 			        	preparedStatement.setInt(2, Integer.valueOf(staff[i]));
 			        	preparedStatement.executeUpdate();
 	        		}
@@ -105,18 +103,13 @@ public class ReservationSessionBean implements ReservationRemote {
 	        }
 				
 	        
-	        if(args.get("menu")!=null) {
-	        	
-	        	sql="delete from meal_reserv where reserv_id = ?";
-	        	preparedStatement = con.prepareStatement(sql);
-	        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
-	        	preparedStatement.executeUpdate();
+	        if(args.get("menu")!=null && args.get("menu")!="") {
 	        	String [] menu = args.get("menu").split(",");
 	        	for (int i =0; i<menu.length; i++) {
 	        		if(menu[i] !=null) {
 	        		sql="INSERT INTO meal_reserv (reserv_id, meal_id) VALUES(?,?)";
 	        		preparedStatement = con.prepareStatement(sql);
-	        		preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+	        		preparedStatement.setInt(1,id); 
 	        		preparedStatement.setInt(2, Integer.valueOf(menu[i]));
 	        		preparedStatement.executeUpdate();
 	        		}
@@ -157,26 +150,26 @@ public class ReservationSessionBean implements ReservationRemote {
 		try {
 			
 			System.out.println(args.get("menu")+" "+ args.get("id"));
-			if(args.get("id")=="0") {
+			if(args.get("id").equals("0")) {
 				addReserv(args);
 				return;
 			}
 			Connection con = dataSource.getConnection();
-			String sql="Update reservation set ?=? where id = ?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setString(3, args.get("id"));
+			PreparedStatement preparedStatement;
+			String sql;
 			if(args!=null){
 		        Enumeration<String> e = args.keys();
 		        while(e.hasMoreElements()) {
 		            String k = e.nextElement();
-		            if (k.equals("staff") &&  k.equals("menu")) {
-		            	preparedStatement.setString(1, k);
-		            	preparedStatement.setString(2, args.get(k));
+		            if (!k.equals("staff") &&  !k.equals("menu")) {
+		            	sql="Update reservation set "+k+"="+args.get(k)+" where id = ?";
+		            	preparedStatement = con.prepareStatement(sql);
+		    			preparedStatement.setInt(1, Integer.valueOf(args.get("id")));
 		            	preparedStatement.executeUpdate();
 		            	
 		            }
 		        } 
-		        if(args.get("staff")!=null) {
+		        if(args.get("staff")!=null && args.get("staff")!="") {
 		        	sql="delete from emp_reserv where reserv_id = ?";
 		        	preparedStatement = con.prepareStatement(sql);
 		        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
@@ -195,7 +188,7 @@ public class ReservationSessionBean implements ReservationRemote {
 		        }
 					
 		        
-		        if(args.get("menu")!=null) {
+		        if(args.get("menu")!=null && args.get("menu")!="") {
 		        	
 		        	sql="delete from meal_reserv where reserv_id = ?";
 		        	preparedStatement = con.prepareStatement(sql);

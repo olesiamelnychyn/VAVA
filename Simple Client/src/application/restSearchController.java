@@ -102,23 +102,20 @@ public class restSearchController {
         
         TableColumn <Restaurant, Integer> capCol = new TableColumn <Restaurant, Integer> ("Capacity");
         capCol.setCellValueFactory(new PropertyValueFactory<>("capacity"));
-        TableColumn <Restaurant, String> zip_codeCol = new TableColumn <Restaurant, String> ("code");
-        zip_codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
-        TableColumn <Restaurant, String> stateCol = new TableColumn <Restaurant, String> ("State");
-        stateCol.setCellValueFactory(new PropertyValueFactory<>("state"));
+        TableColumn <Restaurant, String> zip_codeCol = new TableColumn <Restaurant, String> ("Code");
+        zip_codeCol.setCellValueFactory(new PropertyValueFactory<>("zip"));
         
         data = FXCollections.observableArrayList();
         table.getColumns().add(capCol);
         table.getColumns().add(zip_codeCol);
-        table.getColumns().add(stateCol);
         table.setEditable(true);
         
         ObservableList<String> zip = FXCollections.observableArrayList();
         zip.add("Choose zip");
         
         try {
-			for (String p : this.getZIP()) { 		      
-				zip.add(p);		
+			for (Zip p : this.getZIP()) { 		      
+				zip.add(p.toString());		
 			}
 		} catch (MyExeception e2) {
 			e2.printStackTrace();
@@ -134,8 +131,10 @@ public class restSearchController {
 			txt_to.setText(String.valueOf(capacity));
 		} catch (MyExeception e) {
 			e.printStackTrace();
+			txt_to.setText(String.valueOf(100));
 		} catch (NamingException e) {
 			e.printStackTrace();
+			txt_to.setText(String.valueOf(100));
 		}
 
     	search();
@@ -208,20 +207,21 @@ public class restSearchController {
 				args.put("vis_to", String.valueOf(cap));
 			} catch (MyExeception e) {
 				e.printStackTrace();
-				args.put("vis_to", String.valueOf(50));
+				args.put("vis_to", String.valueOf(100));
+				txt_to.setText(String.valueOf(100));
 			} catch (NamingException e) {
 				e.printStackTrace();
-				args.put("vis_to", String.valueOf(50));
+				args.put("vis_to", String.valueOf(100));
+				txt_to.setText(String.valueOf(100));
 			}
     	}
     	if(cmbox_zip.getValue()!="Choose zip") {
-    		args.put("zip", cmbox_zip.getValue().split(" ")[0]);
+    		args.put("zip", cmbox_zip.getValue().split(",")[0].split(" ")[1]);
     	}else {
     		args.put("zip", "");
     	}
     	
 //    System.out.println(args);
-//      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
        
     	try {
     		final Dictionary<Integer, Restaurant> result1 = doRequest(args);
@@ -252,18 +252,21 @@ public class restSearchController {
     	Context ctx = new InitialContext();
     	RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
         int cap = RestaurantRemote.getMaxCapacity();
+        System.out.println(cap);
     	return cap;
     }
     
-    private ArrayList<String> getZIP() throws MyExeception, NamingException {
+    private ArrayList<Zip> getZIP() throws MyExeception, NamingException {
     	Context ctx = new InitialContext();
     	RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
         ArrayList<Zip> zip = RestaurantRemote.getZip();
-        ArrayList<String> z = new ArrayList<String>();
-        for (Zip p : zip) { 		      
-			z.add(p.getCode()+" "+p.getState());		
-		}
-    	return z;
+        System.out.println(zip);
+//        ArrayList<String> z = new ArrayList<String>();
+//        for (Zip p : zip) { 		      
+//			z.add(p.getCode()+" "+p.getState());		
+//		}
+//        System.out.println(z);
+    	return zip;
     }
     
     private void delete(Integer id) throws MyExeception, NamingException {  

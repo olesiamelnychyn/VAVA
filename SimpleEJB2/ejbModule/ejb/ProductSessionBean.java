@@ -105,7 +105,7 @@ public class ProductSessionBean implements ProductRemote {
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
 			
-			sql="Delete from product where emp_id=?";
+			sql="Delete from product where id=?";
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
@@ -159,13 +159,14 @@ public class ProductSessionBean implements ProductRemote {
 		double price = 0;
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="SELECT MAX(price) FROM product";
+			String sql="SELECT MAX(price) as m FROM product";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
 			resultSet.next();
 			
 			while(resultSet.next()) {
-				price = resultSet.getInt("price");
+				price = resultSet.getInt("m");
+				System.out.print("here "+price);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

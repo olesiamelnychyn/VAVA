@@ -33,12 +33,12 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="select r.id, r.capacity, r.zip, z.state from restaurant r ";
+			String sql="select r.id, r.capacity, r.zip, z.state from restaurant r join zip z on z.code=r.zip ";
 			sql+="where r.capacity between "+args.get("vis_from")+" and "+args.get("vis_to");
 			if(args.get("zip")!="") {
 				sql+= " and r.zip ="+args.get("zip");
 			}
-			sql+=" join zip z on z.code=r.zip order by r.id";
+			sql+=" order by r.id";
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
 			while(resultSet.next()) {
@@ -178,7 +178,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		//System.out.println(result);
+		System.out.println(result);
 		return result;
 	}
 

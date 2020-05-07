@@ -35,5 +35,9 @@ public class Supplier  implements Serializable{
 	public void setE_mail(String e_mail) {
 		this.e_mail = e_mail;
 	}
+	@Override
+	public String toString() {
+		return this.title;
+	}
 
 }
