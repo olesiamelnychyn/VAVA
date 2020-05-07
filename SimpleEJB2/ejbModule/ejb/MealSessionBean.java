@@ -1,5 +1,7 @@
 package ejb;
 
+
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +19,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
 import objects.Meal;
 import objects.Product;
 import objects.Reservation;
@@ -74,11 +77,10 @@ public class MealSessionBean implements MealRemote{
 		Integer id=-1;
 		try {
 			Connection con = dataSource.getConnection();
-			String sql = "INSERT INTO meal (title, price, prep_time) Values ("+ args.get("title")+", ?, ?)";
+			String sql = "INSERT INTO meal (title, price, prep_time) Values ("+ args.get("title")+", ?,"+args.get("prep_time")+")";
 	        PreparedStatement preparedStatement = con.prepareStatement(sql);
-//	        preparedStatement.setString(1,);
 	        preparedStatement.setString(1, args.get("price"));
-	        preparedStatement.setString(2, args.get("prep_time"));
+
 	        System.out.print(preparedStatement);
 	        preparedStatement.executeUpdate();
 //	        String image=args.get("image");
@@ -90,7 +92,7 @@ public class MealSessionBean implements MealRemote{
 			ResultSet resultSet = stmt.executeQuery(sql);
 			
 			while(resultSet.next()) {
-				id = resultSet.getInt(" MAX(id)");
+				id = resultSet.getInt("MAX(id)");
 				System.out.print("heer"+id);
 			}
 			if(args.get("ingr")!=null && args.get("ingr")!="") {
@@ -99,7 +101,7 @@ public class MealSessionBean implements MealRemote{
 	        		if(ingr[i]!=null) {
 	        			sql="INSERT INTO meal_product (meal_id, prod_id) VALUES(?,?)";
 			        	preparedStatement = con.prepareStatement(sql);
-			        	preparedStatement.setInt(1, Integer.valueOf(args.get("id"))); 
+			        	preparedStatement.setInt(1, id); 
 			        	preparedStatement.setInt(2, Integer.valueOf(ingr[i]));
 			        	preparedStatement.executeUpdate();
 	        		}
@@ -120,8 +122,16 @@ public class MealSessionBean implements MealRemote{
 	public void deleteMeal(int id) {
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="Delete from meal where id=?";
+			String sql="Delete from meal_product where meal_id=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			preparedStatement.executeUpdate();
+			sql="Delete from meal_reserv where meal_id=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			preparedStatement.executeUpdate();
+			sql="Delete from meal where id=?";
+			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
@@ -232,14 +242,21 @@ public class MealSessionBean implements MealRemote{
 		}
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss");
 		while(resultSet.next()) {
-			Integer r_id = resultSet.getInt("r.id");
+			try{
+				Integer r_id = resultSet.getInt("r.id");
+			
             Integer rest_id = resultSet.getInt("rest_id");
             Integer visitors = resultSet.getInt("visitors");
-            LocalDateTime date_start = LocalDateTime.parse(resultSet.getString("date_start"), dateFormat);
+            System.out.println(resultSet.getString("date_start"));
+            LocalDateTime date_start= LocalDateTime.parse(resultSet.getString("date_start"), dateFormat);
+
             LocalDateTime date_end = LocalDateTime.parse(resultSet.getString("date_end"), dateFormat);
 			
 			Reservation res = new Reservation(rest_id, date_start, date_end, visitors);
 			reserv.put(r_id, res);
+			}catch(java.time.format.DateTimeParseException | java.lang.NullPointerException ex) {
+				continue;
+			}
 		}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -287,5 +304,7 @@ public class MealSessionBean implements MealRemote{
 		
 		return prods;
 	}
-
+	
+		
 }
+		

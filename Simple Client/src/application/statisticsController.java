@@ -1,4 +1,5 @@
 package application;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +11,19 @@ import javax.naming.NamingException;
 
 import ejb.ReservationRemote;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Menu;
 import javafx.scene.control.ScrollPane;
+import javafx.stage.Stage;
 import objects.StatisticData;
 
 public class statisticsController {
@@ -41,12 +48,39 @@ public class statisticsController {
     @FXML
     private StackedBarChart<String, Number> s_bar_char = new StackedBarChart<String, Number>(xAxis, yAxis);;
 
-    Integer type=0; //1=reserv, 2=rest
+    Integer type=1; //1=reserv, 2=rest
     
     @FXML
     void initialize() {
         assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'statisticsRes.fxml'.";
-        assert s_bar_char != null : "fx:id=\"s_bar_char\" was not injected: check your FXML file 'statisticsRes.fxml'.";    
+        assert s_bar_char != null : "fx:id=\"s_bar_char\" was not injected: check your FXML file 'statisticsRes.fxml'.";  
+        
+        btnBack.getItems().get(0).setOnAction(e ->{
+        	if(type==1) {
+        		openWindow("reservSearchWindow.fxml",e);
+        	}
+        	if(type==2) {
+        		openWindow("restSearchWindow.fxml",e);
+        	}
+        	if(type==3) {
+        		openWindow("mealSearchWindow.fxml",e);
+        	}
+        });
+    }
+    
+    private void openWindow(String window, ActionEvent e) {
+    	try {
+			Parent root = FXMLLoader.load(getClass().getResource(window));
+	        Scene scene = new Scene(root);
+	        Stage stage = new Stage();
+	        stage.setTitle("New Window");
+	        stage.setScene(scene);
+	        stage.show();
+	        (((Node) e.getSource())).getScene().getWindow().hide(); 
+	        
+    	} catch (IOException | java.lang.ClassCastException ex) {
+//    		ex.printStackTrace();
+    	}
     }
     
     public void transferMessage(Integer message) {

@@ -71,12 +71,8 @@ public class ReservationSessionBean implements ReservationRemote {
 		Integer id=-1;
 		try {
 			Connection con = dataSource.getConnection();
-			String sql = "INSERT INTO reservation (rest_id, date_start, date_end,visitors) Values (?, ?, ?,?)";
+			String sql = "INSERT INTO reservation (rest_id, date_start, date_end,visitors) Values ("+args.get("rest_id")+","+args.get("date_start")+","+args.get("date_end")+","+args.get("visitors")+")";
 	        PreparedStatement preparedStatement = con.prepareStatement(sql);
-	        preparedStatement.setString(1, args.get("title"));
-	        preparedStatement.setString(2, args.get("price"));
-	        preparedStatement.setString(3, args.get("prep_time"));
-	        preparedStatement.setString(4, args.get("visitors"));
 	        preparedStatement.executeUpdate();
 	        
 	        sql="SELECT MAX(id) FROM reservation";

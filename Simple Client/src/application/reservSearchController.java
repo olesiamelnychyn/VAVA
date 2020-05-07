@@ -1,5 +1,8 @@
 package application;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -13,6 +16,11 @@ import java.util.ResourceBundle;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import ejb.ReservationRemote;
 import ejb.MyExeception;
@@ -219,7 +227,7 @@ public class reservSearchController {
 		});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		//TODO
+    		TablePrincipale("sample.pdf");
     	});
     	
     	btn_stat.setOnMouseClicked(e -> {
@@ -365,4 +373,50 @@ public class reservSearchController {
     		ex.printStackTrace();
     	}
     }
+    
+public void TablePrincipale(String dest) {
+  
+    	
+        try {
+        	Document document = new Document();
+			PdfWriter.getInstance(document, new FileOutputStream(dest));
+			 document.open();
+		        PdfPTable table1 = new PdfPTable(5);
+		        table1.addCell("Id");
+		        table1.addCell("Title");
+		        table1.addCell("Price");
+		        table1.addCell("Preparation Time");
+		        
+		        Enumeration<Integer> enam = result.keys();
+		      
+		        while(enam.hasMoreElements()) {
+		            Integer k = enam.nextElement();
+		            table1.addCell(k.toString());
+			        table1.addCell(String.valueOf(result.get(k).getRest_id()));
+			        table1.addCell(result.get(k).getDate_start().toString().split("T")[0]+" "+result.get(k).getDate_start().toString().split("T")[1]);
+			        table1.addCell(result.get(k).getDate_end().toString().split("T")[0]+" "+result.get(k).getDate_end().toString().split("T")[1]);
+			        table1.addCell(String.valueOf(result.get(k).getVisitors()));
+	    		}
+		    
+		        document.add(table1);
+		        document.close();
+		        
+		        File file = new File(dest);
+		        
+		        //first check if Desktop is supported by Platform or not
+		        if(!Desktop.isDesktopSupported()){
+		            System.out.println("Desktop is not supported");
+		            return;
+		        }
+		        
+		        Desktop desktop = Desktop.getDesktop();
+		        if(file.exists()) desktop.open(file);
+		        
+		     
+		} catch (DocumentException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       
+	}
 }
