@@ -214,42 +214,37 @@ public class ReservationSessionBean implements ReservationRemote {
 		List <StatisticData> stat = new ArrayList <StatisticData> ();
 		
 		try {
-		List <String> rests = new ArrayList <String> ();
-		String sql="select distinct r.rest_id , rest.capacity, zip.state from reservation r join restaurant rest on rest.id=r.rest_id join zip on rest.zip=zip.code";
-		Connection con = dataSource.getConnection();
-		Statement stmt = con.createStatement();
-		ResultSet resultSet = stmt.executeQuery(sql);
+			List <String> rests = new ArrayList <String> ();
+			String sql="select distinct r.rest_id , rest.capacity, zip.state from reservation r join restaurant rest on rest.id=r.rest_id join zip on rest.zip=zip.code";
+			Connection con = dataSource.getConnection();
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
 			while(resultSet.next()) {
-				
 				String rest= resultSet.getString("r.rest_id")+" "+ resultSet.getString("rest.capacity")+" "+resultSet.getString("zip.state");
-			    
-//			    String state = resultSet.getString("z.state");
-			    
 				rests.add(rest);
 		
 			}
 		
 			
-		sql = "select r.visitors*(select sum(meal.price) from meal_reserv mr join meal on mr.meal_id=meal.id where mr.reserv_id=r.id) debit, r.visitors*( select sum(p.price) from meal_reserv mr join meal m on m.id=mr.meal_id join meal_product mp on mp.meal_id=m.id join product p on p.id=mp.prod_id where mr.reserv_id=r.id) credit  from reservation r where r.rest_id=?";
-		con = dataSource.getConnection();
-		PreparedStatement stmt1 = con.prepareStatement(sql);
-		for(String rest: rests) {
-			stmt1.setString(1, rest.split(" ", 1)[0]);  
-			resultSet = stmt1.executeQuery();
-			double deb=0, pro=0;
-			while(resultSet.next()) {
-				Double credit = resultSet.getDouble("credit");
-			    Double debit = resultSet.getDouble("debit");
-			    deb+=debit;
-			    pro+=credit;
-//			    String state = resultSet.getString("z.state");
+			sql = "select r.visitors*(select sum(meal.price) from meal_reserv mr join meal on mr.meal_id=meal.id where mr.reserv_id=r.id) debit, r.visitors*( select sum(p.price) from meal_reserv mr join meal m on m.id=mr.meal_id join meal_product mp on mp.meal_id=m.id join product p on p.id=mp.prod_id where mr.reserv_id=r.id) credit  from reservation r where r.rest_id=?";
+			con = dataSource.getConnection();
+			PreparedStatement stmt1 = con.prepareStatement(sql);
+			for(String rest: rests) {
+				stmt1.setString(1, rest.split(" ", 1)[0]);  
+				resultSet = stmt1.executeQuery();
+				double deb=0, pro=0;
+				while(resultSet.next()) {
+					Double credit = resultSet.getDouble("credit");
+					Double debit = resultSet.getDouble("debit");
+					deb+=debit;
+					pro+=credit;
 			   
-			}
+				}
 			StatisticData item = new StatisticData(rest, deb, pro);
 			//System.out.println(rest+" "+deb+" "+pro);
 			stat.add(item);
 			
-		}
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

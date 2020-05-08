@@ -10,9 +10,12 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.naming.Context;
@@ -24,6 +27,7 @@ import objects.Meal;
 import objects.Product;
 import objects.Reservation;
 import objects.Restaurant;
+import objects.StatisticData;
 import objects.Supplier;
 import objects.Zip;
 
@@ -303,6 +307,62 @@ public class MealSessionBean implements MealRemote{
 		}
 		
 		return prods;
+	}
+
+	@Override
+	public List<StatisticData> statMeal() {
+List <StatisticData> stat = new ArrayList <StatisticData> ();
+		
+		try {
+			List <String> meals = new ArrayList <String> ();
+			List <Double> prices = new ArrayList <Double> ();
+			String sql="select m.id , m.title, m.price from meal m";
+			Connection con = dataSource.getConnection();
+			Statement stmt = con.createStatement();
+			ResultSet resultSet = stmt.executeQuery(sql);
+			while(resultSet.next()) {
+				String rest= resultSet.getString("m.id")+" "+ resultSet.getString("m.title");
+				Double price = resultSet.getDouble("m.price");
+				meals.add(rest);
+				prices.add(price);
+				
+			}
+		
+			sql = "select sum(p.price) from meal_product mp join product p on mp.prod_id=p.id where mp.meal_id=?";
+			con = dataSource.getConnection();
+			PreparedStatement stmt1 = con.prepareStatement(sql);
+			for (int i=0; i<meals.size(); i++) {
+				stmt1.setString(1, meals.get(i).split(" ", 1)[0]);  
+				resultSet = stmt1.executeQuery();
+				if(resultSet.next()) {
+					double deb=resultSet.getDouble("sum(p.price)");
+				
+				StatisticData item = new StatisticData(meals.get(i), deb*0.3, prices.get(i));
+				stat.add(item);
+				}
+			}
+			
+				
+			
+//			sql = "select m.id, m.title, m.price, p.price from meal m join meal_product mp on mp.meal_id=m.id join product p on mp.prod_id=p.id group by m.id order by m.id";
+//			con = dataSource.getConnection();
+//			Statement stmt = con.createStatement();
+//			ResultSet resultSet = stmt.executeQuery(sql);
+//			Integer id = resultSet.getInt("m.id");
+//			String title = resultSet.getString("m.title");
+//			Double price =resultSet.getDouble("m.price");
+//			Double spends =resultSet.getDouble("SUM(p.price)");
+//			String meal=id.toString()+": "+title;
+//			StatisticData item = new StatisticData(meal, spends, price);
+//			//System.out.println(rest+" "+deb+" "+pro);
+//			stat.add(item);
+			
+	
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return stat;
 	}
 	
 		

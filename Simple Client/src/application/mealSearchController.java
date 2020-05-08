@@ -2,13 +2,11 @@ package application;
 
 import java.awt.Desktop;
 import java.io.File;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalTime;
-//import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -16,12 +14,13 @@ import java.util.ResourceBundle;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -216,7 +215,24 @@ public class mealSearchController {
     	btn_export.setOnMouseClicked(e -> {
     		TablePrincipale("sample.pdf");
     	});
-    	btn_stat.setOnMouseClicked(e -> {openWindow("statisticsRes.fxml", e);});
+    	
+    	btn_stat.setOnMouseClicked(e -> {
+    		try {
+                //Load second scene
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("statisticsRes.fxml"));
+                Parent root = loader.load();
+                statisticsController scene2Controller = loader.getController();
+                scene2Controller.transferMessage(Integer.valueOf(3));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Statistics - Meal");
+                stage.show();
+                ((Node)(e.getSource())).getScene().getWindow().hide(); 
+            } catch (IOException ex) {
+                System.err.println(ex);
+            }
+    	});
+    	
     	
     	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
     	
@@ -339,10 +355,14 @@ public class mealSearchController {
 			PdfWriter.getInstance(document, new FileOutputStream(dest));
 			 document.open();
 		        PdfPTable table1 = new PdfPTable(4);
-		        table1.addCell("Id");
-		        table1.addCell("Title");
-		        table1.addCell("Price");
-		        table1.addCell("Preparation Time");
+		        Font f = new Font();
+		        f.setColor(BaseColor.RED);
+		        f.setStyle(java.awt.Font.BOLD);
+		        
+		        table1.addCell(new Phrase("id", f));
+		        table1.addCell(new Phrase("Title", f));
+		        table1.addCell(new Phrase("Price", f));
+		        table1.addCell(new Phrase("Preparation Time",f));
 		        
 		        Enumeration<Integer> enam = result.keys();
 		      

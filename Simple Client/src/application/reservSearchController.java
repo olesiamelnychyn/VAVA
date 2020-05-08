@@ -17,8 +17,11 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -382,10 +385,13 @@ public void TablePrincipale(String dest) {
 			PdfWriter.getInstance(document, new FileOutputStream(dest));
 			 document.open();
 		        PdfPTable table1 = new PdfPTable(5);
-		        table1.addCell("Id");
-		        table1.addCell("Title");
-		        table1.addCell("Price");
-		        table1.addCell("Preparation Time");
+		        Font f = new Font();
+		        f.setColor(BaseColor.RED);
+		        f.setStyle(java.awt.Font.BOLD);
+		        table1.addCell(new Phrase("Id", f));
+		        table1.addCell(new Phrase("Title", f));
+		        table1.addCell(new Phrase("Price", f));
+		        table1.addCell(new Phrase("Preparation Time", f));
 		        
 		        Enumeration<Integer> enam = result.keys();
 		      
@@ -412,6 +418,7 @@ public void TablePrincipale(String dest) {
 		        Desktop desktop = Desktop.getDesktop();
 		        if(file.exists()) desktop.open(file);
 		        
+		       
 		     
 		} catch (DocumentException | IOException e) {
 			// TODO Auto-generated catch block

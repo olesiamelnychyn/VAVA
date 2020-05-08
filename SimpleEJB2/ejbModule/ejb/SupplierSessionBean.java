@@ -7,12 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Dictionary;
 import java.util.Hashtable;
-
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import objects.Supplier;

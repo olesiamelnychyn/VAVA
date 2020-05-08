@@ -4,11 +4,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import ejb.MealRemote;
 import ejb.ReservationRemote;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -90,6 +90,9 @@ public class statisticsController {
        if(type==1) {
        	reservStat();
        }
+       if(type==3) {
+          mealStat();
+       }
     }
     
     private void reservStat() {
@@ -133,4 +136,49 @@ public class statisticsController {
         s_bar_char.getData().add(series2);
         
     }
+    
+    private void mealStat() {
+    	List <StatisticData> data = new ArrayList <StatisticData> ();
+		try {
+			Context ctx = new InitialContext();
+		
+			MealRemote MealRemote = (MealRemote) ctx.lookup("ejb:/SimpleEJB2//MealSessionEJB!ejb.MealRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+			System.out.print("process");
+			data=MealRemote.statMeal();
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+		
+		List <String> meals = new  ArrayList <String>() ;
+		List <Double> prices = new ArrayList <Double>() ;
+		List <Double> spends = new ArrayList <Double>() ;
+		
+		for(StatisticData item : data) {
+			meals.add(item.attribute);
+			prices.add(item.data2-item.data1);
+			spends.add(item.data1);
+		}
+//		System.out.println(rests+" "+profit+" "+spends);
+        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+        XYChart.Series<String, Number> series2 = new XYChart.Series<>();
+     
+        
+        xAxis.setLabel("Restaurants");
+        xAxis.setCategories(FXCollections.<String>observableArrayList(meals));
+        
+        yAxis.setLabel("Value");
+        series1.setName("profit");
+        series2.setName("spends");
+        for (int i =0; i<meals.size(); i++) {
+        	series1.getData().add(new XYChart.Data<>(meals.get(i), prices.get(i)));
+        	series2.getData().add(new XYChart.Data<>(meals.get(i), spends.get(i)));
+        }
+
+        s_bar_char.getData().add(series1);
+        s_bar_char.getData().add(series2);
+        
+    }
+    
+    
+  
 }
