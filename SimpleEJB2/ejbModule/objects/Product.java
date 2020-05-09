@@ -9,7 +9,7 @@ public class Product implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String title;
 	private Double price;
-	private Supplier supp;
+	private Supplier supp_id;
 	
 	public String getTitle() {
 		return title;
@@ -17,11 +17,11 @@ public class Product implements Serializable{
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Supplier getSupplier() {
-		return supp;
+	public Supplier getSupp_id() {
+		return supp_id;
 	}
-	public void setSupplier(Supplier supplier) {
-		this.supp = supplier;
+	public void setSupp_id(Supplier supplier) {
+		this.supp_id = supplier;
 	}
 	public Double getPrice() {
 		return price;
@@ -32,10 +32,10 @@ public class Product implements Serializable{
 	public Product(String title, Double price, Supplier supp_) {
 		this.title=title;
 		this.price=price;
-		this.supp=supp_;
+		this.supp_id=supp_;
 	}
 	@Override
 	public String toString() {
-		return this.title + ": "+this.price + " " + this.supp.toString();
+		return this.title + ": "+this.price + " " + this.supp_id.toString();
 	}
 }

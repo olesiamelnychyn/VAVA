@@ -2,6 +2,10 @@ package application;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javax.naming.Context;
+
+import ejb.ProductRemote;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -10,6 +14,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import objects.Product;
 
 public class prodController {
 
@@ -44,16 +49,21 @@ public class prodController {
     private Tooltip tool_tip;
 
     @FXML
-    private Spinner<?> spin_price;
+    private Spinner<Double> spin_price;
 
     @FXML
-    private ComboBox<?> cmbox_supp;
+    private ComboBox<String> cmbox_supp;
 
     @FXML
-    private ListView<?> list_rest;
+    private ListView<String> list_rest;
 
     @FXML
-    private ListView<?> list_reserv;
+    private ListView<String> list_reserv;
+    
+    Product meal=null;
+    Integer id=0;
+    Context ctx;
+    ProductRemote ProductRemote;
 
     @FXML
     void initialize() {

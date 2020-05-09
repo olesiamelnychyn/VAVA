@@ -102,7 +102,8 @@ public class prodSearchController {
         TableColumn <Product, Double> priceCol = new TableColumn <Product, Double> ("Price");
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
         TableColumn <Product, String> suppCol = new TableColumn <Product, String> ("Supplier");
-        suppCol.setCellValueFactory(new PropertyValueFactory<>("supp"));
+        suppCol.setCellValueFactory(new PropertyValueFactory<>("supp_id"));
+        
         data = FXCollections.observableArrayList();
         table.getColumns().add(titleCol);
         table.getColumns().add(priceCol);
@@ -242,6 +243,7 @@ public class prodSearchController {
         } catch (MyExeception ex) {
            System.out.print(ex.getMessage());
         }
+    	System.out.println(data);
     	table.setItems(data);
     }
     
