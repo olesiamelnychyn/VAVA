@@ -156,22 +156,60 @@ public class reservController {
         	DateTimeFormatter formatte2 = DateTimeFormatter.ofPattern("HH:mm:ss");
         	Dictionary <String, String> args = new Hashtable<String, String> ();
         	args.put("id", id.toString());
-        	if(reservation==null || spin_vis.getValueFactory().getValue()!=reservation.getVisitors()) {
+        	
+        	try {
+        		if(reservation==null || spin_vis.getValueFactory().getValue()!=reservation.getVisitors()) {
+        			args.put("visitors", spin_vis.getValueFactory().getValue().toString());
+        		}
+        	} catch (NumberFormatException ex) {
+        		if(reservation!=null) {
+        			spin_vis.getValueFactory().setValue(reservation.getVisitors());
+        		}else {
+        			spin_vis.getValueFactory().setValue(0);
+        		}
         		args.put("visitors", spin_vis.getValueFactory().getValue().toString());
+        			
         	}
         	
-        	if(reservation==null || !date_start.getValue().toString().equals(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1).toString()) ||
-        			!spin_time_from.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2).toString())) {
+        	try {
+        		if(reservation==null || !date_start.getValue().toString().equals(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1).toString()) ||
+            			!spin_time_from.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2).toString())) {
+            		args.put("date_start", "\""+date_start.getValue().toString()+" "+spin_time_from.getValueFactory().getValue()+"\"");
+            	}
+        	} catch (NumberFormatException ex) {
+        		if(reservation!=null) {
+        			date_start.setValue(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1));
+        			spin_time_from.getValueFactory().setValue(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2));
+        		} else {
+        			date_start.setValue(LocalDate.parse("2019-01-01",  formatte1));
+            		spin_time_from.getValueFactory().setValue(LocalTime.parse("00:00:00", formatte2));
+            	}
         		args.put("date_start", "\""+date_start.getValue().toString()+" "+spin_time_from.getValueFactory().getValue()+"\"");
         	}
-        		
-        	if(reservation==null || !date_end.getValue().toString().equals(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1).toString()) ||
-        		!spin_time_to.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2).toString())) {
+        	
+        	try {
+        		if(reservation==null || !date_end.getValue().toString().equals(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1).toString()) ||
+        				!spin_time_to.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2).toString())) {
+        			args.put("date_end", "\""+date_end.getValue()+" "+spin_time_to.getValueFactory().getValue()+"\"");
+        		}
+        	}catch(NumberFormatException ex) {
+        		if(reservation!=null) {
+        			date_end.setValue(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1));
+            		spin_time_to.getValueFactory().setValue(LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2));
+        		}else{
+        			date_end.setValue(LocalDate.parse("2021-12-31",  formatte1));
+        			spin_time_to.getValueFactory().setValue(LocalTime.parse("00:00:00", formatte2));
+        		}
         		args.put("date_end", "\""+date_end.getValue()+" "+spin_time_to.getValueFactory().getValue()+"\"");
         	}
+        	
         	if(reservation==null || cmbox_rest.getSelectionModel().getSelectedItem()!=rest_res) {
         		args.put("rest_id", cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]);
+        	} else{
+        		cmbox_rest.getSelectionModel().select(0);
+        		args.put("rest_id", cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]);
         	}
+        	
         	ObservableList<String> meals = list_meal.getItems();
         	String menu="";
         	for(int i =0; i<meals.size(); i++) {
@@ -369,7 +407,7 @@ public class reservController {
     		spin_vis.getValueFactory().setValue(reservation.getVisitors());
     		date_start.setValue(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1));
     		date_end.setValue(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1));
-    		System.out.println(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2)+ " "+LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2));
+//    		System.out.println(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2)+ " "+LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2));
     		spin_time_from.getValueFactory().setValue(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2));
     		spin_time_to.getValueFactory().setValue(LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2));
     		

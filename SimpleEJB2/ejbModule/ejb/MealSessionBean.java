@@ -1,8 +1,8 @@
 package ejb;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+//import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,26 +40,26 @@ public class MealSessionBean implements MealRemote{
 	public Dictionary<Integer, Meal> searchMeal(Dictionary <String, String>  args) {
 		Dictionary<Integer, Meal>result = new Hashtable <Integer, Meal>();
 		System.out.print("here");
-		try {
-			Connection con = dataSource.getConnection();
-		
-			PreparedStatement statement = null;
-			FileInputStream inputStream = null;
- 
-            File image = new File("/Users/olesia/eclipse-workspace1/VAVA/img/caesar.jpg");
-            inputStream = new FileInputStream(image);
- 
-            statement = con.prepareStatement("update meal set image=? where id=1");
-            statement.setBinaryStream(1, (FileInputStream) inputStream, (int)(image.length()));
- 
-            statement.executeUpdate();
- 
-            
-        } catch (FileNotFoundException e) {
-            System.out.println("FileNotFoundException: - " + e);
-        } catch (SQLException e) {
-            System.out.println("SQLException: - " + e);
-        } 
+//		try {
+//			Connection con = dataSource.getConnection();
+//		
+//			PreparedStatement statement = null;
+//			FileInputStream inputStream = null;
+//
+//            File image = new File("/Users/olesia/eclipse-workspace1/VAVA/img/65chai-latte.jpg");
+//            inputStream = new FileInputStream(image);
+// 
+//            statement = con.prepareStatement("update meal set image=? where id=65");
+//            statement.setBinaryStream(1, (FileInputStream) inputStream, (int)(image.length()));
+// 
+//            statement.executeUpdate();
+// 
+//            
+//        } catch (FileNotFoundException e) {
+//            System.out.println("FileNotFoundException: - " + e);
+//        } catch (SQLException e) {
+//            System.out.println("SQLException: - " + e);
+//        } 
 		try {
 			Connection con = dataSource.getConnection();
 			String sql="select m.id, m.title, m.price, m.prep_time from meal m";

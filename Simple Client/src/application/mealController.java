@@ -149,21 +149,45 @@ public class mealController {
 //        	DateTimeFormatter time_p = DateTimeFormatter.ofPattern("H:mm:ss");
         	Dictionary <String, String>  args = new Hashtable <>();
         	args.put("id", id.toString());
+        	
         	if(meal==null || !txt_title.getText().equals(meal.getTitle())) {
         			args.put("title", "\""+txt_title.getText()+"\"");
         	}
-//        	System.out.println(spint_time.getValue()+" "+meal.getPrep_time());
-        	if(meal==null || !((LocalTime)spint_time.getValue()).equals(meal.getPrep_time())) {
+        	
+        	try {
+        		if(meal==null || !((LocalTime)spint_time.getValue()).equals(meal.getPrep_time())) {
+        			String time=spint_time.getValue().toString();
+        			if(spint_time.getValue().toString().length()<8) {
+        				time+=":00";
+        			}
+        			args.put("prep_time", "\""+time+"\"");
+        		}
+        	} catch(NumberFormatException ex) {
+        		if(meal!=null) {
+        			spint_time.getValueFactory().setValue(meal.getPrep_time());
+        		}else {
+        			spint_time.getValueFactory().setValue(LocalTime.now());
+        		}
         		String time=spint_time.getValue().toString();
         		if(spint_time.getValue().toString().length()<8) {
-        			time+=":00";
-        		}
-        		args.put("prep_time", "\""+time+"\"");
+    				time+=":00";
+    			}
+    			args.put("prep_time", "\""+time+"\"");
         	}
-  	
-        	if(meal==null || spin_price.getValue()!=meal.getPrice()) {
+        	
+        	try {
+        		if(meal==null || spin_price.getValue()!=meal.getPrice()) {
+        			args.put("price", spin_price.getValue().toString());
+        		}
+        	} catch(NumberFormatException ex) {
+        		if(meal!=null) {
+        			spin_price.getValueFactory().setValue(meal.getPrice());
+        		}else {
+        			spin_price.getValueFactory().setValue(0.0);
+        		}
         		args.put("price", spin_price.getValue().toString());
         	}
+        	
         	ObservableList<String> prods = list_prod.getItems();
         	String ingr="";
         	for(int i =0; i<prods.size(); i++) {
@@ -282,7 +306,7 @@ public class mealController {
     			
     			System.out.println("here");
     			
-    			byte [] data = MealRemote.getImage(1);
+    			byte [] data = MealRemote.getImage(id);
     			ByteArrayInputStream bis = new ByteArrayInputStream(data);
     	        Iterator<?> readers = ImageIO.getImageReadersByFormatName("jpg");
     	 
