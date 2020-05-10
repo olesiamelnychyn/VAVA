@@ -6,7 +6,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -40,7 +40,7 @@
             </ToolBar>
             <Spinner fx:id="spin_cap" editable="true" layoutX="102.0" layoutY="89.0" prefHeight="25.0" prefWidth="150.0">
               <valueFactory>
-                <SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.05" initialValue="5.00" max="140.00" min="0.00" />
+                <SpinnerValueFactory.IntegerSpinnerValueFactory amountToStepBy="1" initialValue="0" max="140" min="0" />
               </valueFactory>
             </Spinner>
             <Label layoutX="25.0" layoutY="93.0" text="Capacity" />

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import javax.ejb.Remote;
 import objects.Employee;
+import objects.Reservation;
+import objects.Restaurant;
 
 
 @Remote
@@ -17,5 +19,7 @@ public interface EmployeeRemote {
 	void updateEmployee(Dictionary <String, String>  args);
 	int getMaxWage();
 	ArrayList<String> getPositions();
+	public Dictionary<Integer, Restaurant> getRest(Integer id);
+	public Dictionary<Integer, Reservation> getEmpReserv(Integer id);
 
 }

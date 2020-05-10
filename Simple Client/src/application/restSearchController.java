@@ -7,15 +7,14 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import ejb.RestaurantRemote;
 import ejb.MyExeception;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -141,14 +140,14 @@ public class restSearchController {
     	
     	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
     	
-    	btn_new.setOnMouseClicked(e -> {openWindow("empWindow.fxml", e);});
+    	btn_new.setOnMouseClicked(e -> {openWindow("restWindow.fxml", e);});
     	
     	btn_export.setOnMouseClicked(e -> {
     		//TODO
     	});
     	
-    	btn_help.setOnMouseClicked(e->{
-    	});
+    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	
     	btn_delete.setOnMouseClicked(e->{
     		
     		
@@ -181,6 +180,46 @@ public class restSearchController {
     	});
     	
         btn_search.setOnMouseClicked(e ->{search();});
+        
+        table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
+    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    	 @Override
+    	 public void handle(MouseEvent e) {
+    	  if (e.getClickCount() == 2) {
+    		ObservableList <Restaurant> selectedItems = table.getSelectionModel().getSelectedItems();
+      		Dictionary <Integer, Restaurant> transferedData = new Hashtable <Integer, Restaurant>();
+      		
+      		try {
+      			if(selectedItems.size()>0) {
+      				Restaurant rest=selectedItems.get(0);
+      				if(result == null) {
+      					System.out.println("dict is null");
+      				} else {
+      					Enumeration<Integer> enam = result.keys();
+      					while(enam.hasMoreElements()) {
+      						Integer k = enam.nextElement();
+      						if(result.get(k).equals(rest)) {
+      							transferedData.put(k, rest);
+      							break;
+      						}
+      					}
+      				}
+      			}
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("restWindow.fxml"));
+                Parent root = loader.load();
+                restController rC = loader.getController();
+                rC.setRest(transferedData);
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Restaurant");
+                stage.show();
+                ((Node)(e.getSource())).getScene().getWindow().hide(); 
+              } catch (IOException ex) {
+                  System.err.println(ex);
+              }
+    	  }
+    	 }
+    	});
     }
     
     private void search() {

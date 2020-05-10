@@ -82,11 +82,13 @@ public class SupplierSessionBean implements SupplierRemote{
 	@Override
 	public void deleteSupplier(int id) {
 		try {
+			System.out.println("main "+id);
 			Connection con = dataSource.getConnection();
 			String sql="select id from product where supp_id="+String.valueOf(id);
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
 			while(resultSet.next()) {
+				System.out.println(resultSet.getInt("id"));
 				sql="Delete from meal_product where prod_id=?";
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
 				preparedStatement.setInt(1, resultSet.getInt("id"));

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -17,6 +18,9 @@ import javax.ejb.Stateless;
 import javax.sql.DataSource;
 
 import objects.Employee;
+import objects.Reservation;
+import objects.Restaurant;
+import objects.Zip;
 
 @Stateless(name = "EmployeeSessionEJB")
 public class EmployeeSessionBean implements EmployeeRemote{
@@ -34,6 +38,9 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			sql+=" where e.wage between "+args.get("wage_from")+" and "+args.get("wage_to");
 			if(args.get("name")!="") {
 				sql+=" and(e.first_name like \"%"+args.get("name")+"%\" or e.last_name like \"%"+args.get("name")+"%\")";
+			}
+			if(args.get("position")!="") {
+				sql+=" and e.position = \""+args.get("position")+"\"";
 			}
 			sql+=" order by e.id";
 			
@@ -54,7 +61,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
                 String phone = resultSet.getString("phone");
                 String e_mail = resultSet.getString("e_mail");
                 Double wage = resultSet.getDouble("wage");
-                Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, position, phone, e_mail, wage);
+                Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, phone, e_mail, position, wage);
 				result.put(id, emp);
 			}
 		} catch (SQLException e) {
@@ -122,16 +129,17 @@ public class EmployeeSessionBean implements EmployeeRemote{
 	public void updateEmployee(Dictionary<String, String> args) {
 		try {
 			Connection con = dataSource.getConnection();
-			String sql="Update employee set ?=? where id = ?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setString(3, args.get("id"));
+			
 			if(args!=null){
 		        Enumeration<String> e = args.keys();
 		        while(e.hasMoreElements()) {
 		            String k = e.nextElement();
-		            preparedStatement.setString(1, k);
-		            preparedStatement.setString(2, args.get(k));
-		            preparedStatement.executeUpdate();
+		            if(!k.equals("id")) {
+		            	String sql="Update employee set "+k+"="+args.get(k)+" where id = ?";
+		    			PreparedStatement preparedStatement = con.prepareStatement(sql);
+		    			preparedStatement.setInt(1, Integer.valueOf(args.get("id")));
+		            	preparedStatement.executeUpdate();
+		            }
 		        }
 		    }
 			
@@ -179,6 +187,84 @@ public class EmployeeSessionBean implements EmployeeRemote{
 		}
 		
 		return positions;
+	}
+
+	@Override
+	public Dictionary<Integer, Restaurant> getRest(Integer id) {
+		Dictionary<Integer, Restaurant> rests = new Hashtable <Integer, Restaurant>();
+		try {
+			Connection con = dataSource.getConnection();
+			
+			String sql;
+			ResultSet resultSet;
+			
+			if(id!=-1) {
+				sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code where r.id="+id;
+				Statement stmt = con.createStatement();
+				resultSet = stmt.executeQuery(sql);
+				
+				while(resultSet.next()) {
+					Integer r_id = resultSet.getInt("r.id");
+		            String code = resultSet.getString("z.code");
+		            String state = resultSet.getString("z.state");
+		            Integer r_cap = resultSet.getInt("r.capacity");
+		            Zip zip = new Zip(code, state);
+		            Restaurant rest = new Restaurant(zip, r_cap);
+					rests.put(r_id, rest);
+				}
+				sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code where r.id!="+id;
+			}
+			else {
+				sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code order by r.id desc";
+			}
+			Statement stmt = con.createStatement();
+			resultSet = stmt.executeQuery(sql);
+			
+			while(resultSet.next()) {
+				Integer r_id = resultSet.getInt("r.id");
+	            String code = resultSet.getString("z.code");
+	            String state = resultSet.getString("z.state");
+	            Integer r_cap = resultSet.getInt("r.capacity");
+	            Zip zip = new Zip(code, state);
+	            Restaurant rest = new Restaurant(zip, r_cap);
+				rests.put(r_id, rest);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(rests);
+		return rests;
+	}
+
+	@Override
+	public Dictionary<Integer, Reservation> getEmpReserv(Integer id) {
+		Dictionary<Integer, Reservation> resev = new Hashtable <Integer, Reservation>();
+		String sql;
+		ResultSet resultSet;
+		try {
+			Connection con = dataSource.getConnection();
+			
+			
+			sql="SELECT  r.id, r.date_start, r.date_end, r.visitors, r.rest_id from reservation r join emp_reserv er on r.id=er.reserv_id where er.emp_id=?";
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			resultSet = preparedStatement.executeQuery();
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss");
+			while(resultSet.next()) {
+				Integer res_id = resultSet.getInt("r.id");
+	            Integer rest_id = resultSet.getInt("r.rest_id");
+	            Integer visitors = resultSet.getInt("r.visitors");
+	            LocalDateTime date_start = LocalDateTime.parse(resultSet.getString("r.date_start"), dateFormat);
+	            LocalDateTime date_end = LocalDateTime.parse(resultSet.getString("r.date_end"), dateFormat);
+				
+				Reservation res = new Reservation(rest_id, date_start, date_end, visitors);
+				resev.put(res_id, res);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resev;
 	}
 
 	

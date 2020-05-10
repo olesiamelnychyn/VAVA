@@ -1,5 +1,7 @@
 package application;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -8,16 +10,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 //import java.time.LocalTime;
 //import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import ejb.MealRemote;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -31,6 +39,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -262,6 +271,7 @@ public class mealController {
         cmbox_prod.setItems(prods);
         
     	if(id!=0) {
+    		
     		txt_title.setText(meal.getTitle());
     		spin_price.getValueFactory().setValue(meal.getPrice());
     		spint_time.getValueFactory().setValue(meal.getPrep_time());
@@ -269,6 +279,25 @@ public class mealController {
     		ObservableList<String> rests = FXCollections.observableArrayList();
     		
     		try {
+    			
+    			System.out.println("here");
+    			
+    			byte [] data = MealRemote.getImage(1);
+    			ByteArrayInputStream bis = new ByteArrayInputStream(data);
+    	        Iterator<?> readers = ImageIO.getImageReadersByFormatName("jpg");
+    	 
+    	        ImageReader reader = (ImageReader) readers.next();
+    	        Object source = bis; 
+    	        ImageInputStream iis = ImageIO.createImageInputStream(source); 
+    	        reader.setInput(iis, true);
+    	        ImageReadParam param = reader.getDefaultReadParam();
+    	 
+    	        BufferedImage image = reader.read(0, param);
+    			Image n =  SwingFXUtils.toFXImage(image, null );
+    			img_view.setImage(n);
+    			
+    			
+    			System.out.println("here");
     			Dictionary<Integer, Restaurant> la = MealRemote.getRestMeal(id);
     			
     			enam = la.keys();
@@ -280,7 +309,7 @@ public class mealController {
     	            
         		}
     	        list_rest.getItems().addAll(rests);
-			} catch ( SQLException e) {
+			} catch ( SQLException | IOException e) {
 				e.printStackTrace();
 			}
             

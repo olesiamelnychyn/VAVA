@@ -6,12 +6,9 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import ejb.EmployeeRemote;
 import ejb.MyExeception;
 import ejb.SupplierRemote;
 import javafx.collections.FXCollections;
@@ -137,9 +134,8 @@ public class suppSearchController {
     		//TODO
     	});
     	
-    	btn_help.setOnMouseClicked(e->{
-    		//TODO open window with info about the Employees and the work with them
-    	});
+    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	
     	btn_delete.setOnMouseClicked(e->{
     		
     		
@@ -230,8 +226,8 @@ public class suppSearchController {
     private void delete(Integer id) throws MyExeception, NamingException {
 //      
       Context ctx = new InitialContext();
-      EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+      SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
       System.out.print("process");
-      EmployeeRemote.deleteEmployee(id);
+      SupplierRemote.deleteSupplier(id);
     }
 }

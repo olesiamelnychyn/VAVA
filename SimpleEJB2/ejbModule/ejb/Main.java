@@ -1,4 +1,8 @@
 package ejb;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+
 //import java.io.File;
 //import java.io.FileInputStream;
 //import java.io.FileNotFoundException;
@@ -14,8 +18,11 @@ package ejb;
 //import org.hibernate.query.Query;
 
 
+
 public class Main {
 
+	@Resource(lookup = "java:jboss/datasources/mysqlDS")
+	private static DataSource dataSource;
 //	@Resource(lookup = "java:jboss/datasources/mysqlDS")
 //    private DataSource dataSource;
 	
@@ -50,31 +57,8 @@ public class Main {
 //		JDBCUtil util=new JDBCUtil();
 //		util.getConnection();
 //		Connection connection = null;
-//        PreparedStatement statement = null;
-//        FileInputStream inputStream = null;
-// 
-//        try {
-//            File image = new File("../img/caesar.jpg");
-//            inputStream = new FileInputStream(image);
-// 
-//            connection = util.getConnection();
-//            statement = connection.prepareStatement("insert into meal(image) " + "values(?)");
-//            statement.setBinaryStream(1, (InputStream) inputStream, (int)(image.length()));
-// 
-//            statement.executeUpdate();
-// 
-//        } catch (FileNotFoundException e) {
-//            System.out.println("FileNotFoundException: - " + e);
-//        } catch (SQLException e) {
-//            System.out.println("SQLException: - " + e);
-//        } finally {
-//        	 try {
-//                 connection.close();
-//                 statement.close();
-//             } catch (SQLException e) {
-//                 System.out.println("SQLException Finally: - " + e);
-//             }
-//         }
+		
+		
 //        }
 //		util.executeQuery("Select * from meal ");
 		

@@ -1,7 +1,8 @@
 package ejb;
 
-
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,14 +16,12 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
 import objects.Meal;
 import objects.Product;
 import objects.Reservation;
@@ -40,7 +39,27 @@ public class MealSessionBean implements MealRemote{
 	@Override
 	public Dictionary<Integer, Meal> searchMeal(Dictionary <String, String>  args) {
 		Dictionary<Integer, Meal>result = new Hashtable <Integer, Meal>();
+		System.out.print("here");
+		try {
+			Connection con = dataSource.getConnection();
 		
+			PreparedStatement statement = null;
+			FileInputStream inputStream = null;
+ 
+            File image = new File("/Users/olesia/eclipse-workspace1/VAVA/img/caesar.jpg");
+            inputStream = new FileInputStream(image);
+ 
+            statement = con.prepareStatement("update meal set image=? where id=1");
+            statement.setBinaryStream(1, (FileInputStream) inputStream, (int)(image.length()));
+ 
+            statement.executeUpdate();
+ 
+            
+        } catch (FileNotFoundException e) {
+            System.out.println("FileNotFoundException: - " + e);
+        } catch (SQLException e) {
+            System.out.println("SQLException: - " + e);
+        } 
 		try {
 			Connection con = dataSource.getConnection();
 			String sql="select m.id, m.title, m.price, m.prep_time from meal m";
@@ -364,6 +383,32 @@ List <StatisticData> stat = new ArrayList <StatisticData> ();
 		}
 		return stat;
 	}
+
+	@Override
+	public byte[] getImage(int id) {
+		System.out.print("here");
+		byte[] imagebytes=null;
+		try {
+			String sql="select image from meal where id=?";
+			Connection con = dataSource.getConnection();
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			if(resultSet.next()) {
+				imagebytes = resultSet.getBytes("image");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.print(imagebytes);
+		return imagebytes;
+		}
+	
 	
 		
 }

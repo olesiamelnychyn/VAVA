@@ -16,6 +16,7 @@ import ejb.EmployeeRemote;
 import ejb.MyExeception;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -149,9 +150,8 @@ public class empSearchController {
     		//TODO
     	});
     	
-    	btn_help.setOnMouseClicked(e->{
-    		//TODO open window with info about the Employees and the work with them
-    	});
+    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	
     	btn_delete.setOnMouseClicked(e->{
     		
     		
@@ -184,6 +184,46 @@ public class empSearchController {
     	});
     	
         btn_search.setOnMouseClicked(e ->{search();});
+        
+        table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
+    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    	 @Override
+    	 public void handle(MouseEvent e) {
+    	  if (e.getClickCount() == 2) {
+    		ObservableList <Employee> selectedItems = table.getSelectionModel().getSelectedItems();
+      		Dictionary <Integer, Employee> transferedData = new Hashtable <Integer, Employee>();
+      		
+      		try {
+      			if(selectedItems.size()>0) {
+      				Employee emp=selectedItems.get(0);
+      				if(result == null) {
+      					System.out.println("dict is null");
+      				} else {
+      					Enumeration<Integer> enam = result.keys();
+      					while(enam.hasMoreElements()) {
+      						Integer k = enam.nextElement();
+      						if(result.get(k).equals(emp)) {
+      							transferedData.put(k, emp);
+      							break;
+      						}
+      					}
+      				}
+      			}
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("empWindow.fxml"));
+                Parent root = loader.load();
+                empController eC = loader.getController();
+                eC.setEmp(transferedData);
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Employee");
+                stage.show();
+                ((Node)(e.getSource())).getScene().getWindow().hide(); 
+              } catch (IOException ex) {
+                  System.err.println(ex);
+              }
+    	  }
+    	 }
+    	});
         
     }
     private Dictionary<Integer, Employee> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
