@@ -39,7 +39,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -77,7 +76,7 @@ public class mealController {
     private Button btn_undo;
 
     @FXML
-    private SplitMenuButton btn_export;
+    private Button btn_export;
 
     @FXML
     private Button btn_help;

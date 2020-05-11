@@ -133,6 +133,10 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			Connection con = dataSource.getConnection();
 			
 			if(args!=null){
+				if(args.get("id").equals("-1")) {
+					addEmployee(args);
+					return;
+				}
 		        Enumeration<String> e = args.keys();
 		        while(e.hasMoreElements()) {
 		            String k = e.nextElement();

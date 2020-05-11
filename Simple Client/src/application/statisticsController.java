@@ -21,7 +21,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Menu;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 import objects.StatisticData;
@@ -35,7 +35,7 @@ public class statisticsController {
     private URL location;
 
     @FXML
-    private Menu btnBack;
+    private Button btnBack;
 
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis();
@@ -55,7 +55,7 @@ public class statisticsController {
         assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'statisticsRes.fxml'.";
         assert s_bar_char != null : "fx:id=\"s_bar_char\" was not injected: check your FXML file 'statisticsRes.fxml'.";  
         
-        btnBack.getItems().get(0).setOnAction(e ->{
+        btnBack.setOnAction(e ->{
         	if(type==1) {
         		openWindow("reservSearchWindow.fxml",e);
         	}

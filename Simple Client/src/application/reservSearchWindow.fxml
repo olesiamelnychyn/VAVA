@@ -4,8 +4,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
@@ -31,12 +29,7 @@
                   <Button fx:id="btn_home" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Home" />
                 <Button fx:id="btn_new" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="New" />
                   <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
-                  <SplitMenuButton fx:id="btn_export" mnemonicParsing="false" text="Export as">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2" />
-                    </items>
-                  </SplitMenuButton>
+                  <Button fx:id="btn_export" mnemonicParsing="false" text="Export" />
                   <Button fx:id="btn_stat" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Statistic">
                      <tooltip>
                         <Tooltip fx:id="tool_tip1" text="Empty Tooltip" />

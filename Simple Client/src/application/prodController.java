@@ -23,7 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -57,7 +56,7 @@ public class prodController {
     private Button btn_undo;
 
     @FXML
-    private SplitMenuButton btn_export;
+    private Button btn_export;
 
     @FXML
     private Button btn_help;
@@ -107,7 +106,7 @@ public class prodController {
         
         btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
         
-        btn_back.setOnMouseClicked(e ->{openWindow("empSearchWindow.fxml",e);});
+        btn_back.setOnMouseClicked(e ->{openWindow("prodSearchWindow.fxml",e);});
         
         btn_delete.setOnMouseClicked(e ->{
         	if (id!=-1) {

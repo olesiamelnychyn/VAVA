@@ -31,7 +31,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
@@ -68,7 +67,7 @@ public class empController {
     private Button btn_undo;
 
     @FXML
-    private SplitMenuButton btn_export;
+    private Button btn_export;
 
     @FXML
     private Button btn_help;
@@ -100,6 +99,11 @@ public class empController {
     @FXML
     private RadioButton rbtn_female;
     
+    @FXML
+    private TextField txt_phone;
+
+    @FXML
+    private TextField txt_email;
 
     Employee emp=null;
     Integer id=-1;
@@ -125,6 +129,8 @@ public class empController {
         assert img_view != null : "fx:id=\"img_view\" was not injected: check your FXML file 'empWindow.fxml'.";
         assert rbtn_male != null : "fx:id=\"rbtn_male\" was not injected: check your FXML file 'empWindow.fxml'.";
         assert rbtn_female != null : "fx:id=\"rbtn_female\" was not injected: check your FXML file 'empWindow.fxml'.";
+        assert txt_phone != null : "fx:id=\"txt_phone\" was not injected: check your FXML file 'empWindow.fxml'.";
+        assert txt_email != null : "fx:id=\"txt_email\" was not injected: check your FXML file 'empWindow.fxml'.";
         
         try {
 			ctx = new InitialContext();

@@ -22,7 +22,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -66,7 +65,7 @@ public class restSearchController {
     private Button btn_delete;
 
     @FXML
-    private SplitMenuButton btn_export;
+    private Button btn_export;
 
     @FXML
     private Button btn_stat;

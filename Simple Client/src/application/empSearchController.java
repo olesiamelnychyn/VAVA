@@ -70,7 +70,7 @@ public class empSearchController {
     private Button btn_delete;
 
     @FXML
-    private SplitMenuButton btn_export;
+    private Button btn_export;
 
     @FXML
     private Button btn_help;
