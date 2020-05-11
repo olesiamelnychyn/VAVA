@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalTime;
@@ -23,7 +24,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.swing.JFileChooser;
 
 import ejb.MealRemote;
 import javafx.collections.FXCollections;
@@ -45,6 +45,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalTimeStringConverter;
 import objects.Meal;
@@ -144,22 +145,46 @@ public class mealController {
 			e2.printStackTrace();
 		}
        
-//        img_view.setOnMouseClicked(e ->{
-//        	
-//        });
-//        
-        btn_help.setOnMouseClicked(e->{
-//        	if(e.getClickCount()==2) {
+        img_view.setOnMouseClicked(e ->{
+        	if(e.getClickCount()==2) {
                 
-        		JFileChooser fileopen = new JFileChooser();
-        		int ret = fileopen.showDialog(null, "Open file");                
-        		if (ret == JFileChooser.APPROVE_OPTION ) {
-        		    File file = fileopen.getSelectedFile();
-        		    System.out.println(file.getAbsolutePath());
-        		}
-//        	}
-//openWindow("helpWindow.fxml", e);
-        		});
+            	
+            	FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files", "*.jpg");
+            	FileChooser fileChooser = new FileChooser();
+            	fileChooser.getExtensionFilters().add(imageFilter);
+            	Stage stage = new Stage();
+    	        stage.setTitle("New Window");
+            	File file = fileChooser.showOpenDialog(stage);
+            	
+				try {
+					RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(), "r");
+					byte[] b = new byte[(int)f.length()];
+	            	f.readFully(b);
+	            	ByteArrayInputStream bis = new ByteArrayInputStream(b);
+	    	        Iterator<?> readers = ImageIO.getImageReadersByFormatName("jpg");
+	    	 
+	    	        ImageReader reader = (ImageReader) readers.next();
+	    	        Object source = bis; 
+	    	        ImageInputStream iis = ImageIO.createImageInputStream(source); 
+	    	        reader.setInput(iis, true);
+	    	        ImageReadParam param = reader.getDefaultReadParam();
+	    	 
+	    	        BufferedImage image = reader.read(0, param);
+	    			Image n =  SwingFXUtils.toFXImage(image, null );
+	    			
+	    			img_view.setImage(n);
+	    			
+	            	MealRemote.setImage(id, b);
+				} catch ( IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+            	
+            	
+            	}
+        });
+        
+        btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
         
         btn_back.setOnMouseClicked(e ->{openWindow("mealSearchWindow.fxml",e);});
         

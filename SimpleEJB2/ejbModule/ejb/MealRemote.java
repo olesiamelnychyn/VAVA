@@ -22,4 +22,5 @@ public interface MealRemote {
 	Dictionary<Integer, Reservation> getReservMeal(Integer id);
 	Dictionary<Integer, Product> getProdMeal(Integer id);
 	byte[] getImage(int id);
+	void setImage(int id, byte[] img);
 }

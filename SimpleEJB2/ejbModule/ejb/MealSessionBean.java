@@ -408,6 +408,26 @@ List <StatisticData> stat = new ArrayList <StatisticData> ();
 		System.out.print(imagebytes);
 		return imagebytes;
 		}
+
+	@Override
+	public void setImage(int id, byte[] img) {
+		if(id!=0) {
+		String sql="update meal set  image=?  where id=?";
+		Connection con;
+		try {
+			con = dataSource.getConnection();
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setBytes(1, img);
+			preparedStatement.setInt(2, id);
+			preparedStatement.executeUpdate();
+//			System.out.println("done");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
+		
+	}
 	
 	
 		
