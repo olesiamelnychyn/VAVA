@@ -262,6 +262,7 @@ public class restController {
     			list_emp.setItems(emps);
         	}
         });
+        fill();
     }
     
     public void setRest(Dictionary <Integer, Restaurant> dict) {
@@ -275,6 +276,8 @@ public class restController {
     
     private void fill() {
 		spin_cap.getValueFactory().setValue(0);
+		
+		//Zip
 		ObservableList<String> zip = FXCollections.observableArrayList();
         try {
 			for (Zip p : this.getZIP()) { 		      
@@ -288,6 +291,7 @@ public class restController {
         cmbox_zip.setItems(zip);
         cmbox_zip.getSelectionModel().select(0);
         
+        //Employee
         ObservableList<String> emps = FXCollections.observableArrayList();
 		Dictionary<Integer, Employee> la2 = RestaurantRemote.getEmpRest(0);
 		Enumeration<Integer> enam = la2.keys();
@@ -299,6 +303,7 @@ public class restController {
         }
         cmb_emp.setItems(emps);
         
+        //Meals
         ObservableList<String> meals = FXCollections.observableArrayList();
 		Dictionary<Integer, Meal> la3 = RestaurantRemote.getMealRest(0);
 		

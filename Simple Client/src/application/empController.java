@@ -16,6 +16,8 @@ import javax.naming.NamingException;
 
 import ejb.EmployeeRemote;
 import ejb.MyExeception;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -144,6 +146,24 @@ public class empController {
 	        openWindow("empSearchWindow.fxml",e);
         });
         
+        rbtn_male.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+                if (isNowSelected) { 
+                	rbtn_female.setSelected(false);
+                }
+            }
+        });
+        
+        rbtn_female.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+                if (isNowSelected) { 
+                	rbtn_male.setSelected(false);
+                }
+            }
+        });
+        
         btn_save.setOnMouseClicked(e ->{
         	Dictionary <String, String>  args = new Hashtable <>();
         	args.put("id", id.toString());
@@ -186,6 +206,8 @@ public class empController {
         btn_undo.setOnMouseClicked(e ->{
         	fill();
         });
+        
+        fill();
     }
     
     public void setEmp(Dictionary <Integer, Employee> dict) {
@@ -247,9 +269,11 @@ public class empController {
     		spin_wage.getValueFactory().setValue(emp.getWage());
     		if(emp.getGender()=="M") {
     			rbtn_male.setSelected(true);
+    			rbtn_female.setSelected(false);
     		}
     		if(emp.getGender()=="F") {
     			rbtn_female.setSelected(true);
+    			rbtn_male.setSelected(false);
     		}
     		DateTimeFormatter formatte1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     		birthdate.setValue(LocalDate.parse(emp.getBirthdate().toString(),  formatte1));

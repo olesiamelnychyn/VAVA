@@ -2,6 +2,7 @@ package application;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -22,6 +23,8 @@ import javax.imageio.stream.ImageInputStream;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.swing.JFileChooser;
+
 import ejb.MealRemote;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -141,7 +144,22 @@ public class mealController {
 			e2.printStackTrace();
 		}
        
-        btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+//        img_view.setOnMouseClicked(e ->{
+//        	
+//        });
+//        
+        btn_help.setOnMouseClicked(e->{
+//        	if(e.getClickCount()==2) {
+                
+        		JFileChooser fileopen = new JFileChooser();
+        		int ret = fileopen.showDialog(null, "Open file");                
+        		if (ret == JFileChooser.APPROVE_OPTION ) {
+        		    File file = fileopen.getSelectedFile();
+        		    System.out.println(file.getAbsolutePath());
+        		}
+//        	}
+//openWindow("helpWindow.fxml", e);
+        		});
         
         btn_back.setOnMouseClicked(e ->{openWindow("mealSearchWindow.fxml",e);});
         

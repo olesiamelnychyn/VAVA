@@ -64,6 +64,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
                 Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, phone, e_mail, position, wage);
 				result.put(id, emp);
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -97,7 +98,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 				id = resultSet.getInt("MAX(id)");
 			}
 			
-	        
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
@@ -119,6 +120,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -142,7 +144,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 		            }
 		        }
 		    }
-			
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -161,6 +163,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			while(resultSet.next()) {
 				wage = resultSet.getInt("MAX(wage)");
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -182,6 +185,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			while(resultSet.next()) {
 				positions.add(resultSet.getString("position"));
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -229,6 +233,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 	            Restaurant rest = new Restaurant(zip, r_cap);
 				rests.put(r_id, rest);
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -260,6 +265,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 				Reservation res = new Reservation(rest_id, date_start, date_end, visitors);
 				resev.put(res_id, res);
 			}
+			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

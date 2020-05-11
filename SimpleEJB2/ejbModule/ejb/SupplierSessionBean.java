@@ -26,7 +26,7 @@ public class SupplierSessionBean implements SupplierRemote{
 		try {
 			Connection con = dataSource.getConnection();
 			String sql="select s.id, s.title, s.phone, s.e_mail from supplier s";
-			if(args.get("title")!=null && args.get("title")!="") {
+			if(args!=null && args.get("title")!=null && args.get("title")!="") {
 				sql+= " where s.title like \"%"+args.get("title")+"%\"";
 			}
 			System.out.println(sql);
@@ -42,6 +42,7 @@ public class SupplierSessionBean implements SupplierRemote{
                 Supplier supp = new Supplier(title, phone, e_mail);
 				result.put(id, supp);
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -69,7 +70,7 @@ public class SupplierSessionBean implements SupplierRemote{
 				id = resultSet.getInt("MAX(id)");
 				System.out.print("here"+id);
 			}
-			
+			con.close();
 	        
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -115,6 +116,7 @@ public class SupplierSessionBean implements SupplierRemote{
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -138,6 +140,7 @@ public class SupplierSessionBean implements SupplierRemote{
                 Supplier supp = new Supplier(title, phone, e_mail);
 				return supp;
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

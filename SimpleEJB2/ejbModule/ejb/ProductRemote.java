@@ -3,6 +3,7 @@ package ejb;
 import javax.ejb.Remote;
 import java.util.Dictionary;
 
+import objects.Meal;
 import objects.Product;
 import objects.Reservation;
 
@@ -14,6 +15,7 @@ public interface ProductRemote {
 	void deleteProduct(int id);
 	void updateProduct(Dictionary <String, String>  args);
 	double getMaxPrice();
-	Dictionary<Integer, Reservation> getMealProduct(Integer id);
+	Dictionary<Integer, Meal> getMealProduct(Integer id);
+	Dictionary<Integer, Reservation> getReservProduct(Integer id);
 
 }

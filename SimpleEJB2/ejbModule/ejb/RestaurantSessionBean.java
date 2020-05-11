@@ -61,6 +61,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
                 Restaurant rest = new Restaurant(z, capacity);
 				result.put(id, rest);
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -115,7 +116,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		        		}
 		        	}
 		        }
-		        
+		        con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return -1;
@@ -170,6 +171,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -238,6 +240,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		        	}
 		        }
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -259,6 +262,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
                 Zip z = new Zip(code, state);
 				result.add(z);
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -278,6 +282,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			while(resultSet.next()) {
 				capacity = resultSet.getInt("MAX(capacity)");
 			}
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -291,28 +296,29 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		String sql;
 		ResultSet resultSet;
 		try {
-		Connection con = dataSource.getConnection();
-		
-		if(id==0) {
-			sql="SELECT m.id, m.title, m.prep_time, m.price FROM meal m";
-			Statement stmt = con.createStatement();
-			resultSet = stmt.executeQuery(sql);
-		}else {
-			sql="SELECT  m.id, m.title,  m.prep_time, m.price FROM meal m join meal_rest mr on mr.meal_id=m.id where mr.rest_id=?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-		}
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
-		while(resultSet.next()) {
-			Integer r_id = resultSet.getInt("m.id");
-			String title = resultSet.getString("m.title");
-			Double price = resultSet.getDouble("m.price");
-            LocalTime prep_time = LocalTime.parse(resultSet.getString("m.prep_time"), dateFormat);
-            
-            Meal meal = new Meal(title, price, prep_time);
-			meals.put(r_id, meal);
-		}
+			Connection con = dataSource.getConnection();
+			
+			if(id==0) {
+				sql="SELECT m.id, m.title, m.prep_time, m.price FROM meal m";
+				Statement stmt = con.createStatement();
+				resultSet = stmt.executeQuery(sql);
+			}else {
+				sql="SELECT  m.id, m.title,  m.prep_time, m.price FROM meal m join meal_rest mr on mr.meal_id=m.id where mr.rest_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
+			}
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
+			while(resultSet.next()) {
+				Integer r_id = resultSet.getInt("m.id");
+				String title = resultSet.getString("m.title");
+				Double price = resultSet.getDouble("m.price");
+	            LocalTime prep_time = LocalTime.parse(resultSet.getString("m.prep_time"), dateFormat);
+	            
+	            Meal meal = new Meal(title, price, prep_time);
+				meals.put(r_id, meal);
+			}
+			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -326,35 +332,36 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		String sql;
 		ResultSet resultSet;
 		try {
-		Connection con = dataSource.getConnection();
-		
-		if(id==0) {
-			sql="SELECT e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-//			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-		}else {
-			sql="SELECT  e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e where e.rest_id=?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-		}
-
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		while(resultSet.next()) {
-			Integer e_id = resultSet.getInt("id");
-			Integer rest_id = resultSet.getInt("rest_id");
-            String first_name = resultSet.getString("first_name");
-            String last_name = resultSet.getString("last_name");
-            String gender = resultSet.getString("gender");
-            LocalDate birthdate = LocalDate.parse(resultSet.getString("birthdate"), dateFormat);
-            String position = resultSet.getString("position");
-            String phone = resultSet.getString("phone");
-            String e_mail = resultSet.getString("e_mail");
-            Double wage = resultSet.getDouble("wage");
-            Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, position, phone, e_mail, wage);
-			emps.put(e_id, emp);
-		}
+			Connection con = dataSource.getConnection();
+			
+			if(id==0) {
+				sql="SELECT e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+	//			preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
+			}else {
+				sql="SELECT  e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e where e.rest_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
+			}
+	
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			while(resultSet.next()) {
+				Integer e_id = resultSet.getInt("id");
+				Integer rest_id = resultSet.getInt("rest_id");
+	            String first_name = resultSet.getString("first_name");
+	            String last_name = resultSet.getString("last_name");
+	            String gender = resultSet.getString("gender");
+	            LocalDate birthdate = LocalDate.parse(resultSet.getString("birthdate"), dateFormat);
+	            String position = resultSet.getString("position");
+	            String phone = resultSet.getString("phone");
+	            String e_mail = resultSet.getString("e_mail");
+	            Double wage = resultSet.getDouble("wage");
+	            Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, phone, e_mail, position, wage);
+				emps.put(e_id, emp);
+			}
+			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -368,8 +375,8 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			if(args.get("id").equals("0")) {
 				return;
 			}
-			Connection con;
 			try {
+				Connection con;
 				con = dataSource.getConnection();
 			
 				PreparedStatement preparedStatement;
@@ -388,10 +395,12 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		        		}
 		        	}
 		        }
+				con.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
 		
 	}
@@ -431,6 +440,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			stat.add(item);
 			
 			}
+			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -16,6 +16,7 @@ import ejb.ProductRemote;
 import ejb.SupplierRemote;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -156,9 +157,7 @@ public class prodSearchController {
     		//TODO
     	});
     	
-    	btn_help.setOnMouseClicked(e->{
-    		//TODO open window with info about the Employees and the work with them
-    	});
+    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
     	
     	btn_delete.setOnMouseClicked(e->{
     		
@@ -191,6 +190,46 @@ public class prodSearchController {
     	});
     	
         btn_search.setOnMouseClicked(e ->{search();});
+        
+        table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
+    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    	 @Override
+    	 public void handle(MouseEvent e) {
+    	  if (e.getClickCount() == 2) {
+    		ObservableList <Product> selectedItems = table.getSelectionModel().getSelectedItems();
+      		Dictionary <Integer, Product> transferedData = new Hashtable <Integer, Product>();
+      		
+      		try {
+      			if(selectedItems.size()>0) {
+      				Product prod=selectedItems.get(0);
+      				if(result == null) {
+      					System.out.println("dict is null");
+      				} else {
+      					Enumeration<Integer> enam = result.keys();
+      					while(enam.hasMoreElements()) {
+      						Integer k = enam.nextElement();
+      						if(result.get(k).equals(prod)) {
+      							transferedData.put(k, prod);
+      							break;
+      						}
+      					}
+      				}
+      			}
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("prodWindow.fxml"));
+                Parent root = loader.load();
+                prodController eC = loader.getController();
+                eC.setProd(transferedData);
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Product");
+                stage.show();
+                ((Node)(e.getSource())).getScene().getWindow().hide(); 
+              } catch (IOException ex) {
+                  System.err.println(ex);
+              }
+    	  }
+    	 }
+    	});
     }
     
     private void search() {

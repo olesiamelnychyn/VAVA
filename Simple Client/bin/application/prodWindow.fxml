@@ -49,7 +49,7 @@
             </Spinner>
             <Label layoutX="355.0" layoutY="149.0" text="Reservations" />
             <ComboBox fx:id="cmbox_supp" layoutX="432.0" layoutY="48.0" prefWidth="150.0" />
-            <ListView fx:id="list_rest" layoutX="21.0" layoutY="183.0" prefHeight="151.0" prefWidth="250.0" />
+            <ListView fx:id="list_meal" layoutX="21.0" layoutY="183.0" prefHeight="151.0" prefWidth="250.0" />
             <ListView fx:id="list_reserv" layoutX="355.0" layoutY="183.0" prefHeight="151.0" prefWidth="250.0" />
          </children>
     </AnchorPane>
