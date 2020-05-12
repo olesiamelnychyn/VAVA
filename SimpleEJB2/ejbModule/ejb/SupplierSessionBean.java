@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.logging.Level;
+
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
@@ -44,9 +46,8 @@ public class SupplierSessionBean implements SupplierRemote{
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Supplier search: "+args, e);
 		}
-		System.out.println(result);
 		return result;
 	}
 
@@ -71,12 +72,11 @@ public class SupplierSessionBean implements SupplierRemote{
 				System.out.print("here"+id);
 			}
 			con.close();
-	        
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Supplier, failed to insert "+ args, e);
 			return -1;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Supplier (id=="+id+") was succesfully inserted");
 		return id;
 	}
 
@@ -100,17 +100,6 @@ public class SupplierSessionBean implements SupplierRemote{
 				preparedStatement.setInt(1, resultSet.getInt("id"));
 				preparedStatement.executeUpdate();
 			}
-//			try {
-//				Context ctx;
-//				ctx = new InitialContext();
-//				ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");
-//				while(resultSet.next()) {
-//					ProductRemote.deleteProduct(resultSet.getInt("id"));
-//				}
-//			} catch (NamingException e) {				
-//				e.printStackTrace();
-//			}
-			
 			
 			sql="Delete from supplier where id=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -118,9 +107,10 @@ public class SupplierSessionBean implements SupplierRemote{
 			preparedStatement.executeUpdate();
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to delete Supplier (id=="+id+")", e);		
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Supplier (id=="+id+") was succesfully deleted");
 	}
 
 	@Override
@@ -144,7 +134,6 @@ public class SupplierSessionBean implements SupplierRemote{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		//System.out.println(result);
 		return null;
 	}
 	

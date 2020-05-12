@@ -1,8 +1,5 @@
 package ejb;
 
-//import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +13,8 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
+
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.naming.Context;
@@ -40,26 +39,6 @@ public class MealSessionBean implements MealRemote{
 	public Dictionary<Integer, Meal> searchMeal(Dictionary <String, String>  args) {
 		Dictionary<Integer, Meal>result = new Hashtable <Integer, Meal>();
 		System.out.print("here");
-//		try {
-//			Connection con = dataSource.getConnection();
-//		
-//			PreparedStatement statement = null;
-//			FileInputStream inputStream = null;
-//
-//            File image = new File("/Users/olesia/eclipse-workspace1/VAVA/img/65chai-latte.jpg");
-//            inputStream = new FileInputStream(image);
-// 
-//            statement = con.prepareStatement("update meal set image=? where id=65");
-//            statement.setBinaryStream(1, (FileInputStream) inputStream, (int)(image.length()));
-// 
-//            statement.executeUpdate();
-// 
-//            
-//        } catch (FileNotFoundException e) {
-//            System.out.println("FileNotFoundException: - " + e);
-//        } catch (SQLException e) {
-//            System.out.println("SQLException: - " + e);
-//        } 
 		try {
 			Connection con = dataSource.getConnection();
 			String sql="select m.id, m.title, m.price, m.prep_time from meal m";
@@ -82,34 +61,30 @@ public class MealSessionBean implements MealRemote{
                 String title = resultSet.getString("title");
                 Double price = resultSet.getDouble("price");
                 LocalTime prep_time = LocalTime.parse(resultSet.getString("prep_time"), dateFormat);
-//				Dictionary <Integer, Meal> item = new Hashtable <Integer, Meal> ();
-				Meal meal = new Meal(title, price, prep_time);
+                Meal meal = new Meal(title, price, prep_time);
 				result.put(id, meal);
-//				//System.out.println(item);
-//				result.add(item);
+
 			}
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Meal search: "+args, e);
 		}
-		//System.out.println(result);
 		return result;
 	}
 
 	@Override
 	public int addMeal(Dictionary <String, String> args) {
 		Integer id=-1;
+		Connection con;
 		try {
-			Connection con = dataSource.getConnection();
+			con = dataSource.getConnection();
 			String sql = "INSERT INTO meal (title, price, prep_time) Values ("+ args.get("title")+", ?,"+args.get("prep_time")+")";
 	        PreparedStatement preparedStatement = con.prepareStatement(sql);
 	        preparedStatement.setString(1, args.get("price"));
 
 	        System.out.print(preparedStatement);
 	        preparedStatement.executeUpdate();
-//	        String image=args.get("image");
-//	        if(image != null) {
-//	        	//System.out.println("Will be implemented latter");
-//	        }
+
 	        sql="SELECT MAX(id) FROM meal";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
@@ -132,12 +107,12 @@ public class MealSessionBean implements MealRemote{
 	        	
 	        }
 			
-	        
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Meal, failed to insert "+ args, e);
 			return -1;
-		}
-		
+		} 
+		LogTest.LOGGER.log(Level.INFO, "Meal (id=="+id+") was succesfully inserted");
 		return id;
 	}
 
@@ -157,9 +132,13 @@ public class MealSessionBean implements MealRemote{
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to delete Meal (id=="+id+")", e);	
+			return;
 		}
+		LogTest.LOGGER.log(Level.INFO, "Meal (id=="+id+") was succesfully deleted");
+
 	}
 
 	@Override
@@ -204,44 +183,47 @@ public class MealSessionBean implements MealRemote{
 		        	
 		        }
 		    }
-			
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to update Meal (id=="+args.get("id")+"), args:"+args, e);	
+			return;
 		}
+		LogTest.LOGGER.log(Level.INFO, "Meal (id=="+args.get("id")+") was succesfully updated");
 	}
 
 	@Override
 	public Dictionary<Integer, Restaurant> getRestMeal(Integer id){
 		Dictionary<Integer, Restaurant> rests = new Hashtable <Integer, Restaurant>();
 		try {
-		Connection con = dataSource.getConnection();
+			Connection con = dataSource.getConnection();
 		
-		String sql;
-		ResultSet resultSet;
+			String sql;
+			ResultSet resultSet;
 		
-		if(id==0) {
-			sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code";
-			Statement stmt = con.createStatement();
-			resultSet = stmt.executeQuery(sql);
-		}else {
-			sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join meal_rest mr on mr.rest_id=r.id join zip z on r.zip=z.code where mr.meal_id=?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-		}
-		while(resultSet.next()) {
-			Integer r_id = resultSet.getInt("r.id");
-            String code = resultSet.getString("z.code");
-            String state = resultSet.getString("z.state");
-            Integer r_cap = resultSet.getInt("r.capacity");
-            Zip zip = new Zip(code, state);
-            Restaurant rest = new Restaurant(zip, r_cap);
-			rests.put(r_id, rest);
-		}
+			if(id==0) {
+				sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code";
+				Statement stmt = con.createStatement();
+				resultSet = stmt.executeQuery(sql);
+			}else {
+				sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join meal_rest mr on mr.rest_id=r.id join zip z on r.zip=z.code where mr.meal_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
+			}
+			while(resultSet.next()) {
+				Integer r_id = resultSet.getInt("r.id");
+				String code = resultSet.getString("z.code");
+				String state = resultSet.getString("z.state");
+            	Integer r_cap = resultSet.getInt("r.capacity");
+            	Zip zip = new Zip(code, state);
+            	Restaurant rest = new Restaurant(zip, r_cap);
+            	rests.put(r_id, rest);
+
+			}
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Restaurants for Meal "+id, e);
 		}
-		//System.out.println(rests);
 		return rests;
 	}
 
@@ -251,38 +233,36 @@ public class MealSessionBean implements MealRemote{
 		String sql;
 		ResultSet resultSet;
 		try {
-		Connection con = dataSource.getConnection();
+			Connection con = dataSource.getConnection();
 		
-		if(id==0) {
-			sql="SELECT r.id,r.rest_id, r.date_start, r.date_end, r.visitors FROM reservation r";
-			Statement stmt = con.createStatement();
-			resultSet = stmt.executeQuery(sql);
-		}else {
-			sql="SELECT r.id, r.rest_id, r.date_start, r.date_end, r.visitors  FROM reservation r join meal_reserv mr on mr.reserv_id=r.id where mr.meal_id=?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-		}
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss");
-		while(resultSet.next()) {
-			try{
-				Integer r_id = resultSet.getInt("r.id");
-			
-            Integer rest_id = resultSet.getInt("rest_id");
-            Integer visitors = resultSet.getInt("visitors");
-            System.out.println(resultSet.getString("date_start"));
-            LocalDateTime date_start= LocalDateTime.parse(resultSet.getString("date_start"), dateFormat);
-
-            LocalDateTime date_end = LocalDateTime.parse(resultSet.getString("date_end"), dateFormat);
-			
-			Reservation res = new Reservation(rest_id, date_start, date_end, visitors);
-			reserv.put(r_id, res);
-			}catch(java.time.format.DateTimeParseException | java.lang.NullPointerException ex) {
-				continue;
+			if(id==0) {
+				sql="SELECT r.id,r.rest_id, r.date_start, r.date_end, r.visitors FROM reservation r";
+				Statement stmt = con.createStatement();
+				resultSet = stmt.executeQuery(sql);
+			}else {
+				sql="SELECT r.id, r.rest_id, r.date_start, r.date_end, r.visitors  FROM reservation r join meal_reserv mr on mr.reserv_id=r.id where mr.meal_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
 			}
-		}
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss");
+			while(resultSet.next()) {
+				try{
+					Integer r_id = resultSet.getInt("r.id");
+					Integer rest_id = resultSet.getInt("rest_id");
+					Integer visitors = resultSet.getInt("visitors");
+					System.out.println(resultSet.getString("date_start"));
+					LocalDateTime date_start= LocalDateTime.parse(resultSet.getString("date_start"), dateFormat);
+					LocalDateTime date_end = LocalDateTime.parse(resultSet.getString("date_end"), dateFormat);         
+					Reservation res = new Reservation(rest_id, date_start, date_end, visitors);
+					reserv.put(r_id, res);
+				}catch(java.time.format.DateTimeParseException | java.lang.NullPointerException ex) {
+					continue;
+				}
+			}
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Reservations for Meal "+id, e);
 		}
 		return reserv;
 	}
@@ -320,11 +300,10 @@ public class MealSessionBean implements MealRemote{
 					e.printStackTrace();
 				}
 			}
+			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Products for Meal "+id, e);
 		}
-		
 		return prods;
 	}
 
@@ -361,25 +340,9 @@ List <StatisticData> stat = new ArrayList <StatisticData> ();
 				}
 			}
 			
-				
-			
-//			sql = "select m.id, m.title, m.price, p.price from meal m join meal_product mp on mp.meal_id=m.id join product p on mp.prod_id=p.id group by m.id order by m.id";
-//			con = dataSource.getConnection();
-//			Statement stmt = con.createStatement();
-//			ResultSet resultSet = stmt.executeQuery(sql);
-//			Integer id = resultSet.getInt("m.id");
-//			String title = resultSet.getString("m.title");
-//			Double price =resultSet.getDouble("m.price");
-//			Double spends =resultSet.getDouble("SUM(p.price)");
-//			String meal=id.toString()+": "+title;
-//			StatisticData item = new StatisticData(meal, spends, price);
-//			//System.out.println(rest+" "+deb+" "+pro);
-//			stat.add(item);
-			
-	
+			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get statistics data for Meals ", e);
 		}
 		return stat;
 	}
@@ -399,15 +362,12 @@ List <StatisticData> stat = new ArrayList <StatisticData> ();
 			if(resultSet.next()) {
 				imagebytes = resultSet.getBytes("image");
 			}
-			
+			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Something is not correct with an image, failed to get image for Meal "+id, e);
 		}
-		
-		System.out.print(imagebytes);
 		return imagebytes;
-		}
+	}
 
 	@Override
 	public void setImage(int id, byte[] img) {
@@ -421,15 +381,13 @@ List <StatisticData> stat = new ArrayList <StatisticData> ();
 			preparedStatement.setInt(2, id);
 			preparedStatement.executeUpdate();
 //			System.out.println("done");
+			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Something is not correct with an image, failed to insert image for Meal "+id, e);
+			return;
 		}
+		LogTest.LOGGER.log(Level.INFO, "Image for Meal (id=="+id+") was succesfully inserted");
 		}
-		
-	}
-	
-	
-		
+	}	
 }
 		

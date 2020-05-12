@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.logging.Level;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -71,7 +72,7 @@ public class ProductSessionBean implements ProductRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Product search: "+args, e);
 		}
 		return result;
 	}
@@ -95,13 +96,13 @@ public class ProductSessionBean implements ProductRemote {
 			
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Product, failed to insert "+ args, e);
 			return -1;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Product (id=="+id+") was succesfully inserted");
 		return id;
 	}
-
+	
 	@Override
 	public void deleteProduct(int id) {
 		try {
@@ -117,9 +118,11 @@ public class ProductSessionBean implements ProductRemote {
 			preparedStatement.executeUpdate();
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to delete Product (id=="+id+")", e);		
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Product (id=="+id+") was succesfully deleted");
+
 	}
 
 	@Override
@@ -146,9 +149,10 @@ public class ProductSessionBean implements ProductRemote {
 		    }
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to update Product (id=="+args.get("id")+"), args:"+args, e);	
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Product (id=="+args.get("id")+") was succesfully updated");
 	}
 
 	@Override
@@ -173,10 +177,9 @@ public class ProductSessionBean implements ProductRemote {
 		            meals.put(m_id, meal);           
 				}
 			}
-			
+			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Meals for Product "+id, e);
 		}
 		
 		return meals;
@@ -197,7 +200,7 @@ public class ProductSessionBean implements ProductRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get maximum of prices for Product", e);
 		}
 		
 		return price;
@@ -221,8 +224,7 @@ public class ProductSessionBean implements ProductRemote {
 				}
 			}
 		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Reservations for Product "+id, e);
 		}
 		
 		return rese;

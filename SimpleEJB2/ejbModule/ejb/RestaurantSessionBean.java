@@ -15,6 +15,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -40,8 +41,6 @@ public class RestaurantSessionBean implements RestaurantRemote {
 	public Dictionary<Integer, Restaurant> searchRestaurant(Dictionary<String, String> args) {
 		Dictionary<Integer, Restaurant>result = new Hashtable <Integer, Restaurant>();
 		
-		
-		
 		try {
 			Connection con = dataSource.getConnection();
 			String sql="select r.id, r.capacity, r.zip, z.state from restaurant r join zip z on z.code=r.zip ";
@@ -63,9 +62,8 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Restaurant search: "+args, e);
 		}
-		//System.out.println(result);
 		return result;
 	}
 
@@ -116,16 +114,17 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		        		}
 		        	}
 		        }
-		        con.close();
+
+				con.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Restaurant, failed to insert "+ args, e);
 				return -1;
 			}
+			LogTest.LOGGER.log(Level.INFO, "Restaurant (id=="+id+") was succesfully inserted");
 		}
-		
 		return id;
 	}
-
+	
 	@Override
 	public void deleteRestaurant(int id) {
 		try {
@@ -147,6 +146,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			sql="select e.id from employee e where e.rest_id="+String.valueOf(id);
 			stmt = con.createStatement();
 			resultSet = stmt.executeQuery(sql);
+			
 			try {
 				Context ctx;
 				ctx = new InitialContext();
@@ -173,9 +173,11 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			preparedStatement.executeUpdate();
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to delete Restaurant (id=="+id+")", e);		
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Restaurant (id=="+id+") was succesfully deleted");
+
 	}
 
 	@Override
@@ -242,9 +244,10 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to update Restaurant (id=="+args.get("id")+"), args:"+args, e);	
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Restaurant (id=="+args.get("id")+") was succesfully updated");
 	}
 
 	@Override
@@ -264,9 +267,9 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get zips for Restaurants", e);
 		}
-		System.out.println(result);
+
 		return result;
 	}
 
@@ -284,9 +287,8 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get maximum capacity of Restaurants", e);
 		}
-		
 		return capacity;
 	}
 	
@@ -320,8 +322,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Meals for Restaurant "+id, e);
 		}
 		return meals;
 	}
@@ -363,8 +364,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			}
 			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Employees for Restaurant "+id, e);
 		}
 		return emps;
 	}
@@ -397,10 +397,9 @@ public class RestaurantSessionBean implements RestaurantRemote {
 		        }
 				con.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogTest.LOGGER.log(Level.SEVERE, "Failed to add Cheque: "+args, e);
 			}
-			
+			LogTest.LOGGER.log(Level.INFO, "Cheque"+args+"was succesfully inserted");
 		}
 		
 	}
@@ -436,14 +435,12 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			   
 				}
 			StatisticData item = new StatisticData(rest, deb, pro);
-			//System.out.println(rest+" "+deb+" "+pro);
 			stat.add(item);
 			
 			}
 			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get statistics data for Restaurants", e);
 		}
 		return stat;
 	}

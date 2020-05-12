@@ -14,6 +14,8 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
+
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
@@ -59,10 +61,10 @@ public class ReservationSessionBean implements ReservationRemote {
 				Reservation res = new Reservation(rest_id, date_start, date_end, visitors);
 				result.put(id, res);
 			}
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Reservation search: "+args, e);
 		}
-		//System.out.println(result);
 		return result;
 	}
 
@@ -78,7 +80,6 @@ public class ReservationSessionBean implements ReservationRemote {
 	        sql="SELECT MAX(id) FROM reservation";
 	        Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
-//			resultSet.next();
 			
 			while(resultSet.next()) {
 				id = resultSet.getInt("MAX(id)");
@@ -111,12 +112,13 @@ public class ReservationSessionBean implements ReservationRemote {
 	        		}
 	        	}
 	        }
-			
+	    	
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Reservation, failed to insert Reservation for "+ args, e);
 			return -1;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Reservation (id=="+id+") was succesfully inserted");
 		return id;
 	}
 
@@ -136,9 +138,13 @@ public class ReservationSessionBean implements ReservationRemote {
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to delete Reservation (id=="+id+")", e);		
+			return;
 		}
+		LogTest.LOGGER.log(Level.INFO, "Reservation (id=="+id+") was succesfully deleted");
+
 	}
 
 	@Override
@@ -202,13 +208,14 @@ public class ReservationSessionBean implements ReservationRemote {
 		        	}
 		        }
 			}
-			
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to update Reservation ("+args+"), args:"+args, e);	
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Reservation (id=="+args.get("id")+") was succesfully updated");
 	}
-
+	
 	@Override
 	public List<StatisticData> statReserv() {
 		List <StatisticData> stat = new ArrayList <StatisticData> ();
@@ -222,10 +229,7 @@ public class ReservationSessionBean implements ReservationRemote {
 			while(resultSet.next()) {
 				String rest= resultSet.getString("r.rest_id")+" "+ resultSet.getString("rest.capacity")+" "+resultSet.getString("zip.state");
 				rests.add(rest);
-		
 			}
-		
-			
 			sql = "select r.visitors*(select sum(meal.price) from meal_reserv mr join meal on mr.meal_id=meal.id where mr.reserv_id=r.id) debit, r.visitors*( select sum(p.price) from meal_reserv mr join meal m on m.id=mr.meal_id join meal_product mp on mp.meal_id=m.id join product p on p.id=mp.prod_id where mr.reserv_id=r.id) credit  from reservation r where r.rest_id=?";
 			con = dataSource.getConnection();
 			PreparedStatement stmt1 = con.prepareStatement(sql);
@@ -241,13 +245,11 @@ public class ReservationSessionBean implements ReservationRemote {
 			   
 				}
 			StatisticData item = new StatisticData(rest, deb, pro);
-			//System.out.println(rest+" "+deb+" "+pro);
 			stat.add(item);
-			
+			con.close();
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get statistics data for Reservations", e);
 		}
 		return stat;
 	}
@@ -256,28 +258,28 @@ public class ReservationSessionBean implements ReservationRemote {
 	public Dictionary<Integer, Restaurant> getRestReserv(Integer id) throws SQLException {
 		Dictionary<Integer, Restaurant> rests = new Hashtable <Integer, Restaurant>();
 		try {
-		Connection con = dataSource.getConnection();
+			Connection con = dataSource.getConnection();
 		
-		String sql;
-		ResultSet resultSet;
+			String sql;
+			ResultSet resultSet;
+			
+			sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code order by r.id desc";
+			Statement stmt = con.createStatement();
+			resultSet = stmt.executeQuery(sql);
 		
-		sql="SELECT r.id, z.code, z.state, r.capacity FROM restaurant r join zip z on r.zip=z.code order by r.id desc";
-		Statement stmt = con.createStatement();
-		resultSet = stmt.executeQuery(sql);
-		
-		while(resultSet.next()) {
-			Integer r_id = resultSet.getInt("r.id");
-            String code = resultSet.getString("z.code");
-            String state = resultSet.getString("z.state");
-            Integer r_cap = resultSet.getInt("r.capacity");
-            Zip zip = new Zip(code, state);
-            Restaurant rest = new Restaurant(zip, r_cap);
-			rests.put(r_id, rest);
-		}
+			while(resultSet.next()) {
+				Integer r_id = resultSet.getInt("r.id");
+				String code = resultSet.getString("z.code");
+				String state = resultSet.getString("z.state");
+            	Integer r_cap = resultSet.getInt("r.capacity");
+            	Zip zip = new Zip(code, state);
+            	Restaurant rest = new Restaurant(zip, r_cap);
+            	rests.put(r_id, rest);
+			}
+			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Restaurants for Reservation "+id, e);
 		}
-		//System.out.println(rests);
 		return rests;
 	}
 
@@ -287,31 +289,31 @@ public class ReservationSessionBean implements ReservationRemote {
 		String sql;
 		ResultSet resultSet;
 		try {
-		Connection con = dataSource.getConnection();
+			Connection con = dataSource.getConnection();
 		
-		if(id==0) {
-			sql="SELECT m.id, m.title, m.prep_time, m.price FROM meal m";
-			Statement stmt = con.createStatement();
-			resultSet = stmt.executeQuery(sql);
-		}else {
-			sql="SELECT  m.id, m.title,  m.prep_time, m.price FROM meal m join meal_reserv mr on mr.meal_id=m.id where mr.reserv_id=?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-		}
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
-		while(resultSet.next()) {
-			Integer r_id = resultSet.getInt("m.id");
-			String title = resultSet.getString("m.title");
-			Double price = resultSet.getDouble("m.price");
-            LocalTime prep_time = LocalTime.parse(resultSet.getString("m.prep_time"), dateFormat);
+			if(id==0) {
+				sql="SELECT m.id, m.title, m.prep_time, m.price FROM meal m";
+				Statement stmt = con.createStatement();
+				resultSet = stmt.executeQuery(sql);
+			}else {
+				sql="SELECT  m.id, m.title,  m.prep_time, m.price FROM meal m join meal_reserv mr on mr.meal_id=m.id where mr.reserv_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
+			}
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
+			while(resultSet.next()) {
+				Integer r_id = resultSet.getInt("m.id");
+				String title = resultSet.getString("m.title");
+				Double price = resultSet.getDouble("m.price");
+				LocalTime prep_time = LocalTime.parse(resultSet.getString("m.prep_time"), dateFormat);
             
-            Meal meal = new Meal(title, price, prep_time);
-			meals.put(r_id, meal);
-		}
+				Meal meal = new Meal(title, price, prep_time);
+				meals.put(r_id, meal);
+			}
+			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Meals for Reservation "+id, e);
 		}
 		return meals;
 	}
@@ -322,40 +324,38 @@ public class ReservationSessionBean implements ReservationRemote {
 		String sql;
 		ResultSet resultSet;
 		try {
-		Connection con = dataSource.getConnection();
+			Connection con = dataSource.getConnection();
 		
-		if(id==0) {
-			sql="SELECT e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e";
-			Statement stmt = con.createStatement();
-			resultSet = stmt.executeQuery(sql);
-		}else {
-			sql="SELECT  e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e join emp_reserv er on e.id=er.emp_id where er.reserv_id=?";
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-		}
+			if(id==0) {
+				sql="SELECT e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e";
+				Statement stmt = con.createStatement();
+				resultSet = stmt.executeQuery(sql);
+			}else {
+				sql="SELECT  e.id, e.rest_id, e.first_name, e.last_name, e.position, e.wage, e.gender, e.birthdate, e.e_mail, e.phone from employee e join emp_reserv er on e.id=er.emp_id where er.reserv_id=?";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				resultSet = preparedStatement.executeQuery();
+			}
 
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		while(resultSet.next()) {
-			Integer e_id = resultSet.getInt("id");
-			Integer rest_id = resultSet.getInt("rest_id");
-            String first_name = resultSet.getString("first_name");
-            String last_name = resultSet.getString("last_name");
-            String gender = resultSet.getString("gender");
-            LocalDate birthdate = LocalDate.parse(resultSet.getString("birthdate"), dateFormat);
-            String position = resultSet.getString("position");
-            String phone = resultSet.getString("phone");
-            String e_mail = resultSet.getString("e_mail");
-            Double wage = resultSet.getDouble("wage");
-            Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, position, phone, e_mail, wage);
-			emps.put(e_id, emp);
-		}
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			while(resultSet.next()) {
+				Integer e_id = resultSet.getInt("id");
+				Integer rest_id = resultSet.getInt("rest_id");
+				String first_name = resultSet.getString("first_name");
+				String last_name = resultSet.getString("last_name");
+            	String gender = resultSet.getString("gender");
+            	LocalDate birthdate = LocalDate.parse(resultSet.getString("birthdate"), dateFormat);
+            	String position = resultSet.getString("position");
+            	String phone = resultSet.getString("phone");
+            	String e_mail = resultSet.getString("e_mail");
+            	Double wage = resultSet.getDouble("wage");
+            	Employee emp = new Employee(rest_id, first_name, last_name, gender, birthdate, position, phone, e_mail, wage);
+				emps.put(e_id, emp);
+			}
+			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Employees for Reservation "+id, e);
 		}
 		return emps;
 	}
-	
-
 }

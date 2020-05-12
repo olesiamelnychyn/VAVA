@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.logging.Level;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -43,10 +44,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 				sql+=" and e.position = \""+args.get("position")+"\"";
 			}
 			sql+=" order by e.id";
-			
-				
-			
-			System.out.println(sql);
+		
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -66,9 +64,8 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Employee search: "+args, e);
 		}
-		System.out.println(result);
 		return result;
 	}
 
@@ -100,10 +97,10 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Wrong input parameters for Employee, failed to insert "+ args, e);
 			return -1;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Employee (id=="+id+") was succesfully inserted");
 		return id;
 	}
 
@@ -122,9 +119,11 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			preparedStatement.executeUpdate();
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to delete Emplyee (id=="+id+")", e);		
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Employee (id=="+id+") was succesfully deleted");
+
 	}
 
 	@Override
@@ -150,9 +149,10 @@ public class EmployeeSessionBean implements EmployeeRemote{
 		    }
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to update Emplyee (id=="+args.get("id")+"), args:"+args, e);	
+			return;
 		}
-		
+		LogTest.LOGGER.log(Level.INFO, "Employee (id=="+args.get("id")+") was succesfully updated");
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get maximum wage for Employees", e);
 		}
 		
 		return wage;
@@ -191,7 +191,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions for Employees", e);
 		}
 		
 		return positions;
@@ -239,9 +239,8 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Restaurants for Employee "+id, e);
 		}
-		//System.out.println(rests);
 		return rests;
 	}
 
@@ -271,8 +270,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 			}
 			con.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Reservations for Employee "+id, e);
 		}
 		return resev;
 	}

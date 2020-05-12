@@ -10,7 +10,7 @@ public class LogTest {
 
 	
 	private static final LogManager logManager = LogManager.getLogManager();
-	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	public static final Logger LOGGER = Logger.getLogger("confLogger");
 	static{
         try {
             logManager.readConfiguration(new FileInputStream("./logging.properties"));
