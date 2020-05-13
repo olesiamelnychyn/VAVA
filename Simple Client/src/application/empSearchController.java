@@ -1,5 +1,8 @@
 package application;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -7,12 +10,22 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import ejb.EmployeeRemote;
+import ejb.LogTest;
 import ejb.MyExeception;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -122,9 +135,9 @@ public class empSearchController {
 				poss.add(p);		
 			}
 		} catch (MyExeception e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
 		} catch (NamingException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
 		}
     	cmbox_pos.setItems(poss);
     	cmbox_pos.getSelectionModel().select(0);
@@ -133,11 +146,9 @@ public class empSearchController {
 		try {
 			wage = this.getMaxWage();
 			txt_to.setText(String.valueOf(wage));
-		} catch (MyExeception e) {
-			e.printStackTrace();
-		} catch (NamingException e) {
-			e.printStackTrace();
-		}
+		} catch (MyExeception | NamingException e) {
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get max wage", e);
+		} 
     	
     	search();
     	
@@ -146,7 +157,51 @@ public class empSearchController {
     	btn_new.setOnMouseClicked(e -> {openWindow("empWindow.fxml", e);});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		//TODO
+    		try {
+            	Document document = new Document();
+    			PdfWriter.getInstance(document, new FileOutputStream("employees.pdf"));
+    			 document.open();
+    		        PdfPTable table1 = new PdfPTable(4);
+    		        Font f = new Font();
+    		        f.setColor(BaseColor.RED);
+    		        f.setStyle(java.awt.Font.BOLD);
+    		        
+    		        table1.addCell(new Phrase("id", f));
+    		        table1.addCell(new Phrase("Restaurant", f));
+    		        table1.addCell(new Phrase("First Name", f));
+    		        table1.addCell(new Phrase("Last Name", f));
+    		        table1.addCell(new Phrase("Position", f));
+    		        table1.addCell(new Phrase("Wage", f));
+    		        
+    		        Enumeration<Integer> enam = result.keys();
+    		      
+    		        while(enam.hasMoreElements()) {
+    		            Integer k = enam.nextElement();
+    		            table1.addCell(k.toString());
+    			        table1.addCell(result.get(k).getRest_id().toString());
+    			        table1.addCell(result.get(k).getFirst_name());
+    			        table1.addCell(result.get(k).getLast_name());
+    			        table1.addCell(result.get(k).getPosition());
+    			        table1.addCell(result.get(k).getWage().toString());
+    	    		}
+    		    
+    		        document.add(table1);
+    		        document.close();
+    		        
+    		        File file = new File("employees.pdf");
+    		        
+    		        if(!Desktop.isDesktopSupported()){
+    		        	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
+    		            return;
+    		        }
+    		        
+    		        Desktop desktop = Desktop.getDesktop();
+    		        if(file.exists()) desktop.open(file);
+    		        
+    		     
+    		} catch (DocumentException | IOException ex) {
+    			LogTest.LOGGER.log(Level.SEVERE, "Failed to create document", ex);
+    		}
     	});
     	
     	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
@@ -218,7 +273,7 @@ public class empSearchController {
                 stage.show();
                 ((Node)(e.getSource())).getScene().getWindow().hide(); 
               } catch (IOException ex) {
-                  System.err.println(ex);
+            	  LogTest.LOGGER.log(Level.SEVERE, "Failed to open employee", ex);
               }
     	  }
     	 }
@@ -282,10 +337,8 @@ public class empSearchController {
 	            Integer k = enam.nextElement();
 	            data.add(result.get(k));
     		}
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        } catch (MyExeception ex) {
-           System.out.print(ex.getMessage());
+        } catch (NamingException | MyExeception ex) {
+        	LogTest.LOGGER.log(Level.SEVERE, "Failed to get employees", ex);
         }
     	table.setItems(data);
     }
@@ -323,7 +376,7 @@ public class empSearchController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window, e);
     	}
     }
 }

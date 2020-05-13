@@ -21,6 +21,7 @@
                   <Font size="24.0" />
                </font>
             </Label>
+            <Button fx:id="btn_lang" mnemonicParsing="false" text="SK" />
          </children>
     </AnchorPane>
   </children>

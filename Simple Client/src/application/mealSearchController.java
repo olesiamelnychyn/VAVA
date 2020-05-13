@@ -11,6 +11,8 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -40,6 +42,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import objects.Meal;
 import objects.Restaurant;
+import ejb.LogTest;
 import ejb.MealRemote;
 import ejb.MyExeception;
 
@@ -144,7 +147,7 @@ public class mealSearchController {
 	        //System.out.println(rests);
 	        cmbox_rest.setItems(rests);
 		} catch (NamingException | SQLException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to MealRemote", e);
 		}
     	cmbox_rest.getSelectionModel().select(0);
     	txt_from.setText("0.0");
@@ -166,7 +169,7 @@ public class mealSearchController {
                 stage.show();
                 ((Node)(e.getSource())).getScene().getWindow().hide(); 
             } catch (IOException ex) {
-                System.err.println(ex);
+            	LogTest.LOGGER.log(Level.SEVERE, "Failed to open the mealWindow", e);
             }
     		});
     	
@@ -205,7 +208,7 @@ public class mealSearchController {
                 stage.show();
                 ((Node)(e.getSource())).getScene().getWindow().hide(); 
               } catch (IOException ex) {
-                  System.err.println(ex);
+            	  LogTest.LOGGER.log(Level.SEVERE, "Failed to open the mealWindow", e);
               }
     	  }
     	 }
@@ -228,7 +231,7 @@ public class mealSearchController {
                 stage.show();
                 ((Node)(e.getSource())).getScene().getWindow().hide(); 
             } catch (IOException ex) {
-                System.err.println(ex);
+            	LogTest.LOGGER.log(Level.SEVERE, "Failed to open statistics", e);
             }
     	});
     	
@@ -314,11 +317,9 @@ public class mealSearchController {
 	            Integer k = enam.nextElement();
 	            data.add(result.get(k));
     		}
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        } catch (MyExeception ex) {
-           System.out.print(ex.getMessage());
-        }
+        } catch (NamingException | MyExeception ex) {
+        	LogTest.LOGGER.log(Level.SEVERE, "Failed to get meals", ex);
+        } 
     	table.setItems(data);
     }
 	
@@ -341,14 +342,12 @@ public class mealSearchController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window, e);
     	}
     }
     
     
     public void TablePrincipale(String dest) {
-  
-    	
         try {
         	Document document = new Document();
 			PdfWriter.getInstance(document, new FileOutputStream(dest));
@@ -380,7 +379,7 @@ public class mealSearchController {
 		        
 		        //first check if Desktop is supported by Platform or not
 		        if(!Desktop.isDesktopSupported()){
-		            System.out.println("Desktop is not supported");
+		        	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
 		            return;
 		        }
 		        
@@ -389,8 +388,7 @@ public class mealSearchController {
 		        
 		     
 		} catch (DocumentException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to create document", e);
 		}
        
 	}

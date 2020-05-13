@@ -9,12 +9,14 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import ejb.EmployeeRemote;
+import ejb.LogTest;
 import ejb.MyExeception;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -41,100 +43,100 @@ import objects.Reservation;
 import objects.Restaurant;
 
 
-		public class empController {
+public class empController {
 
-		    @FXML
-		    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-		    @FXML
-		    private URL location;
+	@FXML
+	private URL location;
 
-		    @FXML
-		    private TextField txt_fname;
+	@FXML
+	private TextField txt_fname;
 
-		    @FXML
-		    private ComboBox<String> cmbox_pos;
+	@FXML
+	private ComboBox<String> cmbox_pos;
 
-		    @FXML
-		    private Button btn_back;
+	@FXML
+	private Button btn_back;
 
-		    @FXML
-		    private Button btn_save;
+	@FXML
+	private Button btn_save;
 
-		    @FXML
-		    private Button btn_delete;
+	@FXML
+	private Button btn_delete;
 
-		    @FXML
-		    private Button btn_undo;
+	@FXML
+	private Button btn_undo;
 
-		    @FXML
-		    private Button btn_help;
+	@FXML
+	private Button btn_help;
 
-		    @FXML
-		    private Tooltip tool_tip;
+	@FXML
+	private Tooltip tool_tip;
 
-		    @FXML
-		    private TextField txt_lname;
+	@FXML
+	private TextField txt_lname;
 
-		    @FXML
-		    private Spinner<Double> spin_wage;
+	@FXML
+	private Spinner<Double> spin_wage;
 
-		    @FXML
-		    private ComboBox<String> cmbox_rest;
+	@FXML
+	private ComboBox<String> cmbox_rest;
 
-		    @FXML
-		    private DatePicker birthdate;
+	@FXML
+	private DatePicker birthdate;
 
-		    @FXML
-		    private ListView<String> list;
+	@FXML
+	private ListView<String> list;
 
-		    @FXML
-		    private ImageView img_view;
+	@FXML
+	private ImageView img_view;
 
-		    @FXML
-		    private RadioButton rbtn_male;
+	@FXML
+	private RadioButton rbtn_male;
 
-		    @FXML
-		    private RadioButton rbtn_female;
+	@FXML
+	private RadioButton rbtn_female;
 
-		    @FXML
-		    private TextField txt_phone;
+	@FXML
+	private TextField txt_phone;
 
-		    @FXML
-		    private TextField txt_email;
+	@FXML
+	private TextField txt_email;
 
-		    Employee emp=null;
-		    Integer id=-1;
-		    Context ctx;
-		    EmployeeRemote EmployeeRemote;
-		    
-		    @FXML
-		    void initialize() {
-		        assert txt_fname != null : "fx:id=\"txt_fname\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert cmbox_pos != null : "fx:id=\"cmbox_pos\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert btn_undo != null : "fx:id=\"btn_undo\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert txt_lname != null : "fx:id=\"txt_lname\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert spin_wage != null : "fx:id=\"spin_wage\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert cmbox_rest != null : "fx:id=\"cmbox_rest\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert birthdate != null : "fx:id=\"birthdate\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert img_view != null : "fx:id=\"img_view\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert rbtn_male != null : "fx:id=\"rbtn_male\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert rbtn_female != null : "fx:id=\"rbtn_female\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert txt_phone != null : "fx:id=\"txt_phone\" was not injected: check your FXML file 'empWindow.fxml'.";
-		        assert txt_email != null : "fx:id=\"txt_email\" was not injected: check your FXML file 'empWindow.fxml'.";
+	Employee emp=null;
+	Integer id=-1;
+	Context ctx;
+	EmployeeRemote EmployeeRemote;
+	
+	@FXML
+	void initialize() {
+		assert txt_fname != null : "fx:id=\"txt_fname\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert cmbox_pos != null : "fx:id=\"cmbox_pos\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert btn_undo != null : "fx:id=\"btn_undo\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert txt_lname != null : "fx:id=\"txt_lname\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert spin_wage != null : "fx:id=\"spin_wage\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert cmbox_rest != null : "fx:id=\"cmbox_rest\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert birthdate != null : "fx:id=\"birthdate\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert img_view != null : "fx:id=\"img_view\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert rbtn_male != null : "fx:id=\"rbtn_male\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert rbtn_female != null : "fx:id=\"rbtn_female\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert txt_phone != null : "fx:id=\"txt_phone\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert txt_email != null : "fx:id=\"txt_email\" was not injected: check your FXML file 'empWindow.fxml'.";
 
         try {
 			ctx = new InitialContext();
 			EmployeeRemote =  (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote"); 
 			
 		} catch (NamingException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to EmployeeRemote", e2);
 		}
        
 
@@ -189,9 +191,11 @@ import objects.Restaurant;
         	if(emp==null || !birthdate.getValue().toString().equals(LocalDate.parse(emp.getBirthdate().toString(),  formatte1).toString())){
             	args.put("birthdate", "\""+LocalDate.parse(birthdate.getValue().toString(),  formatte1).toString()+"\"");
             }
-        	if(emp==null) {
-        		args.put("e_mail", " ");
-        		args.put("phone", " ");
+        	if(emp==null || !txt_phone.getText().equals(emp.getPhone())) {
+    			args.put("phone", "\""+txt_phone.getText()+"\"");
+        	}
+        	if(emp==null || !txt_email.getText().equals(emp.getE_mail())) {
+    			args.put("e_mail", "\""+txt_email.getText()+"\"");
         	}
         	if(!cmbox_pos.getValue().equals("Choose position") &&(emp==null || !cmbox_pos.getValue().equals(emp.getPosition()))) {
         		args.put("position", "\""+cmbox_pos.getValue()+"\"");
@@ -253,9 +257,9 @@ import objects.Restaurant;
 				poss.add(p);		
 			}
 		} catch (MyExeception e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
 		} catch (NamingException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
 		}
     	cmbox_pos.setItems(poss);
     	if(emp!=null) {
@@ -263,12 +267,13 @@ import objects.Restaurant;
     	}
     	cmbox_pos.getSelectionModel().select(0);
     	
-
     	
     	//not null
     	if(id!=-1) {
     		txt_fname.setText(emp.getFirst_name());
     		txt_lname.setText(emp.getLast_name());
+    		txt_phone.setText(emp.getPhone());
+    		txt_email.setText(emp.getE_mail());
     		spin_wage.getValueFactory().setValue(emp.getWage());
     		if(emp.getGender()=="M") {
     			rbtn_male.setSelected(true);
@@ -310,7 +315,7 @@ import objects.Restaurant;
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window , ex);
     	}
     }
 }

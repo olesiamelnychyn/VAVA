@@ -1,14 +1,29 @@
 package application;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import ejb.LogTest;
 import ejb.MyExeception;
 import ejb.SupplierRemote;
 import javafx.collections.FXCollections;
@@ -130,7 +145,47 @@ public class suppSearchController {
     	});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		//TODO
+    		try {
+            	Document document = new Document();
+    			PdfWriter.getInstance(document, new FileOutputStream("suppliers.pdf"));
+    			 document.open();
+    		        PdfPTable table1 = new PdfPTable(4);
+    		        Font f = new Font();
+    		        f.setColor(BaseColor.RED);
+    		        f.setStyle(java.awt.Font.BOLD);
+    		        
+    		        table1.addCell(new Phrase("id", f));
+    		        table1.addCell(new Phrase("Title", f));
+    		        table1.addCell(new Phrase("Phone", f));
+    		        table1.addCell(new Phrase("E-mail",f));
+    		        
+    		        Enumeration<Integer> enam = result.keys();
+    		      
+    		        while(enam.hasMoreElements()) {
+    		            Integer k = enam.nextElement();
+    		            table1.addCell(k.toString());
+    			        table1.addCell(result.get(k).getTitle().toString());
+    			        table1.addCell(result.get(k).getPhone().toString());
+    			        table1.addCell(result.get(k).getE_mail().toString());
+    	    		}
+    		    
+    		        document.add(table1);
+    		        document.close();
+    		        
+    		        File file = new File("suppliers.pdf");
+    		        
+    		        if(!Desktop.isDesktopSupported()){
+    		        	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
+    		            return;
+    		        }
+    		        
+    		        Desktop desktop = Desktop.getDesktop();
+    		        if(file.exists()) desktop.open(file);
+    		        
+    		     
+    		} catch (DocumentException | IOException ex) {
+    			LogTest.LOGGER.log(Level.SEVERE, "Failed to create document", ex);
+    		}
     	});
     	
     	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
@@ -180,7 +235,7 @@ public class suppSearchController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window, ex);
     	}
 		
 	}
@@ -215,11 +270,9 @@ public class suppSearchController {
 	            Integer k = enam.nextElement();
 	            data.add(result.get(k));
     		}
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        } catch (MyExeception ex) {
-           System.out.print(ex.getMessage());
-        }
+        } catch (NamingException | MyExeception ex) {
+        	LogTest.LOGGER.log(Level.SEVERE, "Failed to get suppliers", ex);
+        } 
     	table.setItems(data);
     }
     private void delete(Integer id) throws MyExeception, NamingException {

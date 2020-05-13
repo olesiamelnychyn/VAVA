@@ -17,7 +17,7 @@ public class Main extends Application {
         primaryStage.show();
         
    
-        LogTest.main();
+//        LogTest.main();
 	}
 	
 	public static void main(String[] args) {

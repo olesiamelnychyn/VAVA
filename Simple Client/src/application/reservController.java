@@ -10,9 +10,11 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import ejb.LogTest;
 import ejb.ReservationRemote;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +29,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -56,9 +57,6 @@ public class reservController {
 
     @FXML
     private Button btn_undo;
-
-    @FXML
-    private SplitMenuButton btn_export;
 
     @FXML
     private Button btn_help;
@@ -120,7 +118,6 @@ public class reservController {
         assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'reservWindow.fxml'.";
         assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'reservWindow.fxml'.";
         assert btn_undo != null : "fx:id=\"btn_undo\" was not injected: check your FXML file 'reservWindow.fxml'.";
-        assert btn_export != null : "fx:id=\"btn_export\" was not injected: check your FXML file 'reservWindow.fxml'.";
         assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'reservWindow.fxml'.";
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'reservWindow.fxml'.";
         assert spin_vis != null : "fx:id=\"spin_price\" was not injected: check your FXML file 'reservWindow.fxml'.";
@@ -144,7 +141,7 @@ public class reservController {
 			ReservRemote=  (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote"); 
 			
 		} catch (NamingException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to EmployeeRemote", e2);
 		}
         
         btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
@@ -297,7 +294,7 @@ public class reservController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window , ex);
     	}
     }
     
@@ -420,7 +417,7 @@ public class reservController {
 
     	}
     	} catch ( SQLException e) {
-			e.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to get restaurants or employees or reservations", e);
 		}
     	
     }

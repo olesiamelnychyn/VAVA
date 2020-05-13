@@ -13,6 +13,8 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -26,6 +28,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import ejb.ReservationRemote;
+import ejb.LogTest;
 import ejb.MyExeception;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -129,7 +132,7 @@ public class reservSearchController {
 			ctx = new InitialContext();
 			ReservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote");
 		} catch (NamingException e3) {
-			e3.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to ReservationRemote", e3);
 		}
         
         TableColumn <Reservation, Integer> restCol = new TableColumn <Reservation, Integer> ("Restaurant");
@@ -181,7 +184,7 @@ public class reservSearchController {
                    stage.show();
                    ((Node)(e.getSource())).getScene().getWindow().hide(); 
                  } catch (IOException ex) {
-                     System.err.println(ex);
+                	 LogTest.LOGGER.log(Level.SEVERE, "Failed to open reservation", e);
                  }
        	  }
        	 }
@@ -199,7 +202,7 @@ public class reservSearchController {
 	        }
 	        cmbox_rest.setItems(rests);
 		} catch (SQLException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get restaurants", e2);
 		}
 	
     	cmbox_rest.getSelectionModel().select(0);
@@ -224,7 +227,7 @@ public class reservSearchController {
             stage.show();
             ((Node)(e.getSource())).getScene().getWindow().hide(); 
         } catch (IOException ex) {
-            System.err.println(ex);
+        	LogTest.LOGGER.log(Level.SEVERE, "Failed to open reservation window", e);
         }
 		});
     	
@@ -245,7 +248,7 @@ public class reservSearchController {
                 stage.show();
                 ((Node)(e.getSource())).getScene().getWindow().hide(); 
             } catch (IOException ex) {
-                System.err.println(ex);
+            	LogTest.LOGGER.log(Level.SEVERE, "Failed to open statistics", e);
             }
     	});
     	
@@ -346,11 +349,9 @@ public class reservSearchController {
 	            Integer k = enam.nextElement();
 	            data.add(result.get(k));
     		}
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        } catch (MyExeception ex) {
-           System.out.print(ex.getMessage());
-        }
+        } catch (NamingException | MyExeception ex) {
+        	LogTest.LOGGER.log(Level.SEVERE, "Failed to get reservations", ex);
+        } 
     	table.setItems(data);
 		
     }
@@ -372,13 +373,11 @@ public class reservSearchController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window , ex);
     	}
     }
     
-public void TablePrincipale(String dest) {
-  
-    	
+    public void TablePrincipale(String dest) { 	
         try {
         	Document document = new Document();
 			PdfWriter.getInstance(document, new FileOutputStream(dest));
@@ -410,7 +409,7 @@ public void TablePrincipale(String dest) {
 		        
 		        //first check if Desktop is supported by Platform or not
 		        if(!Desktop.isDesktopSupported()){
-		            System.out.println("Desktop is not supported");
+		        	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
 		            return;
 		        }
 		        
@@ -420,8 +419,7 @@ public void TablePrincipale(String dest) {
 		       
 		     
 		} catch (DocumentException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to create document", e);
 		}
        
 	}

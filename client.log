@@ -1,5 +1,5 @@
 
-трав. 12, 2020 10:02:35 AM application.LogTest howToLogException
+трав. 13, 2020 5:11:22 PM application.LogTest howToLogException
 SEVERE: Vypocet nedopadol dobre
 java.lang.ArithmeticException: / by zero
 	at application.LogTest.howToLogException(LogTest.java:30)

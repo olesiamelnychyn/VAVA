@@ -1,5 +1,8 @@
 package application;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -7,10 +10,21 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import ejb.LogTest;
 import ejb.MyExeception;
 import ejb.ProductRemote;
 import ejb.SupplierRemote;
@@ -131,7 +145,7 @@ public class prodSearchController {
 	        System.out.println(supps);
 	        cmbox_supp.setItems(supps);
 		} catch (NamingException e) {
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get suppliers", e);
 		}
 		cmbox_supp.setItems(supps);
 		cmbox_supp.getSelectionModel().select(0);
@@ -140,10 +154,8 @@ public class prodSearchController {
 		try {
 			price = this.getMaxPrice();
 			txt_to.setText(String.valueOf(price));
-		} catch (MyExeception e) {
-			e.printStackTrace();
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (MyExeception | NamingException e) {
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get max price", e);
 		}
     	
     	search();
@@ -153,7 +165,47 @@ public class prodSearchController {
     	btn_new.setOnMouseClicked(e -> {openWindow("prodWindow.fxml", e);});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		//TODO
+    		try {
+            	Document document = new Document();
+    			PdfWriter.getInstance(document, new FileOutputStream("products.pdf"));
+    			 document.open();
+    		        PdfPTable table1 = new PdfPTable(4);
+    		        Font f = new Font();
+    		        f.setColor(BaseColor.RED);
+    		        f.setStyle(java.awt.Font.BOLD);
+    		        
+    		        table1.addCell(new Phrase("id", f));
+    		        table1.addCell(new Phrase("Title", f));
+    		        table1.addCell(new Phrase("Price", f));
+    		        table1.addCell(new Phrase("Supplier",f));
+    		        
+    		        Enumeration<Integer> enam = result.keys();
+    		      
+    		        while(enam.hasMoreElements()) {
+    		            Integer k = enam.nextElement();
+    		            table1.addCell(k.toString());
+    			        table1.addCell(result.get(k).getTitle());
+    			        table1.addCell(result.get(k).getPrice().toString());
+    			        table1.addCell(result.get(k).getSupp_id().toString());
+    	    		}
+    		    
+    		        document.add(table1);
+    		        document.close();
+    		        
+    		        File file = new File("products.pdf");
+    		        
+    		        if(!Desktop.isDesktopSupported()){
+    		        	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
+    		            return;
+    		        }
+    		        
+    		        Desktop desktop = Desktop.getDesktop();
+    		        if(file.exists()) desktop.open(file);
+    		        
+    		     
+    		} catch (DocumentException | IOException ex) {
+    			LogTest.LOGGER.log(Level.SEVERE, "Failed to create document", ex);
+    		}
     	});
     	
     	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
@@ -224,7 +276,7 @@ public class prodSearchController {
                 stage.show();
                 ((Node)(e.getSource())).getScene().getWindow().hide(); 
               } catch (IOException ex) {
-                  System.err.println(ex);
+            	  LogTest.LOGGER.log(Level.SEVERE, "Failed to open product", ex);
               }
     	  }
     	 }
@@ -276,10 +328,8 @@ public class prodSearchController {
 	            Integer k = enam.nextElement();
 	            data.add(result.get(k));
     		}
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        } catch (MyExeception ex) {
-           System.out.print(ex.getMessage());
+        } catch (NamingException | MyExeception ex) {
+        	LogTest.LOGGER.log(Level.SEVERE, "Failed to get products", ex);
         }
     	System.out.println(data);
     	table.setItems(data);
@@ -320,7 +370,7 @@ public class prodSearchController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window , ex);
     	}
     }
 }

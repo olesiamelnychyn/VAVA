@@ -6,10 +6,13 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import ejb.LogTest;
 import ejb.ProductRemote;
 import ejb.SupplierRemote;
 import javafx.collections.FXCollections;
@@ -101,7 +104,7 @@ public class prodController {
 			ProductRemote =  (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote"); 
 			
 		} catch (NamingException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to EmployeeRemote", e2);
 		}
         
         btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
@@ -167,8 +170,7 @@ public class prodController {
             	cmbox_supp.getSelectionModel().select(0);
             }
 		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get suppliers", e);
 		}
     	if(prod!=null) {
     		txt_title.setText(prod.getTitle());
@@ -221,7 +223,7 @@ public class prodController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window, ex);
     	}
     }
 }

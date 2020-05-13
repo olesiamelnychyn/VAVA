@@ -16,6 +16,7 @@ import java.util.Iterator;
 //import java.time.LocalTime;
 //import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -25,6 +26,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import ejb.LogTest;
 import ejb.MealRemote;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -76,9 +78,6 @@ public class mealController {
     private Button btn_undo;
 
     @FXML
-    private Button btn_export;
-
-    @FXML
     private Button btn_help;
 
     @FXML
@@ -123,7 +122,6 @@ public class mealController {
         assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_undo != null : "fx:id=\"btn_undo\" was not injected: check your FXML file 'mealWindow.fxml'.";
-        assert btn_export != null : "fx:id=\"btn_export\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert spin_price != null : "fx:id=\"spin_price\" was not injected: check your FXML file 'mealWindow.fxml'.";
@@ -141,7 +139,7 @@ public class mealController {
 			 MealRemote=  (MealRemote) ctx.lookup("ejb:/SimpleEJB2//MealSessionEJB!ejb.MealRemote"); 
 			
 		} catch (NamingException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to MealRemote", e2);
 		}
        
         img_view.setOnMouseClicked(e ->{
@@ -175,12 +173,11 @@ public class mealController {
 	    			
 	            	MealRemote.setImage(id, b);
 				} catch ( IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					LogTest.LOGGER.log(Level.SEVERE, "Failed to get image", e1);
 				}
             	
             	
-            	}
+            }
         });
         
         btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
@@ -292,7 +289,7 @@ public class mealController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window, e);
     	}
     }
     
@@ -376,7 +373,7 @@ public class mealController {
         		}
     	        list_rest.getItems().addAll(rests);
 			} catch ( SQLException | IOException e) {
-				e.printStackTrace();
+				LogTest.LOGGER.log(Level.SEVERE, "Failed to get image from database", e);
 			}
             
     		ObservableList<String> reserv = FXCollections.observableArrayList();

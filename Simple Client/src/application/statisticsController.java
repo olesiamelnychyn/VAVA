@@ -4,10 +4,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import ejb.LogTest;
 import ejb.MealRemote;
 import ejb.ReservationRemote;
 import javafx.collections.FXCollections;
@@ -79,7 +82,7 @@ public class statisticsController {
 	        (((Node) e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException | java.lang.ClassCastException ex) {
-//    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open the window "+window, ex);
     	}
     }
     

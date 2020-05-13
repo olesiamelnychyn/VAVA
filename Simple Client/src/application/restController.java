@@ -7,9 +7,11 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import ejb.LogTest;
 import ejb.MyExeception;
 import ejb.RestaurantRemote;
 import javafx.collections.FXCollections;
@@ -23,7 +25,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -51,9 +52,6 @@ public class restController {
 
     @FXML
     private Button btn_undo;
-
-    @FXML
-    private SplitMenuButton btn_export;
 
     @FXML
     private Button btn_help1;
@@ -117,7 +115,6 @@ public class restController {
         assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert btn_undo != null : "fx:id=\"btn_undo\" was not injected: check your FXML file 'restWindow.fxml'.";
-        assert btn_export != null : "fx:id=\"btn_export\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert btn_help1 != null : "fx:id=\"btn_help1\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert tool_tip1 != null : "fx:id=\"tool_tip1\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert spin_cap != null : "fx:id=\"spin_cap\" was not injected: check your FXML file 'restWindow.fxml'.";
@@ -142,7 +139,7 @@ public class restController {
 			RestaurantRemote=(RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote"); 
 			
 		} catch (NamingException e2) {
-			e2.printStackTrace();
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to RestaurantRemote", e2);
 		}
         
         btn_help1.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
@@ -283,11 +280,9 @@ public class restController {
 			for (Zip p : this.getZIP()) { 		      
 				zip.add(p.toString());		
 			}
-		} catch (MyExeception e2) {
-			e2.printStackTrace();
-		} catch (NamingException e2) {
-			e2.printStackTrace();
-		}
+		} catch (MyExeception | NamingException e2) {
+			LogTest.LOGGER.log(Level.SEVERE, "Failed to get zip", e2);
+		} 
         cmbox_zip.setItems(zip);
         cmbox_zip.getSelectionModel().select(0);
         
@@ -340,7 +335,7 @@ public class restController {
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
 	        
     	} catch (IOException ex) {
-    		ex.printStackTrace();
+    		LogTest.LOGGER.log(Level.SEVERE, "Failed to open window "+window, ex);
     	}
     }
 	
