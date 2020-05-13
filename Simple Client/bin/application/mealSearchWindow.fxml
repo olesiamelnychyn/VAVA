@@ -17,17 +17,17 @@
             <TextField fx:id="txt_search" layoutX="14.0" layoutY="43.0" prefHeight="25.0" prefWidth="468.0" promptText="Enter title.." />
             <TableView fx:id="table" layoutX="14.0" layoutY="83.0" prefHeight="352.0" prefWidth="468.0" />
             <Button fx:id="btn_search" layoutX="504.0" layoutY="410.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="139.0" text="Search" />
-            <Label layoutX="504.0" layoutY="45.0" text="Price" />
-            <Label layoutX="506.0" layoutY="74.0" text="from" />
-            <Label layoutX="506.0" layoutY="108.0" text="to" />
+            <Label fx:id="price" layoutX="504.0" layoutY="45.0" text="Price" />
+            <Label fx:id="from" layoutX="506.0" layoutY="74.0" text="from" />
+            <Label fx:id="to" layoutX="506.0" layoutY="108.0" text="to" />
             <TextField fx:id="txt_from" layoutX="547.0" layoutY="71.0" prefHeight="25.0" prefWidth="96.0" />
             <TextField fx:id="txt_to" layoutX="547.0" layoutY="106.0" prefHeight="25.0" prefWidth="96.0" />
             <ComboBox fx:id="cmbox_rest" layoutX="500.0" layoutY="175.0" prefHeight="25.0" prefWidth="147.0" />
-            <Label layoutX="503.0" layoutY="146.0" text="Restaurant" />
+            <Label fx:id="rest" layoutX="503.0" layoutY="146.0" text="Restaurant" />
             <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
               <items>
                   <Button fx:id="btn_home" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Home" />
-                <Button fx:id="btn_new" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="New" />
+                  <Button fx:id="btn_new" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="New" />
                   <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
                   <Button fx:id="btn_export" mnemonicParsing="false" text="Export" />
                   <Button fx:id="btn_stat" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Statistic">
@@ -40,6 +40,7 @@
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
               </items>
             </ToolBar>
          </children>

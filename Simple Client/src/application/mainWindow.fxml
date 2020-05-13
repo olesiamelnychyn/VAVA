@@ -16,7 +16,7 @@
             <Button fx:id="btn_prod" layoutX="255.0" layoutY="268.0" mnemonicParsing="false" prefHeight="130.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-image: url(./img/btn.png);" text="Products" />
             <Button fx:id="btn_supp" layoutX="459.0" layoutY="268.0" mnemonicParsing="false" prefHeight="130.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-image: url(./img/btn.png);" text="Suppliers" />
             <Button fx:id="btn_reserv" layoutX="459.0" layoutY="87.0" mnemonicParsing="false" prefHeight="130.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-image: url(./img/btn.png);" text="Reservations" />
-            <Label layoutX="224.0" layoutY="28.0" text="Restaurant Chain" textFill="WHITE">
+            <Label  fx:id="chain" layoutX="224.0" layoutY="28.0" text="Restaurant Chain" textFill="WHITE">
                <font>
                   <Font size="24.0" />
                </font>

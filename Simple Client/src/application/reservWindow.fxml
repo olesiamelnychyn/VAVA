@@ -16,16 +16,16 @@
   <children>
     <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" style="-fx-background-color: #afb5e8;" VBox.vgrow="ALWAYS">
          <children>
-            <Label layoutX="25.0" layoutY="52.0" text="Start" />
-            <Label layoutX="25.0" layoutY="91.0" text="End" />
-            <Label layoutX="341.0" layoutY="149.0" text="Employees" />
-            <Label layoutX="348.0" layoutY="52.0" text="Restaurant" />
+            <Label fx:id="lb_start" layoutX="20.0" layoutY="52.0" text="Start" />
+            <Label fx:id="lb_end" layoutX="20.0" layoutY="91.0" text="End" />
+            <Label fx:id="lb_emps" layoutX="341.0" layoutY="149.0" text="Employees" />
+            <Label fx:id="lb_rest" layoutX="348.0" layoutY="52.0" text="Restaurant" />
             <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
               <items>
                   <Button fx:id="btn_back" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Back" />
-                <Button fx:id="btn_save" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Save" />
+                  <Button fx:id="btn_save" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Save" />
                   <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
-                  <Button fx:id="btn_undo" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Undo all" />
+                  <Button fx:id="btn_undo" mnemonicParsing="false" prefHeight="12.0" prefWidth="100.0" text="Undo all" />
                   <Button fx:id="btn_help" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Help">
                      <tooltip>
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
@@ -39,8 +39,8 @@
                 <SpinnerValueFactory.IntegerSpinnerValueFactory amountToStepBy="1" initialValue="0" max="100" min="0" />
               </valueFactory>
             </Spinner>
-            <Label layoutX="348.0" layoutY="91.0" text="Visitors" />
-            <Label layoutX="25.0" layoutY="149.0" text="Meals" />
+            <Label fx:id="lb_vis" layoutX="348.0" layoutY="91.0" text="Visitors" />
+            <Label fx:id="lb_meals" layoutX="20.0" layoutY="149.0" text="Meals" />
             <ComboBox fx:id="cmbox_rest" layoutX="425.0" layoutY="48.0" prefWidth="150.0" />
             <Button fx:id="btn_add_meal" layoutX="64.0" layoutY="388.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Add" />
             <Button fx:id="btn_del_meal" layoutX="151.0" layoutY="388.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Delete" />

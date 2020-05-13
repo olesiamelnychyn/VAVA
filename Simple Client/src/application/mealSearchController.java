@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -33,6 +34,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -52,7 +54,7 @@ public class mealSearchController {
     private Button btn_lang;
 	
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle  rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -95,6 +97,16 @@ public class mealSearchController {
 
     @FXML
     private Button btn_help;
+    
+    @FXML
+    private Label price;
+    
+    @FXML
+    private Label rest;
+    @FXML
+    private Label from;
+    @FXML
+    private Label to;
 
     @FXML
     private Tooltip tool_tip;
@@ -104,6 +116,10 @@ public class mealSearchController {
     
     @FXML
     void initialize() {
+    	assert to != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert price != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert from != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert rest != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
     	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
         assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
@@ -274,8 +290,40 @@ public class mealSearchController {
     	
         btn_search.setOnMouseClicked(e ->{search();});
         
-    }
-    
+        btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang();
+        
+        }
+        
+        
+       private void lang() {
+        	
+        	if(btn_lang.getText().equals("en")) {
+        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+        		btn_lang.setText("sk");
+        	} else {
+        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+        		btn_lang.setText("en");
+        	}
+        	
+        	btn_home.setText(rb.getString("btn.home"));
+        	btn_new.setText(rb.getString("btn.new"));
+        	btn_delete.setText(rb.getString("btn.del"));
+        	btn_stat.setText(rb.getString("btn.stat"));
+        	btn_help.setText(rb.getString("btn.help"));
+        	btn_search.setText(rb.getString("btn.search"));
+        	table.getColumns().get(0).setText(rb.getString("meal.title"));
+        	table.getColumns().get(1).setText(rb.getString("meal.price"));
+        	table.getColumns().get(2).setText(rb.getString("meal.prep_time"));
+        	txt_search.setPromptText(rb.getString("prompt"));
+        	price.setText(rb.getString("meal.price"));
+        	from.setText(rb.getString("filt.from"));
+        	to.setText(rb.getString("filt.to"));
+        	rest.setText(rb.getString("rest"));
+        	cmbox_rest.getItems().set(0, rb.getString("reserv.choose_rest"));	
+        }
+     
 	private Dictionary<Integer, Meal> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
     
         Context ctx = new InitialContext();

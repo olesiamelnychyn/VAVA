@@ -13,6 +13,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 //import java.time.LocalTime;
 //import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -38,6 +39,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -60,7 +62,7 @@ public class mealController {
     private Button btn_lang;
 	
 	@FXML
-    private ResourceBundle resources;
+    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -113,6 +115,25 @@ public class mealController {
     @FXML
     private ListView<String> list_reserv;
     
+    @FXML
+    private Label lb_price;
+    
+    @FXML
+    private Label lb_title;
+    
+    @FXML
+    private Label lb_rests;
+    
+    @FXML
+    private Label lb_prods;
+    
+    @FXML
+    private Label lb_reservs;
+    
+    @FXML
+    private Label lb_prep_time;
+    
+    
     Meal meal=null;
     Integer id=0;
     Context ctx;
@@ -120,6 +141,12 @@ public class mealController {
     
     @FXML
     void initialize() {    
+    	assert lb_price != null : "fx:id=\"lb_price\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_title != null : "fx:id=\"lb_title\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_rests != null : "fx:id=\"lb_rests\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_prods != null : "fx:id=\"lb_prods\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_reservs != null : "fx:id=\"lb_reservs\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_prep_time != null : "fx:id=\"lb_prep_time\" was not injected: check your FXML file 'mealWindow.fxml'.";
     	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert txt_title != null : "fx:id=\"txt_title\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'mealWindow.fxml'.";
@@ -269,7 +296,38 @@ public class mealController {
         		list_prod.setItems(prods);
         	}
         });
-        
+        btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang();
+            
+    }
+    
+private void lang() {
+    	
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+    	} else {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		btn_lang.setText("en");
+    	}
+    	
+    	btn_back.setText(rb.getString("btn.back"));
+    	btn_save.setText(rb.getString("btn.save"));
+    	btn_delete.setText(rb.getString("btn.del"));
+    	btn_undo.setText(rb.getString("btn.undo"));
+    	btn_help.setText(rb.getString("btn.help"));
+    	btn_add_prod.setText(rb.getString("btn.add"));
+    	btn_del_prod.setText(rb.getString("btn.del"));
+    	
+    	lb_title.setText(rb.getString("meal.title"));
+    	lb_price.setText(rb.getString("meal.price"));
+    	lb_prep_time.setText(rb.getString("meal.prep_time"));
+    	lb_reservs.setText(rb.getString("reservs"));
+    	lb_rests.setText(rb.getString("rests"));
+    	lb_prods.setText(rb.getString("prods"));
+    	
+	
     }
     
     public void setMeal(Dictionary <Integer, Meal> dict) {

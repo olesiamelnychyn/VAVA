@@ -16,8 +16,6 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         
-   
-//        LogTest.main();
 	}
 	
 	public static void main(String[] args) {

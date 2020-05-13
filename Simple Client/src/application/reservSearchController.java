@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -41,6 +42,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -57,7 +59,7 @@ public class reservSearchController {
     private Button btn_lang;
 	
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle  rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -107,6 +109,22 @@ public class reservSearchController {
     @FXML
     private DatePicker date_to;
     
+    @FXML
+    private Label date_range;
+    
+    @FXML
+    private Label amount_vis;
+    
+    @FXML
+    private Label from;
+    
+    @FXML
+    private Label to;
+    
+    @FXML
+    private Label rest;
+    
+    
     Dictionary<Integer, Reservation> result;
     ObservableList<Reservation> data ;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -115,6 +133,12 @@ public class reservSearchController {
     
     @FXML
     void initialize() {
+    	
+    	assert date_range != null : "fx:id=\"date_range\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
+    	assert amount_vis != null : "fx:id=\"amount_vis\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
+    	assert from != null : "fx:id=\"from\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
+    	assert to != null : "fx:id=\"to\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
+    	assert rest != null : "fx:id=\"res\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
     	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert btn_search != null : "fx:id=\"btn_search\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
@@ -131,7 +155,8 @@ public class reservSearchController {
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert date_from != null : "fx:id=\"date_from\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert date_to != null : "fx:id=\"date_to\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
-       
+     
+        
         try {
 			ctx = new InitialContext();
 			ReservationRemote = (ReservationRemote) ctx.lookup("ejb:/SimpleEJB2//ReservSessionEJB!ejb.ReservationRemote");
@@ -154,6 +179,7 @@ public class reservSearchController {
         table.getColumns().add(visCol);
         table.setEditable(true);
         
+        
         table.setOnMouseClicked(new EventHandler<MouseEvent>() {
        	 @Override
        	 public void handle(MouseEvent e) {
@@ -171,7 +197,7 @@ public class reservSearchController {
          					while(enam.hasMoreElements()) {
          						Integer k = enam.nextElement();
          						if(result.get(k).equals(res)) {
-         							//System.out.println("Gonna open this one"+k);
+         							System.out.println("Gonna open this one"+k);
          							transferedData.put(k, res);
          							break;
          						}
@@ -189,6 +215,7 @@ public class reservSearchController {
                    ((Node)(e.getSource())).getScene().getWindow().hide(); 
                  } catch (IOException ex) {
                 	 LogTest.LOGGER.log(Level.SEVERE, "Failed to open reservation", e);
+                	 ex.printStackTrace();;
                  }
        	  }
        	 }
@@ -196,7 +223,7 @@ public class reservSearchController {
 
 		try {
 			ObservableList<String> rests = FXCollections.observableArrayList();
-			rests.add("Choose restaurant");
+			rests.add(rb.getString("reserv.choose_rest"));
 			Dictionary<Integer, Restaurant> la = ReservationRemote.getRestReserv(0);
 			Enumeration<Integer> enam1 = la.keys();
 	        while(enam1.hasMoreElements()) {
@@ -290,9 +317,43 @@ public class reservSearchController {
     	});
     	
 	btn_search.setOnMouseClicked(e ->{search();});
+	
+	btn_lang.setText("en");
+    btn_lang.setOnMouseClicked(e ->{ lang();});
+    lang();
+    
     }
     
     
+   private void lang() {
+    	
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+    	} else {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		btn_lang.setText("en");
+    	}
+    	
+    	btn_home.setText(rb.getString("btn.home"));
+    	btn_new.setText(rb.getString("btn.new"));
+    	btn_delete.setText(rb.getString("btn.del"));
+    	btn_stat.setText(rb.getString("btn.stat"));
+    	btn_help.setText(rb.getString("btn.help"));
+    	btn_search.setText(rb.getString("btn.search"));
+    	table.getColumns().get(0).setText(rb.getString("rest"));
+    	table.getColumns().get(1).setText(rb.getString("reserv.date_start"));
+    	table.getColumns().get(2).setText(rb.getString("reserv.date_end"));
+    	table.getColumns().get(3).setText(rb.getString("reserv.visit"));
+    	date_range.setText(rb.getString("reserv.date_range"));
+    	
+    	from.setText(rb.getString("filt.from"));
+    	to.setText(rb.getString("filt.to"));
+    	amount_vis.setText(rb.getString("reserv.amount_vis"));
+    	rest.setText(rb.getString("rest"));
+    	cmbox_rest.getItems().set(0, rb.getString("reserv.choose_rest"));	
+    }
+ 
     private Dictionary<Integer, Reservation> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
        
     	Dictionary<Integer, Reservation> la = ReservationRemote.searchReserv(args);

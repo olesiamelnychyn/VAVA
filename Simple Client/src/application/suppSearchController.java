@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -34,6 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import  javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -49,7 +51,7 @@ public class suppSearchController {
     private Button btn_lang;
 	
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle  rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -90,11 +92,27 @@ public class suppSearchController {
     @FXML
     private Button btn_new;
     
+    @FXML
+    private Label lb_price;
+    
+    @FXML
+    private Label lb_title;
+    
+    @FXML
+    private Label lb_phone;
+    
+    @FXML
+    private Label lb_email;
+    
     Dictionary<Integer, Supplier> result;
     ObservableList<Supplier> data ;
 
     @FXML
     void initialize() {
+    	assert lb_price != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
+    	assert lb_title != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
+    	assert lb_phone != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
+    	assert lb_email != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
     	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
         assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
@@ -227,7 +245,38 @@ public class suppSearchController {
     	
         btn_search.setOnMouseClicked(e ->{search();});
         
-    }
+        btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang();
+        
+        }
+        
+        
+       private void lang() {
+        	
+        	if(btn_lang.getText().equals("en")) {
+        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+        		btn_lang.setText("sk");
+        	} else {
+        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+        		btn_lang.setText("en");
+        	}
+        	
+        	btn_home.setText(rb.getString("btn.home"));
+        	btn_new.setText(rb.getString("supp.add_new"));
+        	btn_delete.setText(rb.getString("btn.del"));
+        	btn_help.setText(rb.getString("btn.help"));
+        	btn_search.setText(rb.getString("btn.search"));
+        	table.getColumns().get(0).setText(rb.getString("supp.title"));
+        	table.getColumns().get(1).setText(rb.getString("supp.e_mail"));
+        	table.getColumns().get(2).setText(rb.getString("supp.phone"));
+        	txt_search.setPromptText(rb.getString("prompt"));
+        	lb_title.setText(rb.getString("supp.title"));
+        	lb_email.setText(rb.getString("supp.e_mail"));
+        	lb_phone.setText(rb.getString("supp.phone"));
+        	
+        }
+     
     private void openWindow(String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));

@@ -13,6 +13,7 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
           <Button fx:id="btnBack" mnemonicParsing="false" text="Back" />
+            <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
         </items>
       </ToolBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">

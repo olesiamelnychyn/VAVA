@@ -13,12 +13,13 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
 public class mainController {
 	
     @FXML
-    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));;
+    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -43,6 +44,9 @@ public class mainController {
 
     @FXML
     private Button btn_reserv;
+    
+    @FXML
+    private Label chain;
 	
     @FXML
     void initialize() {
@@ -54,6 +58,7 @@ public class mainController {
         assert btn_supp != null : "fx:id=\"btn_supp\" was not injected: check your FXML file 'mainWindow.fxml'.";
         assert btn_reserv != null : "fx:id=\"btn_reserv\" was not injected: check your FXML file 'mainWindow.fxml'.";
         assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mainWindow.fxml'.";
+        assert btn_lang != null : "fx:id=\"chain\" was not injected: check your FXML file 'mainWindow.fxml'.";
         btn_lang.setText("en");
         btn_lang.setOnMouseClicked(e ->{ lang();});
         lang();
@@ -78,6 +83,12 @@ public class mainController {
     	}
     	
     	btn_emp.setText(rb.getString("emps"));
+    	btn_rest.setText(rb.getString("rests"));
+    	btn_meal.setText(rb.getString("meals"));
+    	btn_prod.setText(rb.getString("prods"));
+    	btn_supp.setText(rb.getString("supps"));
+    	btn_reserv.setText(rb.getString("reservs"));
+    	chain.setText(rb.getString("main"));
     	
     }
     
@@ -87,7 +98,7 @@ public class mainController {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(rb.getString(window.split("S")[0]+"s"));
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(event.getSource())).getScene().getWindow().hide(); 

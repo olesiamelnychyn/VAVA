@@ -18,16 +18,16 @@
     <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" style="-fx-background-color: #afb5e8;" VBox.vgrow="ALWAYS">
          <children>
             <TextField fx:id="txt_title" layoutX="115.0" layoutY="204.0" prefHeight="25.0" prefWidth="139.0" promptText="Enter title.." />
-            <Label layoutX="21.0" layoutY="208.0" text="Title" />
-            <Label layoutX="23.0" layoutY="240.0" text="Price" />
-            <Label layoutX="297.0" layoutY="309.0" text="Restaurant" />
-            <Label layoutX="297.0" layoutY="52.0" text="Products" />
+            <Label fx:id="lb_title" layoutX="21.0" layoutY="208.0" text="Title" />
+            <Label fx:id="lb_price" layoutX="23.0" layoutY="240.0" text="Price" />
+            <Label fx:id="lb_rests" layoutX="297.0" layoutY="309.0" text="Restaurants" />
+            <Label fx:id="lb_prods" layoutX="297.0" layoutY="52.0" text="Products" />
             <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
               <items>
                   <Button fx:id="btn_back" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Back" />
-                <Button fx:id="btn_save" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Save" />
+                  <Button fx:id="btn_save" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Save" />
                   <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
-                  <Button fx:id="btn_undo" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Undo all" />
+                  <Button fx:id="btn_undo" mnemonicParsing="false" prefHeight="12.0" prefWidth="100.0" text="Undo all" />
                   <Button fx:id="btn_help" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Help">
                      <tooltip>
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
@@ -41,9 +41,9 @@
                 <SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.05" initialValue="5.00" max="140.00" min="0.00" />
               </valueFactory>
             </Spinner>
-            <Label layoutX="23.0" layoutY="272.0" text="Preperation time" />
+            <Label fx:id="lb_prep_time" layoutX="23.0" layoutY="272.0" text="Preperation time" />
             <ListView fx:id="list_prod" layoutX="297.0" layoutY="87.0" prefHeight="206.0" prefWidth="250.0" />
-            <Label layoutX="23.0" layoutY="309.0" text="Reservations" />
+            <Label fx:id="lb_reservs" layoutX="23.0" layoutY="309.0" text="Reservations" />
             <ImageView fx:id="img_view" fitHeight="150.0" fitWidth="200.0" layoutX="34.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" />
             <Spinner fx:id="spint_time" layoutX="115.0" layoutY="268.0" prefHeight="25.0" prefWidth="139.0">
              
