@@ -37,6 +37,9 @@ import objects.Supplier;
 
 public class prodController {
 
+	@FXML
+    private Button btn_lang;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -86,6 +89,7 @@ public class prodController {
 
     @FXML
     void initialize() {
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert txt_title != null : "fx:id=\"txt_title\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'prodWindow.fxml'.";

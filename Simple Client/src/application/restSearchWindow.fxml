@@ -39,6 +39,7 @@
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
               </items>
             </ToolBar>
             <Label layoutX="498.0" layoutY="211.0" text="Amount of employees:" />

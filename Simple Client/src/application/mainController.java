@@ -16,9 +16,9 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
 public class mainController {
-
+	
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));;
 
     @FXML
     private URL location;
@@ -43,11 +43,10 @@ public class mainController {
 
     @FXML
     private Button btn_reserv;
-
-    ResourceBundle rbSk =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+	
     @FXML
     void initialize() {
-    	
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mainWindow.fxml'.";
         assert btn_emp != null : "fx:id=\"btn_emp\" was not injected: check your FXML file 'mainWindow.fxml'.";
         assert btn_rest != null : "fx:id=\"btn_rest\" was not injected: check your FXML file 'mainWindow.fxml'.";
         assert btn_meal != null : "fx:id=\"btn_meal\" was not injected: check your FXML file 'mainWindow.fxml'.";
@@ -71,14 +70,14 @@ public class mainController {
     private void lang() {
     	
     	if(btn_lang.getText().equals("en")) {
-    		rbSk =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
     		btn_lang.setText("sk");
     	} else {
-    		rbSk =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
     		btn_lang.setText("en");
     	}
     	
-    	btn_emp.setText(rbSk.getString("emps"));
+    	btn_emp.setText(rb.getString("emps"));
     	
     }
     

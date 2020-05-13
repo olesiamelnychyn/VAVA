@@ -53,6 +53,9 @@ import objects.Restaurant;
 
 public class reservSearchController {
 
+	@FXML
+    private Button btn_lang;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -112,6 +115,7 @@ public class reservSearchController {
     
     @FXML
     void initialize() {
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert btn_search != null : "fx:id=\"btn_search\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
         assert txt_from != null : "fx:id=\"txt_from\" was not injected: check your FXML file 'reservSearchWindow.fxml'.";
@@ -232,7 +236,7 @@ public class reservSearchController {
 		});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		TablePrincipale("sample.pdf");
+    		TablePrincipale("reservations.pdf");
     	});
     	
     	btn_stat.setOnMouseClicked(e -> {

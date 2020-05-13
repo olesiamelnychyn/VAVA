@@ -47,6 +47,9 @@ import javafx.stage.Stage;
 import objects.Employee;
 
 public class empSearchController {
+	
+	@FXML
+    private Button btn_lang;
 
     @FXML
     private ResourceBundle resources;
@@ -95,6 +98,7 @@ public class empSearchController {
     
     @FXML
     void initialize() {
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
         assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
         assert btn_search != null : "fx:id=\"btn_search\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
@@ -161,7 +165,7 @@ public class empSearchController {
             	Document document = new Document();
     			PdfWriter.getInstance(document, new FileOutputStream("employees.pdf"));
     			 document.open();
-    		        PdfPTable table1 = new PdfPTable(4);
+    		        PdfPTable table1 = new PdfPTable(6);
     		        Font f = new Font();
     		        f.setColor(BaseColor.RED);
     		        f.setStyle(java.awt.Font.BOLD);

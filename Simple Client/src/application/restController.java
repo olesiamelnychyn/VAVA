@@ -35,6 +35,9 @@ import objects.Zip;
 
 public class restController {
 
+	@FXML
+    private Button btn_lang;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -111,6 +114,7 @@ public class restController {
 
     @FXML
     void initialize() {
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'restWindow.fxml'.";
         assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'restWindow.fxml'.";

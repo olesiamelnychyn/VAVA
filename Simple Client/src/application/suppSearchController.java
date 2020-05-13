@@ -45,6 +45,9 @@ import objects.Supplier;
 
 public class suppSearchController {
 
+	@FXML
+    private Button btn_lang;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -92,6 +95,7 @@ public class suppSearchController {
 
     @FXML
     void initialize() {
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
         assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";
         assert btn_search != null : "fx:id=\"btn_search\" was not injected: check your FXML file 'suppSearchWindow.fxml'.";

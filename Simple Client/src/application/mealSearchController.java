@@ -48,6 +48,9 @@ import ejb.MyExeception;
 
 public class mealSearchController {
 
+	@FXML
+    private Button btn_lang;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -101,6 +104,7 @@ public class mealSearchController {
     
     @FXML
     void initialize() {
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
         assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
         assert btn_search != null : "fx:id=\"btn_search\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
@@ -215,7 +219,7 @@ public class mealSearchController {
     	});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		TablePrincipale("sample.pdf");
+    		TablePrincipale("meals.pdf");
     	});
     	
     	btn_stat.setOnMouseClicked(e -> {

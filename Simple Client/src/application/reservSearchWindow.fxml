@@ -40,6 +40,7 @@
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
               </items>
             </ToolBar>
             <DatePicker fx:id="date_from" layoutX="500.0" layoutY="240.0" prefHeight="25.0" prefWidth="147.0" />

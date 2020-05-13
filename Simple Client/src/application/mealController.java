@@ -56,7 +56,10 @@ import objects.Restaurant;
 
 public class mealController {
 
-    @FXML
+	@FXML
+    private Button btn_lang;
+	
+	@FXML
     private ResourceBundle resources;
 
     @FXML
@@ -117,6 +120,7 @@ public class mealController {
     
     @FXML
     void initialize() {    
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert txt_title != null : "fx:id=\"txt_title\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'mealWindow.fxml'.";
         assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'mealWindow.fxml'.";

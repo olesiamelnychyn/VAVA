@@ -4,7 +4,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
 <?import javafx.scene.control.TextField?>
@@ -34,6 +33,7 @@
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
               </items>
             </ToolBar>
             <Spinner fx:id="spin_price" layoutX="114.0" layoutY="236.0" prefHeight="25.0" prefWidth="139.0">

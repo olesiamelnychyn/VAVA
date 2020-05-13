@@ -7,9 +7,9 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -36,6 +36,7 @@
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
               </items>
             </ToolBar>
             <TextField fx:id="txt_lname" layoutX="115.0" layoutY="256.0" prefHeight="25.0" prefWidth="139.0" promptText="Enter surname.." />

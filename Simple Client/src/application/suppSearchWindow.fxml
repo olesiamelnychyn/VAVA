@@ -31,6 +31,7 @@
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
               </items>
             </ToolBar>
             <TextField fx:id="txt_phone" layoutX="547.0" layoutY="79.0" prefHeight="25.0" prefWidth="96.0" />

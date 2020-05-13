@@ -49,6 +49,9 @@ import objects.Zip;
 
 public class restSearchController {
 
+	@FXML
+    private Button btn_lang;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -99,6 +102,7 @@ public class restSearchController {
 
     @FXML
     void initialize() {
+    	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
         assert btn_search != null : "fx:id=\"btn_search\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
         assert txt_from != null : "fx:id=\"txt_from\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
@@ -159,7 +163,7 @@ public class restSearchController {
             	Document document = new Document();
     			PdfWriter.getInstance(document, new FileOutputStream("restaurants.pdf"));
     			 document.open();
-    		        PdfPTable table1 = new PdfPTable(4);
+    		        PdfPTable table1 = new PdfPTable(3);
     		        Font f = new Font();
     		        f.setColor(BaseColor.RED);
     		        f.setStyle(java.awt.Font.BOLD);

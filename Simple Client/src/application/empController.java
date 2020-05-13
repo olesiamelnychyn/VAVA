@@ -44,6 +44,9 @@ import objects.Restaurant;
 
 
 public class empController {
+	
+	@FXML
+    private Button btn_lang;
 
 	@FXML
 	private ResourceBundle resources;
@@ -112,6 +115,7 @@ public class empController {
 	
 	@FXML
 	void initialize() {
+		assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'empWindow.fxml'.";
 		assert txt_fname != null : "fx:id=\"txt_fname\" was not injected: check your FXML file 'empWindow.fxml'.";
 		assert cmbox_pos != null : "fx:id=\"cmbox_pos\" was not injected: check your FXML file 'empWindow.fxml'.";
 		assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'empWindow.fxml'.";
