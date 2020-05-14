@@ -7,7 +7,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -19,22 +18,16 @@
     <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="451.0" prefWidth="664.0" style="-fx-background-color: #afb5e8;" VBox.vgrow="ALWAYS">
          <children>
             <TextField fx:id="txt_title" layoutX="115.0" layoutY="48.0" prefHeight="25.0" prefWidth="139.0" promptText="Enter title.." />
-            <Label layoutX="25.0" layoutY="52.0" text="Title" />
-            <Label layoutX="23.0" layoutY="91.0" text="Price" />
-            <Label layoutX="21.0" layoutY="149.0" text="Meals" />
-            <Label layoutX="355.0" layoutY="52.0" text="Supplier" />
+            <Label fx:id="lb_title" layoutX="25.0" layoutY="52.0" text="Title" />
+            <Label fx:id="lb_price" layoutX="23.0" layoutY="91.0" text="Price" />
+            <Label fx:id="lb_meals" layoutX="21.0" layoutY="149.0" text="Meals" />
+            <Label fx:id="lb_supp" layoutX="355.0" layoutY="52.0" text="Supplier" />
             <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
               <items>
                   <Button fx:id="btn_back" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Back" />
                 <Button fx:id="btn_save" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Save" />
                   <Button fx:id="btn_delete" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Delete" />
                   <Button fx:id="btn_undo" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Undo all" />
-                  <SplitMenuButton fx:id="btn_export" mnemonicParsing="false" text="Export as">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2" />
-                    </items>
-                  </SplitMenuButton>
                   <Button fx:id="btn_help" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Help">
                      <tooltip>
                         <Tooltip fx:id="tool_tip" text="Empty Tooltip" />
@@ -48,7 +41,7 @@
                 <SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.05" initialValue="5.00" max="140.00" min="0.00" />
               </valueFactory>
             </Spinner>
-            <Label layoutX="355.0" layoutY="149.0" text="Reservations" />
+            <Label fx:id="lb_reservs" layoutX="355.0" layoutY="149.0" text="Reservations" />
             <ComboBox fx:id="cmbox_supp" layoutX="432.0" layoutY="48.0" prefWidth="150.0" />
             <ListView fx:id="list_meal" layoutX="21.0" layoutY="183.0" prefHeight="151.0" prefWidth="250.0" />
             <ListView fx:id="list_reserv" layoutX="355.0" layoutY="183.0" prefHeight="151.0" prefWidth="250.0" />

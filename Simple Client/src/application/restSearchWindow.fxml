@@ -16,13 +16,13 @@
          <children>
             <TableView fx:id="table" layoutX="14.0" layoutY="45.0" prefHeight="390.0" prefWidth="468.0" />
             <Button fx:id="btn_search" layoutX="504.0" layoutY="410.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="139.0" text="Search" />
-            <Label layoutX="504.0" layoutY="45.0" text="Amount of visitors" />
-            <Label layoutX="506.0" layoutY="74.0" text="from" />
-            <Label layoutX="506.0" layoutY="108.0" text="to" />
+            <Label fx:id="lb_capacity" layoutX="504.0" layoutY="45.0" text="Amount of visitors" />
+            <Label fx:id="lb_from" layoutX="506.0" layoutY="74.0" text="from" />
+            <Label fx:id="lb_to" layoutX="506.0" layoutY="108.0" text="to" />
             <TextField fx:id="txt_from" layoutX="547.0" layoutY="71.0" prefHeight="25.0" prefWidth="96.0" />
             <TextField fx:id="txt_to" layoutX="547.0" layoutY="106.0" prefHeight="25.0" prefWidth="96.0" />
             <ComboBox fx:id="cmbox_zip" layoutX="500.0" layoutY="175.0" prefHeight="25.0" prefWidth="147.0" />
-            <Label layoutX="503.0" layoutY="146.0" text="Zip" />
+            <Label fx:id="lb_zip" layoutX="503.0" layoutY="146.0" text="Zip" />
             <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
               <items>
                   <Button fx:id="btn_home" mnemonicParsing="false" prefHeight="12.0" prefWidth="72.0" text="Home" />
@@ -42,11 +42,6 @@
                   <Button fx:id="btn_lang" mnemonicParsing="false" text="en" />
               </items>
             </ToolBar>
-            <Label layoutX="498.0" layoutY="211.0" text="Amount of employees:" />
-            <Label layoutX="505.0" layoutY="243.0" text="from" />
-            <Label layoutX="505.0" layoutY="277.0" text="to" />
-            <TextField fx:id="txt_from_emp" layoutX="546.0" layoutY="240.0" prefHeight="25.0" prefWidth="96.0" />
-            <TextField fx:id="txt_to_emp" layoutX="546.0" layoutY="275.0" prefHeight="25.0" prefWidth="96.0" />
          </children>
     </AnchorPane>
   </children>

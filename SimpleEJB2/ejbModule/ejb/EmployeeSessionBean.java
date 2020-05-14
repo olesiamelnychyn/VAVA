@@ -269,7 +269,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 				resev.put(res_id, res);
 			}
 			con.close();
-		} catch (SQLException e) {
+		} catch (SQLException | NullPointerException  e) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get Reservations for Employee "+id, e);
 		}
 		return resev;

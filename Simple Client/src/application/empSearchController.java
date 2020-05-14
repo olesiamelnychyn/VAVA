@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -37,6 +38,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -52,7 +54,7 @@ public class empSearchController {
     private Button btn_lang;
 
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -93,11 +95,27 @@ public class empSearchController {
     @FXML
     private Tooltip tool_tip;
     
+    @FXML
+	private Label lb_from;
+	    
+    @FXML
+	private Label lb_to;
+	    
+    @FXML
+    private Label lb_pos;
+	    
+    @FXML
+    private Label lb_wage;
+    
     Dictionary<Integer, Employee> result;
     ObservableList<Employee> data ;
     
     @FXML
     void initialize() {
+    	assert lb_from != null : "fx:id=\"lb_from\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert lb_to != null : "fx:id=\"lb_to\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert lb_pos != null : "fx:id=\"lb_pos\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert lb_wage != null : "fx:id=\"lb_wage\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
     	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
         assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
@@ -138,11 +156,10 @@ public class empSearchController {
 			for (String p : this.getPositions()) { 		      
 				poss.add(p);		
 			}
-		} catch (MyExeception e2) {
+		} catch (MyExeception | NamingException e2) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
-		} catch (NamingException e2) {
-			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
-		}
+		} 
+        
     	cmbox_pos.setItems(poss);
     	cmbox_pos.getSelectionModel().select(0);
     	txt_from.setText("0.0");
@@ -154,7 +171,7 @@ public class empSearchController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get max wage", e);
 		} 
     	
-    	search();
+    	
     	
     	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
     	
@@ -282,8 +299,47 @@ public class empSearchController {
     	  }
     	 }
     	});
-        
+    	
+    	btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang();
+        search();
     }
+    
+    private void lang() {
+    	
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+    	} else {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		btn_lang.setText("en");
+    	}
+    	
+    	btn_home.setText(rb.getString("btn.home"));
+    	btn_new.setText(rb.getString("btn.new"));
+    	btn_delete.setText(rb.getString("btn.del"));
+    	btn_help.setText(rb.getString("btn.help"));
+    	btn_search.setText(rb.getString("btn.search"));
+
+    	table.getColumns().get(0).setText(rb.getString("rest"));
+    	table.getColumns().get(1).setText(rb.getString("emp.first_name"));
+    	table.getColumns().get(2).setText(rb.getString("emp.last_name"));
+    	table.getColumns().get(3).setText(rb.getString("emp.pos"));
+    	table.getColumns().get(4).setText(rb.getString("emp.wage"));
+    	
+    	lb_from.setText(rb.getString("filt.from"));
+    	lb_to.setText(rb.getString("filt.to"));
+    	lb_wage.setText(rb.getString("emp.wage"));
+    	txt_search.setPromptText(rb.getString("emp.prompt"));
+    	lb_pos.setText(rb.getString("emp.pos"));
+//    	ObservableList <String> selectedItems = cmbox_pos.getItems();
+//    	selectedItems.set(0, rb.getString("emp.choose_pos"));
+    	cmbox_pos.getItems().set(0, rb.getString("emp.choose_pos"));;
+    	cmbox_pos.getSelectionModel().select(0);
+	
+    }
+    
     private Dictionary<Integer, Employee> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
         
         Context ctx = new InitialContext();
@@ -323,13 +379,13 @@ public class empSearchController {
 				args.put("wage_to", String.valueOf(50.0));
 			}
     	}
-    	if(cmbox_pos.getValue()!="Choose position") {
+    	if(!cmbox_pos.getValue().equals(rb.getString("emp.choose_pos"))) {
     		args.put("position", cmbox_pos.getValue());
     	}else {
     		args.put("position", "");
     	}
     	
-//    System.out.println(args);
+    System.out.println(args);
 //      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
        
     	try {

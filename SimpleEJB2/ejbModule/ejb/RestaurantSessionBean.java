@@ -420,18 +420,22 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			}
 		
 			
-			sql = "select c.rest_id, sum(m.price)*c.amount as debit, sum(p.price)*c.amount as credit from cheque  c join meal m on m.id=c.meal_id join meal_product mp on mp.meal_id=m.id join product p on p.id=mp.prod_id group by c.rest_id order by c.rest_id";
+			sql = "select c.rest_id, m.price*c.amount as credit, p.price*c.amount as debit from cheque  c join meal m on m.id=c.meal_id join meal_product mp on mp.meal_id=m.id join product p on p.id=mp.prod_id  where c.rest_id=?";
 			con = dataSource.getConnection();
 			PreparedStatement stmt1 = con.prepareStatement(sql);
+//			resultSet = stmt1.executeQuery();
 			for(String rest: rests) {
-				stmt1.setString(1, rest.split(" ", 1)[0]);  
+				System.out.println(rest.split(" ", 2)[0]);
+				stmt1.setString(1, rest.split(" ", 2)[0]);  
 				resultSet = stmt1.executeQuery();
 				double deb=0, pro=0;
 				while(resultSet.next()) {
 					Double credit = resultSet.getDouble("credit");
 					Double debit = resultSet.getDouble("debit");
+//					StatisticData item = new StatisticData(resultSet.getString("c.rest_id"), debit, credit);
 					deb+=debit;
-					pro+=credit;
+					pro=credit;
+					
 			   
 				}
 			StatisticData item = new StatisticData(rest, deb, pro);

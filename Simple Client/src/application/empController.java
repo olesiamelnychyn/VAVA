@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -30,6 +31,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
@@ -49,7 +51,7 @@ public class empController {
     private Button btn_lang;
 
 	@FXML
-	private ResourceBundle resources;
+	private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
 	@FXML
 	private URL location;
@@ -107,6 +109,33 @@ public class empController {
 
 	@FXML
 	private TextField txt_email;
+	
+	@FXML
+	private Label lb_fname;
+	    
+    @FXML
+	private Label lb_lname;
+	    
+    @FXML
+    private Label lb_pos;
+	    
+    @FXML
+    private Label lb_rest;
+	    
+    @FXML
+    private Label lb_wage;
+	    
+    @FXML
+    private Label lb_birth;
+    
+    @FXML
+    private Label lb_reserv;
+	    
+    @FXML
+    private Label lb_email;
+	    
+    @FXML
+    private Label lb_phone;
 
 	Employee emp=null;
 	Integer id=-1;
@@ -115,6 +144,15 @@ public class empController {
 	
 	@FXML
 	void initialize() {
+		assert lb_rest != null : "fx:id=\"lb_rest\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_pos != null : "fx:id=\"lb_pos\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_lname != null : "fx:id=\"lb_lname\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_fname != null : "fx:id=\"lb_fname\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_phone != null : "fx:id=\"lb_phone\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_email != null : "fx:id=\"lb_email\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_reserv != null : "fx:id=\"lb_reserv\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_birth != null : "fx:id=\"lb_birth\" was not injected: check your FXML file 'empWindow.fxml'.";
+		assert lb_wage != null : "fx:id=\"lb_wage\" was not injected: check your FXML file 'empWindow.fxml'.";
 		assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'empWindow.fxml'.";
 		assert txt_fname != null : "fx:id=\"txt_fname\" was not injected: check your FXML file 'empWindow.fxml'.";
 		assert cmbox_pos != null : "fx:id=\"cmbox_pos\" was not injected: check your FXML file 'empWindow.fxml'.";
@@ -142,7 +180,10 @@ public class empController {
 		} catch (NamingException e2) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to EmployeeRemote", e2);
 		}
-       
+        
+        btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang();       
 
         btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
         
@@ -219,6 +260,35 @@ public class empController {
         });
         
         fill();
+    }
+	
+	private void lang() {
+    	
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+    	} else {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		btn_lang.setText("en");
+    	}
+    	
+    	btn_back.setText(rb.getString("btn.back"));
+    	btn_save.setText(rb.getString("btn.save"));
+    	btn_delete.setText(rb.getString("btn.del"));
+    	btn_undo.setText(rb.getString("btn.undo"));
+    	btn_help.setText(rb.getString("btn.help"));
+    	rbtn_male.setText(rb.getString("emp.m"));
+    	rbtn_female.setText(rb.getString("emp.f"));
+    	
+    	lb_fname.setText(rb.getString("emp.first_name"));
+    	lb_lname.setText(rb.getString("emp.last_name"));
+    	lb_wage.setText(rb.getString("emp.wage"));
+    	lb_reserv.setText(rb.getString("reservs"));
+    	lb_rest.setText(rb.getString("rest"));
+    	lb_phone.setText(rb.getString("supp.phone"));
+    	lb_pos.setText(rb.getString("emp.pos"));
+    	lb_birth.setText(rb.getString("emp.birthdate"));
+	
     }
     
     public void setEmp(Dictionary <Integer, Employee> dict) {

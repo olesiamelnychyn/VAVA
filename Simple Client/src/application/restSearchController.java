@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -37,6 +38,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -53,7 +55,7 @@ public class restSearchController {
     private Button btn_lang;
 	
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -96,12 +98,29 @@ public class restSearchController {
 
     @FXML
     private Tooltip tool_tip;
+    
+    @FXML
+    private Label lb_from;
+    
+    @FXML
+    private Label lb_zip;
+    
+    @FXML
+    private Label lb_capacity;
+    
+    @FXML
+    private Label lb_to;
+    
 
     Dictionary<Integer, Restaurant> result;
     ObservableList<Restaurant> data ;
 
     @FXML
     void initialize() {
+    	assert lb_zip != null : "fx:id=\"lb_zip\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_capacity != null : "fx:id=\"lb_capacity\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_from != null : "fx:id=\"lb_from\" was not injected: check your FXML file 'mealWindow.fxml'.";
+    	assert lb_to != null : "fx:id=\"lb_to\" was not injected: check your FXML file 'mealWindow.fxml'.";
     	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
         assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
         assert btn_search != null : "fx:id=\"btn_search\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
@@ -235,6 +254,23 @@ public class restSearchController {
     	
         btn_search.setOnMouseClicked(e ->{search();});
         
+        btn_stat.setOnMouseClicked(e ->{
+        	try {
+                //Load second scene
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("statisticsRes.fxml"));
+                Parent root = loader.load();
+                statisticsController scene2Controller = loader.getController();
+                scene2Controller.transferMessage(Integer.valueOf(2));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Statistics for Restaurants");
+                stage.show();
+                ((Node)(e.getSource())).getScene().getWindow().hide(); 
+            } catch (IOException ex) {
+            	LogTest.LOGGER.log(Level.SEVERE, "Failed to open statistics", e);
+            }
+        });
+        
         table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
     	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
     	 @Override
@@ -274,6 +310,36 @@ public class restSearchController {
     	  }
     	 }
     	});
+
+    	btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang();
+    }
+    
+    private void lang() {
+    	
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+    	} else {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		btn_lang.setText("en");
+    	}
+    	
+    	btn_home.setText(rb.getString("btn.home"));
+    	btn_new.setText(rb.getString("btn.new"));
+    	btn_delete.setText(rb.getString("btn.del"));
+    	btn_help.setText(rb.getString("btn.help"));
+    	btn_search.setText(rb.getString("btn.search"));
+
+    	table.getColumns().get(0).setText(rb.getString("rest.cap"));
+    	table.getColumns().get(1).setText(rb.getString("rest.zip"));
+    	
+    	lb_from.setText(rb.getString("filt.from"));
+    	lb_to.setText(rb.getString("filt.to"));
+    	lb_capacity.setText(rb.getString("rest.cap"));
+    	cmbox_zip.getItems().set(0, rb.getString("rest.choose_zip"));
+	
     }
     
     private void search() {
@@ -308,7 +374,7 @@ public class restSearchController {
 				txt_to.setText(String.valueOf(100));
 			}
     	}
-    	if(cmbox_zip.getValue()!="Choose zip") {
+    	if(cmbox_zip.getValue()!=rb.getString("rest.choose_zip")) {
     		args.put("zip", cmbox_zip.getValue().split(",")[0].split(" ")[1]);
     	}else {
     		args.put("zip", "");

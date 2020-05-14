@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -13,6 +14,7 @@ import javax.naming.NamingException;
 import ejb.LogTest;
 import ejb.MealRemote;
 import ejb.ReservationRemote;
+import ejb.RestaurantRemote;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,7 +37,7 @@ public class statisticsController {
     private Button btn_lang;
 	
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -73,6 +75,23 @@ public class statisticsController {
         		openWindow("mealSearchWindow.fxml",e);
         	}
         });
+        
+        btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang();
+    }
+    
+    private void lang() {
+    	
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+    	} else {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		btn_lang.setText("en");
+    	}
+    	
+    	btnBack.setText(rb.getString("btn.back"));
     }
     
     private void openWindow(String window, ActionEvent e) {
@@ -96,6 +115,9 @@ public class statisticsController {
        type=message;
        if(type==1) {
        	reservStat();
+       }
+       if(type==2) {
+    	   restStat();
        }
        if(type==3) {
           mealStat();
@@ -179,6 +201,48 @@ public class statisticsController {
         for (int i =0; i<meals.size(); i++) {
         	series1.getData().add(new XYChart.Data<>(meals.get(i), prices.get(i)));
         	series2.getData().add(new XYChart.Data<>(meals.get(i), spends.get(i)));
+        }
+
+        s_bar_char.getData().add(series1);
+        s_bar_char.getData().add(series2);
+        
+    }
+    
+    private void restStat() {
+    	List <StatisticData> data = new ArrayList <StatisticData> ();
+		try {
+			Context ctx = new InitialContext();
+		
+			RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+			System.out.print("process");
+			data=RestaurantRemote.statRest();
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+		
+		List <String> rests = new  ArrayList <String>() ;
+		List <Double> profit = new ArrayList <Double>() ;
+		List <Double> spends = new ArrayList <Double>() ;
+		
+		for(StatisticData item : data) {
+			rests.add(item.attribute);
+			profit.add(item.data2-item.data1);
+			spends.add(item.data1);
+		}
+//		System.out.println(rests+" "+profit+" "+spends);
+        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+        XYChart.Series<String, Number> series2 = new XYChart.Series<>();
+     
+        
+        xAxis.setLabel("Restaurants");
+        xAxis.setCategories(FXCollections.<String>observableArrayList(rests));
+        
+        yAxis.setLabel("Value");
+        series1.setName("profit");
+        series2.setName("spends");
+        for (int i =0; i<rests.size(); i++) {
+        	series1.getData().add(new XYChart.Data<>(rests.get(i), profit.get(i)));
+        	series2.getData().add(new XYChart.Data<>(rests.get(i), spends.get(i)));
         }
 
         s_bar_char.getData().add(series1);

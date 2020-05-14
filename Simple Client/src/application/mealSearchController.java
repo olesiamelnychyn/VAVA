@@ -172,7 +172,7 @@ public class mealSearchController {
     	cmbox_rest.getSelectionModel().select(0);
     	txt_from.setText("0.0");
     	txt_to.setText("50.0");
-    	search();
+    	
     	
     	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
     	
@@ -293,7 +293,7 @@ public class mealSearchController {
         btn_lang.setText("en");
         btn_lang.setOnMouseClicked(e ->{ lang();});
         lang();
-        
+        search();
         }
         
         
@@ -321,7 +321,8 @@ public class mealSearchController {
         	from.setText(rb.getString("filt.from"));
         	to.setText(rb.getString("filt.to"));
         	rest.setText(rb.getString("rest"));
-        	cmbox_rest.getItems().set(0, rb.getString("reserv.choose_rest"));	
+        	cmbox_rest.getItems().set(0, rb.getString("reserv.choose_rest"));
+        	cmbox_rest.getSelectionModel().select(0);
         }
      
 	private Dictionary<Integer, Meal> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
@@ -339,7 +340,7 @@ public class mealSearchController {
 		}
 		Dictionary <String, String> args = new Hashtable <String, String> ();
     	args.put("title", txt_search.getText());
-		if(cmbox_rest.getValue()!="Choose restaurant") {
+		if(!cmbox_rest.getValue().equals(rb.getString("reserv.choose_rest"))) {
 			System.out.println(cmbox_rest.getValue().split(",")[0]);
 			args.put("rest_id", cmbox_rest.getValue().split(",")[0]);
 		} else {

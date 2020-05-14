@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -24,6 +25,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
@@ -41,7 +43,7 @@ public class prodController {
     private Button btn_lang;
 	
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle rb =  ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
 
     @FXML
     private URL location;
@@ -62,9 +64,6 @@ public class prodController {
     private Button btn_undo;
 
     @FXML
-    private Button btn_export;
-
-    @FXML
     private Button btn_help;
 
     @FXML
@@ -82,6 +81,21 @@ public class prodController {
     @FXML
     private ListView<String> list_reserv;
     
+    @FXML
+	private Label lb_title;
+	    
+    @FXML
+	private Label lb_price;
+	    
+    @FXML
+    private Label lb_supp;
+	    
+    @FXML
+    private Label lb_meals;
+    
+    @FXML
+    private Label lb_reservs;
+    
     Product prod=null;
     Integer id=0;
     Context ctx;
@@ -89,13 +103,17 @@ public class prodController {
 
     @FXML
     void initialize() {
+    	assert lb_reservs != null : "fx:id=\"lb_reservs\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert lb_meals != null : "fx:id=\"lb_meals\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert lb_title != null : "fx:id=\"lb_title\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert lb_supp != null : "fx:id=\"lb_supp\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
+    	assert lb_price != null : "fx:id=\"lb_price\" was not injected: check your FXML file 'mealSearchWindow.fxml'.";
     	assert btn_lang != null : "fx:id=\"btn_lang\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert txt_title != null : "fx:id=\"txt_title\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert btn_back != null : "fx:id=\"btn_back\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert btn_save != null : "fx:id=\"btn_save\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert btn_delete != null : "fx:id=\"btn_delete\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert btn_undo != null : "fx:id=\"btn_undo\" was not injected: check your FXML file 'prodWindow.fxml'.";
-        assert btn_export != null : "fx:id=\"btn_export\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'prodWindow.fxml'.";
         assert spin_price != null : "fx:id=\"spin_price\" was not injected: check your FXML file 'prodWindow.fxml'.";
@@ -146,6 +164,34 @@ public class prodController {
         });
         
         fill();
+        
+        btn_lang.setText("en");
+        btn_lang.setOnMouseClicked(e ->{ lang();});
+        lang(); 
+    }
+    
+    private void lang() {
+    	
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+    	} else {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+    		btn_lang.setText("en");
+    	}
+    	
+    	btn_back.setText(rb.getString("btn.back"));
+    	btn_save.setText(rb.getString("btn.save"));
+    	btn_delete.setText(rb.getString("btn.del"));
+    	btn_undo.setText(rb.getString("btn.undo"));
+    	btn_help.setText(rb.getString("btn.help"));
+    	
+    	lb_reservs.setText(rb.getString("reservs"));
+    	lb_meals.setText(rb.getString("meals"));
+    	lb_price.setText(rb.getString("prop.price"));
+    	lb_title.setText(rb.getString("prod.title"));
+    	lb_supp.setText(rb.getString("supp"));
+	
     }
     
     private void fill() {
