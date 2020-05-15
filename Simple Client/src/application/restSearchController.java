@@ -380,7 +380,6 @@ public class restSearchController {
     		args.put("zip", "");
     	}
     	
-//    System.out.println(args);
        
     	try {
     		final Dictionary<Integer, Restaurant> result1 = doRequest(args);

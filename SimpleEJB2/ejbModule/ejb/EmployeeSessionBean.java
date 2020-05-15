@@ -72,19 +72,18 @@ public class EmployeeSessionBean implements EmployeeRemote{
 	@Override
 	public int addEmployee(Dictionary<String, String> args) {
 		Integer id=-1;
+		if(args.size()<9) {
+			return -1;
+		}
 		try {
 			Connection con = dataSource.getConnection();
-			String sql = "INSERT INTO employee (rest_id, first_name, last_name, gender, birthdate, phone, e_mail, position, wage) VALUES (?,?,?,?,?,?,?,?,?)";
+			String sql = "INSERT INTO employee (rest_id, first_name, last_name, gender, birthdate, phone, e_mail, position, wage) VALUES (?,"+ args.get("first_name")+","+ args.get("last_name")+",?,"+args.get("birthdate")+","+args.get("phone")+
+					","+args.get("e_mail")+","+args.get("position")+",?)";
 	        PreparedStatement preparedStatement = con.prepareStatement(sql);
-	        preparedStatement.setString(1, args.get("rest_id"));
-	        preparedStatement.setString(2, args.get("first_name"));
-	        preparedStatement.setString(3, args.get("last_name"));
-	        preparedStatement.setString(4, args.get("gender"));
-	        preparedStatement.setString(5, args.get("birthdate"));
-	        preparedStatement.setString(6, args.get("phone"));
-	        preparedStatement.setString(7, args.get("e_mail"));
-	        preparedStatement.setString(8, args.get("position"));
-	        preparedStatement.setString(9, args.get("wage"));
+	        preparedStatement.setInt(1, Integer.valueOf(args.get("rest_id")));
+	    
+	        preparedStatement.setString(2, args.get("gender").toString().substring(1, 2));
+	        preparedStatement.setString(3, args.get("wage"));
 	        preparedStatement.executeUpdate();
 	        
 	        sql="SELECT MAX(id) FROM employee";

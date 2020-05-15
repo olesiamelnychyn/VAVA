@@ -23,7 +23,7 @@
             <Label fx:id="lb_fname" layoutX="21.0" layoutY="220.0" text="First name" />
             <Label fx:id="lb_wage" layoutX="278.0" layoutY="372.0" text="Wage" />
             <Label fx:id="lb_rest" layoutX="278.0" layoutY="54.0" text="Restaurant" />
-            <ComboBox fx:id="cmbox_pos" layoutX="110.0" layoutY="368.0" prefHeight="25.0" prefWidth="139.0" promptText="Choose position" />
+            <ComboBox fx:id="cmbox_pos" layoutX="110.0" layoutY="368.0" prefHeight="25.0" prefWidth="139.0" />
             <Label fx:id="lb_pos" layoutX="19.0" layoutY="372.0" text="Position" />
             <ToolBar layoutY="-6.0" prefHeight="40.0" prefWidth="664.0">
               <items>
@@ -46,7 +46,7 @@
                 <SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="100.0" initialValue="500.00" max="10000.00" min="0.00" />
               </valueFactory>
             </Spinner>
-            <ComboBox fx:id="cmbox_rest" layoutX="368.0" layoutY="50.0" prefHeight="25.0" prefWidth="139.0" promptText="Choose restaurant" />
+            <ComboBox fx:id="cmbox_rest" layoutX="368.0" layoutY="50.0" prefHeight="25.0" prefWidth="139.0"/>
             <DatePicker fx:id="birthdate" layoutX="111.0" layoutY="326.0" prefHeight="25.0" prefWidth="139.0" />
             <Label fx:id="lb_birth" layoutX="17.0" layoutY="333.0" text="Birthdate" />
             <ListView fx:id="list" layoutX="280.0" layoutY="119.0" prefHeight="222.0" prefWidth="338.0" />

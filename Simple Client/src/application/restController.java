@@ -204,7 +204,7 @@ public class restController {
         			staff+=emps.get(i).split(",")[0]+",";
         	}
         	args.put("staff", staff);
-        	System.out.println(args);
+       
         	
         	RestaurantRemote.updateRestaurant(args);
 	        openWindow("restSearchWindow.fxml",e);
@@ -213,7 +213,6 @@ public class restController {
         
         btn_add_meal_to_order.setOnMouseClicked(e ->{
         	if(cmb_order.getSelectionModel().getSelectedItem()!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
         		ObservableList<String> orders = list_orders.getItems();
         		orders.add(cmb_order.getSelectionModel().getSelectedItem());
         		list_orders.setItems(orders);
@@ -222,7 +221,7 @@ public class restController {
         
         btn_del_meal_to_order.setOnMouseClicked(e ->{
         	if(cmb_order.getSelectionModel().getSelectedItem()!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
+
         		ObservableList<String> orders = list_orders.getItems();
         		orders.remove(cmb_order.getSelectionModel().getSelectedItem());
         		list_orders.setItems(orders);
@@ -231,7 +230,6 @@ public class restController {
         
         btn_confirm_order.setOnMouseClicked(e ->{
         	if(rest!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
         		Dictionary <String, String>  args = new Hashtable <>();
         		ObservableList<String> orders = list_orders.getItems();
             	String menu="";
@@ -248,7 +246,6 @@ public class restController {
         
         btn_add_meal.setOnMouseClicked(e ->{
         	if(cmb_meal.getSelectionModel().getSelectedItem()!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
         		ObservableList<String> meals = list_meal.getItems();
         		meals.remove(cmb_meal.getSelectionModel().getSelectedItem());
         		meals.add(cmb_meal.getSelectionModel().getSelectedItem());
@@ -269,7 +266,6 @@ public class restController {
         
         btn_add_emp.setOnMouseClicked(e ->{
         	if(cmb_emp.getSelectionModel().getSelectedItem()!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
         		ObservableList<String> emps = list_emp.getItems();
         		emps.remove(cmb_emp.getSelectionModel().getSelectedItem());
         		emps.add(cmb_emp.getSelectionModel().getSelectedItem());
@@ -382,7 +378,6 @@ public class restController {
     
     private ArrayList<Zip> getZIP() throws MyExeception, NamingException {
     	ArrayList<Zip> zip = RestaurantRemote.getZip();
-        System.out.println(zip);
     	return zip;
     }
 

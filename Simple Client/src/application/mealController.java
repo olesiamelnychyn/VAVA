@@ -217,6 +217,7 @@ public class mealController {
         
         btn_save.setOnMouseClicked(e ->{
 //        	DateTimeFormatter time_p = DateTimeFormatter.ofPattern("H:mm:ss");
+        	if(!txt_title.getText().isEmpty() &&  spin_price.getValue()!=0) {
         	Dictionary <String, String>  args = new Hashtable <>();
         	args.put("id", id.toString());
         	
@@ -265,6 +266,7 @@ public class mealController {
         	}
         	args.put("ingr", ingr);
         	MealRemote.updateMeal(args);
+        	}
 	        openWindow("mealSearchWindow.fxml",e);
 			
         });

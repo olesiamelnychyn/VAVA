@@ -143,10 +143,10 @@ public class prodController {
         btn_save.setOnMouseClicked(e ->{
         	Dictionary <String, String>  args = new Hashtable <>();
         	args.put("id", id.toString());
-        	if(prod==null || !txt_title.getText().equals(prod.getTitle())) {
+        	if(!txt_title.getText().isEmpty() && (prod==null || !txt_title.getText().equals(prod.getTitle()))) {
     			args.put("title", "\""+txt_title.getText()+"\"");
         	}
-        	if(prod==null || !cmbox_supp.getValue().equals(prod.getSupp_id().toString())) {
+        	if(!cmbox_supp.getValue().isEmpty() && (prod==null || !cmbox_supp.getValue().equals(prod.getSupp_id().toString()))) {
         		args.put("supp_id", "\""+cmbox_supp.getValue().split(":")[0]+"\"");
         	}
   	
@@ -154,7 +154,9 @@ public class prodController {
         		args.put("price", spin_price.getValue().toString());
         	}
         	
-        	ProductRemote.updateProduct(args);
+        	if(!txt_title.getText().isEmpty()){
+        		ProductRemote.updateProduct(args);
+        	}
 	        openWindow("prodSearchWindow.fxml",e);
 			
         });

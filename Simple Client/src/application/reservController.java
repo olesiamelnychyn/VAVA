@@ -201,13 +201,19 @@ public class reservController {
         	try {
         		if(reservation==null || !date_start.getValue().toString().equals(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1).toString()) ||
             			!spin_time_from.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2).toString())) {
-            		args.put("date_start", "\""+date_start.getValue().toString()+" "+spin_time_from.getValueFactory().getValue()+"\"");
+        			String time=spin_time_from.getValue().toString();
+        			if(spin_time_from.getValue().toString().length()<8) {
+        				time="00:"+time;
+        			}
+            		args.put("date_start", "\""+date_start.getValue().toString()+" "+time+"\"");
             	}
         	} catch (NumberFormatException ex) {
         		if(reservation!=null) {
+        			
         			date_start.setValue(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1));
         			spin_time_from.getValueFactory().setValue(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2));
         		} else {
+        			System.out.println(spin_time_from.getValue());
         			date_start.setValue(LocalDate.parse("2019-01-01",  formatte1));
             		spin_time_from.getValueFactory().setValue(LocalTime.parse("00:00:00", formatte2));
             	}
@@ -217,7 +223,11 @@ public class reservController {
         	try {
         		if(reservation==null || !date_end.getValue().toString().equals(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1).toString()) ||
         				!spin_time_to.getValueFactory().getValue().toString().equals(LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2).toString())) {
-        			args.put("date_end", "\""+date_end.getValue()+" "+spin_time_to.getValueFactory().getValue()+"\"");
+        			String time=spin_time_to.getValue().toString();
+        			if(spin_time_to.getValue().toString().length()<8) {
+        				time="00:"+time;
+        			}
+        			args.put("date_end", "\""+date_end.getValue()+" "+time+"\"");
         		}
         	}catch(NumberFormatException ex) {
         		if(reservation!=null) {

@@ -265,14 +265,15 @@ public class empController {
         btn_save.setOnMouseClicked(e ->{
         	Dictionary <String, String>  args = new Hashtable <>();
         	args.put("id", id.toString());
-        	if(!cmbox_pos.getValue().equals("Choose position") &&(emp==null || cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]!=emp.getRest_id().toString())) {
+        	
+        	if(!cmbox_rest.getValue().equals("Choose restaurant") &&(emp==null || cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]!=emp.getRest_id().toString())) {
         		args.put("rest_id", cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]);
         	}
-        	if(emp==null || !txt_fname.getText().equals(emp.getFirst_name())) {
-        			args.put("first_name", "\""+txt_fname.getText()+"\"");
+        	if(!txt_fname.getText().isEmpty() && (emp==null || !txt_fname.getText().equals(emp.getFirst_name()))) {
+    			args.put("first_name", "\""+txt_fname.getText()+"\"");
         	}
-        	if(emp==null || !txt_lname.getText().equals(emp.getLast_name())) {
-    			args.put("last_name", "\""+txt_lname.getText()+"\"");
+        	if(!txt_lname.getText().isEmpty() && (emp==null || !txt_lname.getText().equals(emp.getLast_name()))) {
+			args.put("last_name", "\""+txt_lname.getText()+"\"");
         	}
         	if(emp==null || (rbtn_male.isSelected() && emp.getGender()!="M")) {
         		args.put("gender", "\"M\"");
@@ -284,10 +285,10 @@ public class empController {
         	if(emp==null || !birthdate.getValue().toString().equals(LocalDate.parse(emp.getBirthdate().toString(),  formatte1).toString())){
             	args.put("birthdate", "\""+LocalDate.parse(birthdate.getValue().toString(),  formatte1).toString()+"\"");
             }
-        	if(emp==null || !txt_phone.getText().equals(emp.getPhone())) {
+        	if(!txt_phone.getText().isEmpty() && (emp==null || !txt_phone.getText().equals(emp.getPhone()))) {
     			args.put("phone", "\""+txt_phone.getText()+"\"");
         	}
-        	if(emp==null || !txt_email.getText().equals(emp.getE_mail())) {
+        	if(!txt_email.getText().isEmpty() && (emp==null || !txt_email.getText().equals(emp.getE_mail()))) {
     			args.put("e_mail", "\""+txt_email.getText()+"\"");
         	}
         	if(!cmbox_pos.getValue().equals("Choose position") &&(emp==null || !cmbox_pos.getValue().equals(emp.getPosition()))) {
@@ -384,11 +385,14 @@ public class empController {
 		}
     	cmbox_pos.setItems(poss);
     	cmbox_pos.getSelectionModel().select(0);
-    	cmbox_rest.getSelectionModel().select(r-1);
+    	cmbox_rest.getSelectionModel().select(0);
+    	DateTimeFormatter formatte1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		birthdate.setValue(LocalDate.parse(LocalDate.now().toString(),  formatte1));
     	
     	//not null
     	if(id!=-1) {
-    		
+    		cmbox_rest.getSelectionModel().select(r-1);
+        	
     		txt_fname.setText(emp.getFirst_name());
     		txt_lname.setText(emp.getLast_name());
     		txt_phone.setText(emp.getPhone());
@@ -427,7 +431,7 @@ public class empController {
 	        
 			
     		
-    		DateTimeFormatter formatte1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    		
     		birthdate.setValue(LocalDate.parse(emp.getBirthdate().toString(),  formatte1));
         	//Reservations
         	ObservableList<String> rese = FXCollections.observableArrayList();

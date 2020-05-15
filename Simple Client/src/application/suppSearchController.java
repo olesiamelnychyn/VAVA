@@ -145,7 +145,7 @@ public class suppSearchController {
     	
     	btn_new.setOnMouseClicked(e -> {
     		Dictionary <String, String>  args = new Hashtable <>();
-    		if(txt_title.getText()!="" && txt_phone.getText()!="" && txt_email.getText()!=""
+    		if(!txt_title.getText().isEmpty() && !txt_phone.getText().isEmpty() && !txt_email.getText().isEmpty()
     				&& txt_title.getText().toString().length()<=30 
     				&& txt_phone.getText().toString().length()<=13
     				&& txt_email.getText().toString().length()<=320) {
