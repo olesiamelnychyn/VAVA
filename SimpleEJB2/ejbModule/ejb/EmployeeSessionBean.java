@@ -262,6 +262,7 @@ public class EmployeeSessionBean implements EmployeeRemote{
 				Integer res_id = resultSet.getInt("r.id");
 	            Integer rest_id = resultSet.getInt("r.rest_id");
 	            Integer visitors = resultSet.getInt("r.visitors");
+	            System.out.println(resultSet.getInt("r.id"));	            
 	            LocalDateTime date_start = LocalDateTime.parse(resultSet.getString("r.date_start"), dateFormat);
 	            LocalDateTime date_end = LocalDateTime.parse(resultSet.getString("r.date_end"), dateFormat);
 				
@@ -275,5 +276,46 @@ public class EmployeeSessionBean implements EmployeeRemote{
 		return resev;
 	}
 
-	
+	@Override
+	public byte[] getImage(int id) {
+		System.out.print("here");
+		byte[] imagebytes=null;
+		try {
+			String sql="select image from employee where id=?";
+			Connection con = dataSource.getConnection();
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			if(resultSet.next()) {
+				imagebytes = resultSet.getBytes("image");
+			}
+			con.close();
+		} catch (SQLException e) {
+			LogTest.LOGGER.log(Level.SEVERE, "Something is not correct with an image, failed to get image for Employee "+id, e);
+		}
+		return imagebytes;
+	}
+
+	@Override
+	public void setImage(int id, byte[] img) {
+		if(id!=0) {
+		String sql="update employee set  image=?  where id=?";
+		Connection con;
+		try {
+			con = dataSource.getConnection();
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setBytes(1, img);
+			preparedStatement.setInt(2, id);
+			preparedStatement.executeUpdate();
+//			System.out.println("done");
+			con.close();
+		} catch (SQLException e) {
+			LogTest.LOGGER.log(Level.SEVERE, "Something is not correct with an image, failed to insert image for Employee "+id, e);
+			return;
+		}
+		LogTest.LOGGER.log(Level.INFO, "Image for Employee (id=="+id+") was succesfully inserted");
+		}
+	}
 }

@@ -51,7 +51,7 @@
             <Label fx:id="lb_birth" layoutX="17.0" layoutY="333.0" text="Birthdate" />
             <ListView fx:id="list" layoutX="280.0" layoutY="119.0" prefHeight="222.0" prefWidth="338.0" />
             <Label fx:id="lb_reserv" layoutX="280.0" layoutY="92.0" text="Reservations" />
-            <ImageView fx:id="img_view" fitHeight="150.0" fitWidth="200.0" layoutX="34.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="img_view" fitHeight="150.0" fitWidth="150.0" layoutX="42.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" />
             <RadioButton fx:id="rbtn_male" layoutX="20.0" layoutY="293.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="112.0" text="Male" />
             <RadioButton fx:id="rbtn_female" layoutX="155.0" layoutY="293.0" mnemonicParsing="false" text="Female" />
             <Label fx:id="lb_phone" layoutX="280.0" layoutY="415.0" text="Phone" />

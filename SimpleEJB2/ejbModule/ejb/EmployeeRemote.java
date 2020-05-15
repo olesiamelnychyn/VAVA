@@ -21,5 +21,7 @@ public interface EmployeeRemote {
 	ArrayList<String> getPositions();
 	public Dictionary<Integer, Restaurant> getRest(Integer id);
 	public Dictionary<Integer, Reservation> getEmpReserv(Integer id);
-
+	public byte[] getImage(int id);
+	public void setImage(int id, byte[] img);
+	
 }

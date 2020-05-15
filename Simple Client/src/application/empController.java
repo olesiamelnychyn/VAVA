@@ -1,6 +1,10 @@
 package application;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -8,10 +12,15 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -23,6 +32,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -37,8 +47,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import objects.Employee;
 import objects.Reservation;
@@ -180,6 +192,42 @@ public class empController {
 		} catch (NamingException e2) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to EmployeeRemote", e2);
 		}
+        
+        img_view.setOnMouseClicked(e ->{
+        	if(e.getClickCount()==2) {
+                
+            	FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files", "*.jpg");
+            	FileChooser fileChooser = new FileChooser();
+            	fileChooser.getExtensionFilters().add(imageFilter);
+            	Stage stage = new Stage();
+    	        stage.setTitle("New Window");
+            	File file = fileChooser.showOpenDialog(stage);
+            	
+				try {
+					RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(), "r");
+					byte[] b = new byte[(int)f.length()];
+	            	f.readFully(b);
+	            	ByteArrayInputStream bis = new ByteArrayInputStream(b);
+	    	        Iterator<?> readers = ImageIO.getImageReadersByFormatName("jpg");
+	    	 
+	    	        ImageReader reader = (ImageReader) readers.next();
+	    	        Object source = bis; 
+	    	        ImageInputStream iis = ImageIO.createImageInputStream(source); 
+	    	        reader.setInput(iis, true);
+	    	        ImageReadParam param = reader.getDefaultReadParam();
+	    	 
+	    	        BufferedImage image = reader.read(0, param);
+	    			Image n =  SwingFXUtils.toFXImage(image, null );
+	    			
+	    			img_view.setImage(n);
+	    			
+	    			EmployeeRemote.setImage(id, b);
+				} catch ( IOException e1) {
+					LogTest.LOGGER.log(Level.SEVERE, "Failed to get image", e1);
+				}
+            	
+            }
+        });
         
         btn_lang.setText("en");
         btn_lang.setOnMouseClicked(e ->{ lang();});
@@ -344,19 +392,44 @@ public class empController {
     	
     	//not null
     	if(id!=-1) {
+    		
     		txt_fname.setText(emp.getFirst_name());
     		txt_lname.setText(emp.getLast_name());
     		txt_phone.setText(emp.getPhone());
     		txt_email.setText(emp.getE_mail());
     		spin_wage.getValueFactory().setValue(emp.getWage());
-    		if(emp.getGender()=="M") {
+    		if(emp.getGender().equals("M")) {
     			rbtn_male.setSelected(true);
     			rbtn_female.setSelected(false);
     		}
-    		if(emp.getGender()=="F") {
+    		if(emp.getGender().equals("F")) {
     			rbtn_female.setSelected(true);
     			rbtn_male.setSelected(false);
     		}
+    		   		
+			try {
+				byte [] data = EmployeeRemote.getImage(id);
+				if(data!=null) {
+				ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		        Iterator<?> readers = ImageIO.getImageReadersByFormatName("jpg");
+		 
+		        ImageReader reader = (ImageReader) readers.next();
+		        Object source = bis; 
+		        ImageInputStream iis;
+				iis = ImageIO.createImageInputStream(source);
+				reader.setInput(iis, true);
+		        ImageReadParam param = reader.getDefaultReadParam();
+		 
+		        BufferedImage image = reader.read(0, param);
+				Image n =  SwingFXUtils.toFXImage(image, null );
+				img_view.setImage(n);
+				}
+			} catch (IOException e) {
+				LogTest.LOGGER.log(Level.SEVERE, "Failed to get image from database", e);
+			} 
+	        
+			
+    		
     		DateTimeFormatter formatte1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     		birthdate.setValue(LocalDate.parse(emp.getBirthdate().toString(),  formatte1));
         	//Reservations

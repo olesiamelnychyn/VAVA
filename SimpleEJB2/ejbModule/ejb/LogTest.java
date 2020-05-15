@@ -10,15 +10,16 @@ public class LogTest {
 
 	
 	private static final LogManager logManager = LogManager.getLogManager();
-	public static final Logger LOGGER = Logger.getLogger("confLogger");
+	public static final Logger LOGGER = Logger.getLogger("serverLog");
 	static{
         try {
-            logManager.readConfiguration(new FileInputStream("./logging.properties"));
+            logManager.readConfiguration(new FileInputStream(System.getProperty("jboss.server.config.dir")+"/logging.properties"));
             System.out.print("yes");
         } catch (IOException exception) {
             LOGGER.log(Level.SEVERE, "Error in loading configuration",exception);
             System.out.print("no");
         }
+        
     }
 	public static void main() {
 		
