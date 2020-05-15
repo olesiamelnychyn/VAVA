@@ -31,7 +31,6 @@ public class SupplierSessionBean implements SupplierRemote{
 			if(args!=null && args.get("title")!=null && args.get("title")!="") {
 				sql+= " where s.title like \"%"+args.get("title")+"%\"";
 			}
-			System.out.println(sql);
 			sql+=" order by s.id";
 			
 			Statement stmt = con.createStatement();
@@ -61,7 +60,6 @@ public class SupplierSessionBean implements SupplierRemote{
 	        preparedStatement.setString(1, args.get("title"));
 	        preparedStatement.setString(2, args.get("phone"));
 	        preparedStatement.setString(3, args.get("e_mail"));
-	        System.out.print(preparedStatement);
 	        preparedStatement.executeUpdate();
 	        sql="SELECT MAX(id) FROM supplier";
 	        Statement stmt = con.createStatement();
@@ -69,7 +67,6 @@ public class SupplierSessionBean implements SupplierRemote{
 			
 			while(resultSet.next()) {
 				id = resultSet.getInt("MAX(id)");
-				System.out.print("here"+id);
 			}
 			con.close();
 		} catch (SQLException e) {
@@ -83,13 +80,12 @@ public class SupplierSessionBean implements SupplierRemote{
 	@Override
 	public void deleteSupplier(int id) {
 		try {
-			System.out.println("main "+id);
+		
 			Connection con = dataSource.getConnection();
 			String sql="select id from product where supp_id="+String.valueOf(id);
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
 			while(resultSet.next()) {
-				System.out.println(resultSet.getInt("id"));
 				sql="Delete from meal_product where prod_id=?";
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
 				preparedStatement.setInt(1, resultSet.getInt("id"));

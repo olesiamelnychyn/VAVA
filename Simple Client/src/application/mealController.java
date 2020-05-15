@@ -280,7 +280,6 @@ public class mealController {
         
         btn_add_prod.setOnMouseClicked(e ->{
         	if(cmbox_prod.getSelectionModel().getSelectedItem()!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
         		ObservableList<String> prods= list_prod.getItems();
         		prods.remove(cmbox_prod.getSelectionModel().getSelectedItem());
         		prods.add(cmbox_prod.getSelectionModel().getSelectedItem());
@@ -331,7 +330,7 @@ private void lang() {
     }
     
     public void setMeal(Dictionary <Integer, Meal> dict) {
-    	//System.out.println("here");
+
     	Enumeration<Integer> enam = dict.keys();
         while(enam.hasMoreElements()) {
         	id = enam.nextElement();
@@ -400,12 +399,9 @@ private void lang() {
     		txt_title.setText(meal.getTitle());
     		spin_price.getValueFactory().setValue(meal.getPrice());
     		spint_time.getValueFactory().setValue(meal.getPrep_time());
-    		//TODO get prod
     		ObservableList<String> rests = FXCollections.observableArrayList();
     		
     		try {
-    			
-    			System.out.println("here");
     			
     			byte [] data = MealRemote.getImage(id);
     			ByteArrayInputStream bis = new ByteArrayInputStream(data);
@@ -421,8 +417,6 @@ private void lang() {
     			Image n =  SwingFXUtils.toFXImage(image, null );
     			img_view.setImage(n);
     			
-    			
-    			System.out.println("here");
     			Dictionary<Integer, Restaurant> la = MealRemote.getRestMeal(id);
     			
     			enam = la.keys();
@@ -445,11 +439,9 @@ private void lang() {
     	        while(enam.hasMoreElements()) {
     	            Integer k = enam.nextElement();
     	            String res = k+", rest: "+la.get(k).getRest_id()+ ", "+la.get(k).getDate_start()+"-"+la.get(k).getDate_end();
-    	            //System.out.println(rest);
     	            reserv.add(res);
     	            
         		}
-    	        //System.out.println(rests);
     	        list_reserv.getItems().addAll(reserv);
 			
     	   prods = FXCollections.observableArrayList();

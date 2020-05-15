@@ -358,18 +358,17 @@ public class empController {
 		Dictionary<Integer, Restaurant> la = EmployeeRemote.getRest(rest_id);
 		
 		Enumeration<Integer> enam = la.keys();
-		
+		int r = 0, i=0;
         while(enam.hasMoreElements()) {
+        	i+=1;
             Integer k = enam.nextElement();
             String rest = k+", cap: "+la.get(k).getCapacity()+ ","+la.get(k).getZip().getState();
+            if(id!=-1 && emp.getRest_id().equals(k)) {
+            	r = i;
+            }
             rests.add(rest);
         }
         cmbox_rest.setItems(rests);
-        if(rest_id!=-1)
-        	cmbox_rest.getSelectionModel().select(cmbox_rest.getItems().get(0).toString());
-        else {
-        	cmbox_rest.getSelectionModel().select(0);
-        }
 		
         //Position
         ObservableList<String> poss = FXCollections.observableArrayList();
@@ -384,11 +383,8 @@ public class empController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
 		}
     	cmbox_pos.setItems(poss);
-    	if(emp!=null) {
-    		cmbox_pos.getSelectionModel().select(emp.getPosition());
-    	}
     	cmbox_pos.getSelectionModel().select(0);
-    	
+    	cmbox_rest.getSelectionModel().select(r-1);
     	
     	//not null
     	if(id!=-1) {
@@ -398,6 +394,7 @@ public class empController {
     		txt_phone.setText(emp.getPhone());
     		txt_email.setText(emp.getE_mail());
     		spin_wage.getValueFactory().setValue(emp.getWage());
+    		cmbox_pos.getSelectionModel().select(emp.getPosition());
     		if(emp.getGender().equals("M")) {
     			rbtn_male.setSelected(true);
     			rbtn_female.setSelected(false);

@@ -86,7 +86,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 				while(resultSet.next()) {
 					id = resultSet.getInt("MAX(id)");
 				}
-				System.out.println("Id new: "+id);
+				
 				if(args.get("staff")!=null && args.get("staff")!="") {
 		        	String [] staff = args.get("staff").split(",");
 		        	for (int i =0; i<staff.length; i++) {
@@ -183,7 +183,6 @@ public class RestaurantSessionBean implements RestaurantRemote {
 	@Override
 	public void updateRestaurant(Dictionary<String, String> args) {
 		try {
-			System.out.println(args.get("menu")+" "+ args.get("id"));
 			if(args.get("id").equals("0")) {
 				addRestaurant(args);
 				return;
@@ -425,7 +424,7 @@ public class RestaurantSessionBean implements RestaurantRemote {
 			PreparedStatement stmt1 = con.prepareStatement(sql);
 //			resultSet = stmt1.executeQuery();
 			for(String rest: rests) {
-				System.out.println(rest.split(" ", 2)[0]);
+				
 				stmt1.setString(1, rest.split(" ", 2)[0]);  
 				resultSet = stmt1.executeQuery();
 				double deb=0, pro=0;

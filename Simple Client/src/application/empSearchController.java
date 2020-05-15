@@ -384,9 +384,6 @@ public class empSearchController {
     	}else {
     		args.put("position", "");
     	}
-    	
-    System.out.println(args);
-//      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm:ss");
        
     	try {
     		final Dictionary<Integer, Employee> result1 = doRequest(args);
@@ -421,7 +418,6 @@ public class empSearchController {
 //      
       Context ctx = new InitialContext();
       EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
-      System.out.print("process");
       EmployeeRemote.deleteEmployee(id);
     }
     

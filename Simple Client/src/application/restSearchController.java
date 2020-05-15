@@ -234,7 +234,7 @@ public class restSearchController {
 	    	        while(enam.hasMoreElements()) {
 	    	            Integer k = enam.nextElement();
 	    	            if(result.get(k).equals(Restaurant_del)) {
-	    	            	System.out.println("Gonna delete this one"+k);
+	    	            	System.out.println("Gonna delete this one "+k);
 	    	            	try {
 								delete(k);
 							} catch (MyExeception | NamingException e1) {
@@ -409,27 +409,20 @@ public class restSearchController {
     	Context ctx = new InitialContext();
     	RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
         int cap = RestaurantRemote.getMaxCapacity();
-        System.out.println(cap);
     	return cap;
     }
     
     private ArrayList<Zip> getZIP() throws MyExeception, NamingException {
     	Context ctx = new InitialContext();
-    	RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+    	RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote"); 
         ArrayList<Zip> zip = RestaurantRemote.getZip();
-        System.out.println(zip);
-//        ArrayList<String> z = new ArrayList<String>();
-//        for (Zip p : zip) { 		      
-//			z.add(p.getCode()+" "+p.getState());		
-//		}
-//        System.out.println(z);
+
     	return zip;
     }
     
     private void delete(Integer id) throws MyExeception, NamingException {  
       Context ctx = new InitialContext();
-      RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
-      System.out.print("process");
+      RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    
       RestaurantRemote.deleteRestaurant(id);
     }
     

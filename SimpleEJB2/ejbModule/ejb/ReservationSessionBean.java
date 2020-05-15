@@ -47,7 +47,6 @@ public class ReservationSessionBean implements ReservationRemote {
 				sql+=" and r.rest_id="+args.get("rest_id");
 			}
 			
-			System.out.println(sql);
 			Statement stmt = con.createStatement();
 			ResultSet resultSet = stmt.executeQuery(sql);
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss");
@@ -84,7 +83,6 @@ public class ReservationSessionBean implements ReservationRemote {
 			while(resultSet.next()) {
 				id = resultSet.getInt("MAX(id)");
 			}
-			System.out.println("Id new: "+id);
 			if(args.get("staff")!=null && args.get("staff")!="") {
 	        	String [] staff = args.get("staff").split(",");
 	        	for (int i =0; i<staff.length; i++) {
@@ -151,7 +149,7 @@ public class ReservationSessionBean implements ReservationRemote {
 	public void updateReserv(Dictionary<String, String> args) {
 		try {
 			
-			System.out.println(args.get("menu")+" "+ args.get("id"));
+		
 			if(args.get("id").equals("0")) {
 				addReserv(args);
 				return;
@@ -220,12 +218,7 @@ public class ReservationSessionBean implements ReservationRemote {
 	public List<StatisticData> statReserv() {
 		List <StatisticData> stat = new ArrayList <StatisticData> ();
 		
-		try {
-//			List <String> rests = new ArrayList <String> ();
-//			String sql="select distinct r.rest_id , rest.capacity, zip.state from reservation r join restaurant rest on rest.id=r.rest_id join zip on rest.zip=zip.code";
-//			Connection con = dataSource.getConnection();
-//			Statement stmt = con.createStatement();
-//			ResultSet resultSet = stmt.executeQuery(sql);
+		try {		
 			List <String> rests = new ArrayList <String> ();
  			String sql="select distinct r.rest_id , rest.capacity, zip.state from reservation r join restaurant rest on rest.id=r.rest_id join zip on rest.zip=zip.code";
  			Connection con = dataSource.getConnection();
@@ -242,7 +235,6 @@ public class ReservationSessionBean implements ReservationRemote {
 			con = dataSource.getConnection();
 			PreparedStatement stmt1 = con.prepareStatement(sql);
 			for(String rest: rests) {
-				System.out.println( rest.split(" ", 2)[0]);
 				stmt1.setString(1, rest.split(" ", 2)[0]);  
 				resultSet = stmt1.executeQuery();
 				double deb=0, pro=0;

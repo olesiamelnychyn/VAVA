@@ -155,7 +155,7 @@ public class prodSearchController {
 			Dictionary <String, String> args = new Hashtable <String, String> ();
 	    	args.put("", "");
 			Dictionary<Integer, Supplier> la = SupplierRemote.searchSupplier(args);
-			System.out.println(la);
+			
 			
 			Enumeration<Integer> enam = la.keys();
 	        while(enam.hasMoreElements()) {
@@ -164,7 +164,6 @@ public class prodSearchController {
 	            supps.add(supp);
 	            
     		}
-	        System.out.println(supps);
 	        cmbox_supp.setItems(supps);
 		} catch (NamingException e) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get suppliers", e);
@@ -386,31 +385,28 @@ public class prodSearchController {
         } catch (NamingException | MyExeception ex) {
         	LogTest.LOGGER.log(Level.SEVERE, "Failed to get products", ex);
         }
-    	System.out.println(data);
     	table.setItems(data);
     }
     
     private Dictionary<Integer, Product> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
         
         Context ctx = new InitialContext();
-        ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");   
     	Dictionary<Integer, Product> la = ProductRemote.searchProduct(args);
     	return la;
     }
     
     private double getMaxPrice() throws MyExeception, NamingException {
     	Context ctx = new InitialContext();
-    	ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+    	ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");  
     	double price = ProductRemote.getMaxPrice();
-    	System.out.println(price);
     	return price;
     }
     
     private void delete(Integer id) throws MyExeception, NamingException {
 //      
       Context ctx = new InitialContext();
-      ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
-      System.out.print("process");
+      ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");   
       ProductRemote.deleteProduct(id);
     }
     

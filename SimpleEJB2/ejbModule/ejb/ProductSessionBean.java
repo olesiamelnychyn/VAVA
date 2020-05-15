@@ -65,10 +65,6 @@ public class ProductSessionBean implements ProductRemote {
 				    Product prod = new Product(title, price, supp);
 					result.put(id, prod);
 				}
-//					Context ctx;
-//					ctx = new InitialContext();
-//					SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");
-//					Supplier supp = SupplierRemote.getSupplierById(supp_id);
 			}
 			con.close();
 		} catch (SQLException e) {
@@ -132,7 +128,6 @@ public class ProductSessionBean implements ProductRemote {
 			
 			if(args!=null){
 				if(args.get("id").equals("0")) {
-					System.out.println(args.get("id"));
 					addProduct(args);
 					return;
 				}
@@ -196,7 +191,6 @@ public class ProductSessionBean implements ProductRemote {
 			
 			while(resultSet.next()) {
 				price = resultSet.getInt("MAX(price)");
-				System.out.print("here "+price);
 			}
 			con.close();
 		} catch (SQLException e) {

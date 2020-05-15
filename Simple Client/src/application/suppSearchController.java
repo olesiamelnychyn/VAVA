@@ -294,14 +294,14 @@ public class suppSearchController {
 	}
     private int addSupp(Dictionary <String, String>  args) throws MyExeception, NamingException {
     	Context ctx = new InitialContext();
-    	SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+    	SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");  
         int id = SupplierRemote.addSupplier(args);
     	return id;
     }
 	private Dictionary<Integer, Supplier> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
         
         Context ctx = new InitialContext();
-        SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");    
     	Dictionary<Integer, Supplier> la = SupplierRemote.searchSupplier(args);
     	return la;
     }
@@ -331,8 +331,8 @@ public class suppSearchController {
     private void delete(Integer id) throws MyExeception, NamingException {
 //      
       Context ctx = new InitialContext();
-      SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
-      System.out.print("process");
+      SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");    
+
       SupplierRemote.deleteSupplier(id);
     }
 }
