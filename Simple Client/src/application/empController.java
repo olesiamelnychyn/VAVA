@@ -196,6 +196,7 @@ public class empController {
         img_view.setOnMouseClicked(e ->{
         	if(e.getClickCount()==2) {
                 
+        		//open dialog window for image searching
             	FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files", "*.jpg");
             	FileChooser fileChooser = new FileChooser();
             	fileChooser.getExtensionFilters().add(imageFilter);
@@ -203,6 +204,7 @@ public class empController {
     	        stage.setTitle("New Window");
             	File file = fileChooser.showOpenDialog(stage);
             	
+            	//get image
 				try {
 					RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(), "r");
 					byte[] b = new byte[(int)f.length()];
@@ -266,6 +268,7 @@ public class empController {
         	Dictionary <String, String>  args = new Hashtable <>();
         	args.put("id", id.toString());
         	
+        	//get all info from fields on the form
         	if(!cmbox_rest.getValue().equals("Choose restaurant") &&(emp==null || cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]!=emp.getRest_id().toString())) {
         		args.put("rest_id", cmbox_rest.getSelectionModel().getSelectedItem().split(",")[0]);
         	}
@@ -299,6 +302,7 @@ public class empController {
         		args.put("wage", spin_wage.getValue().toString());
         	}
         	
+        	//update or create employee
         	EmployeeRemote.updateEmployee(args);
 	        openWindow("empSearchWindow.fxml",e);
 			
@@ -312,7 +316,7 @@ public class empController {
     }
 	
 	private void lang() {
-    	
+    	//changing language
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
     		btn_lang.setText("sk");
@@ -350,8 +354,9 @@ public class empController {
     }
     
     private void fill() {
-    	
+    	//wage
     	spin_wage.getValueFactory().setValue(0.0);
+
     	//Restaurant
     	ObservableList<String> rests = FXCollections.observableArrayList();
     	int rest_id = -1;
@@ -386,10 +391,12 @@ public class empController {
     	cmbox_pos.setItems(poss);
     	cmbox_pos.getSelectionModel().select(0);
     	cmbox_rest.getSelectionModel().select(0);
+    	
+    	//birthdate
     	DateTimeFormatter formatte1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		birthdate.setValue(LocalDate.parse(LocalDate.now().toString(),  formatte1));
     	
-    	//not null
+    	//employee not null
     	if(id!=-1) {
     		cmbox_rest.getSelectionModel().select(r-1);
         	
@@ -408,6 +415,7 @@ public class empController {
     			rbtn_male.setSelected(false);
     		}
     		   		
+    		//get image 
 			try {
 				byte [] data = EmployeeRemote.getImage(id);
 				if(data!=null) {
@@ -429,14 +437,12 @@ public class empController {
 				LogTest.LOGGER.log(Level.SEVERE, "Failed to get image from database", e);
 			} 
 	        
-			
-    		
     		
     		birthdate.setValue(LocalDate.parse(emp.getBirthdate().toString(),  formatte1));
+    		
         	//Reservations
         	ObservableList<String> rese = FXCollections.observableArrayList();
     		Dictionary<Integer, Reservation> la2 = EmployeeRemote.getEmpReserv(id);
-    		
     		enam = la2.keys();
             while(enam.hasMoreElements()) {
                 Integer k = enam.nextElement();
