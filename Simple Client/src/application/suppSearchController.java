@@ -141,7 +141,7 @@ public class suppSearchController {
         table.setEditable(true);
         search();
     	
-    	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
+    	btn_home.setOnMouseClicked(e -> {openWindow("Main", "mainWindow.fxml", e);});
     	
     	btn_new.setOnMouseClicked(e -> {
     		Dictionary <String, String>  args = new Hashtable <>();
@@ -210,11 +210,9 @@ public class suppSearchController {
     		}
     	});
     	
-    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
     	
     	btn_delete.setOnMouseClicked(e->{
-    		
-    		
     		ObservableList <Supplier> selectedItems = table.getSelectionModel().getSelectedItems();
     		for (Supplier Supplier_del : selectedItems) {
     		int break1=0;
@@ -252,37 +250,36 @@ public class suppSearchController {
         }
         
         
-       private void lang() {
+    private void lang() {
         	
-        	if(btn_lang.getText().equals("en")) {
-        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
-        		btn_lang.setText("sk");
-        	} else {
-        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
-        		btn_lang.setText("en");
-        	}
+        if(btn_lang.getText().equals("en")) {
+       		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+       		btn_lang.setText("sk");
+       	} else {
+       		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+       		btn_lang.setText("en");
+       	}
         	
-        	btn_home.setText(rb.getString("btn.home"));
-        	btn_new.setText(rb.getString("supp.add_new"));
-        	btn_delete.setText(rb.getString("btn.del"));
-        	btn_help.setText(rb.getString("btn.help"));
-        	btn_search.setText(rb.getString("btn.search"));
-        	table.getColumns().get(0).setText(rb.getString("supp.title"));
-        	table.getColumns().get(1).setText(rb.getString("supp.e_mail"));
-        	table.getColumns().get(2).setText(rb.getString("supp.phone"));
-        	txt_search.setPromptText(rb.getString("prompt"));
-        	lb_title.setText(rb.getString("supp.title"));
-        	lb_email.setText(rb.getString("supp.e_mail"));
-        	lb_phone.setText(rb.getString("supp.phone"));
-        	
-        }
+       	btn_home.setText(rb.getString("btn.home"));
+       	btn_new.setText(rb.getString("supp.add_new"));
+       	btn_delete.setText(rb.getString("btn.del"));
+       	btn_help.setText(rb.getString("btn.help"));
+       	btn_search.setText(rb.getString("btn.search"));
+       	table.getColumns().get(0).setText(rb.getString("supp.title"));
+       	table.getColumns().get(1).setText(rb.getString("supp.e_mail"));
+       	table.getColumns().get(2).setText(rb.getString("supp.phone"));
+       	txt_search.setPromptText(rb.getString("prompt"));
+       	lb_title.setText(rb.getString("supp.title"));
+       	lb_email.setText(rb.getString("supp.e_mail"));
+       	lb_phone.setText(rb.getString("supp.phone"));
+    }
      
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title,String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
@@ -306,7 +303,7 @@ public class suppSearchController {
     	return la;
     }
     
-    private void search() {
+    private void search() { //fill the listView of suppliers due to the filtres
 		if(result!=null) {
 			((Hashtable<Integer, Supplier>) result).clear();
 			data.clear();
@@ -328,8 +325,7 @@ public class suppSearchController {
         } 
     	table.setItems(data);
     }
-    private void delete(Integer id) throws MyExeception, NamingException {
-//      
+    private void delete(Integer id) throws MyExeception, NamingException {   
       Context ctx = new InitialContext();
       SupplierRemote SupplierRemote = (SupplierRemote) ctx.lookup("ejb:/SimpleEJB2//SupplierSessionEJB!ejb.SupplierRemote");    
 

@@ -160,23 +160,20 @@ public class mealSearchController {
 	        while(enam.hasMoreElements()) {
 	            Integer k = enam.nextElement();
 	            String rest = k+", cap: "+la.get(k).getCapacity()+ ","+la.get(k).getZip().getState();
-	            //System.out.println(rest);
 	            rests.add(rest);
-	            
     		}
-	        //System.out.println(rests);
 	        cmbox_rest.setItems(rests);
 		} catch (NamingException | SQLException e) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to MealRemote", e);
 		}
+		
     	cmbox_rest.getSelectionModel().select(0);
     	txt_from.setText("0.0");
     	txt_to.setText("50.0");
     	
+    	btn_home.setOnMouseClicked(e -> {openWindow("Main", "mainWindow.fxml", e);});
     	
-    	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
-    	
-    	btn_new.setOnMouseClicked(e -> {
+    	btn_new.setOnMouseClicked(e -> { //to create new meal -> open new window
     		Dictionary <Integer, Meal> transferedData = new Hashtable <Integer, Meal>();
     		try {
     			FXMLLoader loader = new FXMLLoader(getClass().getResource("mealWindow.fxml"));
@@ -193,54 +190,52 @@ public class mealSearchController {
             }
     		});
     	
-    	table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
-    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
-    	 @Override
-    	 public void handle(MouseEvent e) {
-    	  if (e.getClickCount() == 2) {
-    		ObservableList <Meal> selectedItems = table.getSelectionModel().getSelectedItems();
-      		Dictionary <Integer, Meal> transferedData = new Hashtable <Integer, Meal>();
+    	table.getSelectionModel().setCellSelectionEnabled(true);
+    	table.setOnMouseClicked(new EventHandler<MouseEvent>() { //double click opens meal in a new window
+    		@Override
+    		public void handle(MouseEvent e) {
+    			if (e.getClickCount() == 2) {
+    				ObservableList <Meal> selectedItems = table.getSelectionModel().getSelectedItems();
+    				Dictionary <Integer, Meal> transferedData = new Hashtable <Integer, Meal>();
       		
-      		try {
-      			if(selectedItems.size()>0) {
-      	    		Meal meal=selectedItems.get(0);
-      				if(result == null) {
-      					//System.out.println("dict is null");
-      				} else {
-      					Enumeration<Integer> enam = result.keys();
-      					while(enam.hasMoreElements()) {
-      						Integer k = enam.nextElement();
-      						if(result.get(k).equals(meal)) {
-      							//System.out.println("Gonna open this one"+k);
-      							transferedData.put(k, meal);
-      							break;
-      						}
-      					}
-      				}
-      			}
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("mealWindow.fxml"));
-                Parent root = loader.load();
-                mealController scene2Controller = loader.getController();
-                scene2Controller.setMeal(transferedData);
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root));
-                stage.setTitle("Meal");
-                stage.show();
-                ((Node)(e.getSource())).getScene().getWindow().hide(); 
-              } catch (IOException ex) {
-            	  LogTest.LOGGER.log(Level.SEVERE, "Failed to open the mealWindow", e);
-              }
-    	  }
-    	 }
+    				try {
+    					if(selectedItems.size()>0) {
+    						Meal meal=selectedItems.get(0);
+    						if(result == null) {
+    							//System.out.println("dict is null");
+    						} else {
+    							Enumeration<Integer> enam = result.keys();
+    							while(enam.hasMoreElements()) {
+    								Integer k = enam.nextElement();
+    								if(result.get(k).equals(meal)) {
+    									transferedData.put(k, meal);
+    									break;
+    								}
+    							}
+    						}
+    					}
+    					FXMLLoader loader = new FXMLLoader(getClass().getResource("mealWindow.fxml"));
+    					Parent root = loader.load();
+    					mealController scene2Controller = loader.getController();
+    					scene2Controller.setMeal(transferedData);
+    					Stage stage = new Stage();
+    					stage.setScene(new Scene(root));
+    					stage.setTitle("Meal");
+    					stage.show();
+    					((Node)(e.getSource())).getScene().getWindow().hide(); 
+    				} catch (IOException ex) {
+    					LogTest.LOGGER.log(Level.SEVERE, "Failed to open the mealWindow", e);
+    				}
+    			}
+    		}
     	});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		TablePrincipale("meals.pdf");
+    		tablePDF("meals.pdf");
     	});
     	
     	btn_stat.setOnMouseClicked(e -> {
     		try {
-                //Load second scene
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("statisticsRes.fxml"));
                 Parent root = loader.load();
                 statisticsController scene2Controller = loader.getController();
@@ -256,7 +251,7 @@ public class mealSearchController {
     	});
     	
     	
-    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
     	
     	btn_delete.setOnMouseClicked(e->{
     		
@@ -270,7 +265,6 @@ public class mealSearchController {
 	    	        while(enam.hasMoreElements()) {
 	    	            Integer k = enam.nextElement();
 	    	            if(result.get(k).equals(meal_del)) {
-	    	            	//System.out.println("Gonna delete this one"+k);
 	    	            	try {
 								delete(k);
 							} catch (MyExeception | NamingException e1) {
@@ -293,37 +287,37 @@ public class mealSearchController {
         btn_lang.setText("en");
         btn_lang.setOnMouseClicked(e ->{ lang();});
         lang();
+        
         search();
-        }
-        
-        
-       private void lang() {
+    }
+         
+    private void lang() {
         	
-        	if(btn_lang.getText().equals("en")) {
-        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
-        		btn_lang.setText("sk");
-        	} else {
-        		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
-        		btn_lang.setText("en");
-        	}
-        	
-        	btn_home.setText(rb.getString("btn.home"));
-        	btn_new.setText(rb.getString("btn.new"));
-        	btn_delete.setText(rb.getString("btn.del"));
-        	btn_stat.setText(rb.getString("btn.stat"));
-        	btn_help.setText(rb.getString("btn.help"));
-        	btn_search.setText(rb.getString("btn.search"));
-        	table.getColumns().get(0).setText(rb.getString("meal.title"));
-        	table.getColumns().get(1).setText(rb.getString("meal.price"));
-        	table.getColumns().get(2).setText(rb.getString("meal.prep_time"));
-        	txt_search.setPromptText(rb.getString("prompt"));
-        	price.setText(rb.getString("meal.price"));
-        	from.setText(rb.getString("filt.from"));
-        	to.setText(rb.getString("filt.to"));
-        	rest.setText(rb.getString("rest"));
-        	cmbox_rest.getItems().set(0, rb.getString("reserv.choose_rest"));
-        	cmbox_rest.getSelectionModel().select(0);
+    	if(btn_lang.getText().equals("en")) {
+    		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
+    		btn_lang.setText("sk");
+        } else {
+        	rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("sk"));
+        	btn_lang.setText("en");
         }
+        	
+        btn_home.setText(rb.getString("btn.home"));
+       	btn_new.setText(rb.getString("btn.new"));
+       	btn_delete.setText(rb.getString("btn.del"));
+       	btn_stat.setText(rb.getString("btn.stat"));
+       	btn_help.setText(rb.getString("btn.help"));
+       	btn_search.setText(rb.getString("btn.search"));
+       	table.getColumns().get(0).setText(rb.getString("meal.title"));
+       	table.getColumns().get(1).setText(rb.getString("meal.price"));
+       	table.getColumns().get(2).setText(rb.getString("meal.prep_time"));
+       	txt_search.setPromptText(rb.getString("prompt"));
+       	price.setText(rb.getString("meal.price"));
+       	from.setText(rb.getString("filt.from"));
+       	to.setText(rb.getString("filt.to"));
+       	rest.setText(rb.getString("rest"));
+       	cmbox_rest.getItems().set(0, rb.getString("reserv.choose_rest"));
+       	cmbox_rest.getSelectionModel().select(0);
+    }
      
 	private Dictionary<Integer, Meal> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
     
@@ -333,13 +327,15 @@ public class mealSearchController {
     	return la;
     }
     
-	private void search() {
+	private void search() { //fills the main list with meals due to the filtres
+		
 		if(result!=null) {
 			((Hashtable<Integer, Meal>) result).clear();
 			data.clear();
 		}
 		Dictionary <String, String> args = new Hashtable <String, String> ();
     	args.put("title", txt_search.getText());
+    	
 		if(!cmbox_rest.getValue().equals(rb.getString("reserv.choose_rest"))) {
 			System.out.println(cmbox_rest.getValue().split(",")[0]);
 			args.put("rest_id", cmbox_rest.getValue().split(",")[0]);
@@ -377,19 +373,18 @@ public class mealSearchController {
     }
 	
     private void delete(Integer id) throws MyExeception, NamingException {
-     
     	Context ctx = new InitialContext();
         MealRemote MealRemote = (MealRemote) ctx.lookup("ejb:/SimpleEJB2//MealSessionEJB!ejb.MealRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
         System.out.print("process");
         MealRemote.deleteMeal(id);
     }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
@@ -400,46 +395,46 @@ public class mealSearchController {
     }
     
     
-    public void TablePrincipale(String dest) {
+    public void tablePDF(String dest) {
         try {
         	Document document = new Document();
 			PdfWriter.getInstance(document, new FileOutputStream(dest));
-			 document.open();
-		        PdfPTable table1 = new PdfPTable(4);
-		        Font f = new Font();
-		        f.setColor(BaseColor.RED);
-		        f.setStyle(java.awt.Font.BOLD);
+			document.open();
+		    PdfPTable table1 = new PdfPTable(4);
+		    Font f = new Font();
+		    f.setColor(BaseColor.RED);
+		    f.setStyle(java.awt.Font.BOLD);
 		        
-		        table1.addCell(new Phrase("id", f));
-		        table1.addCell(new Phrase("Title", f));
-		        table1.addCell(new Phrase("Price", f));
-		        table1.addCell(new Phrase("Preparation Time",f));
+		    table1.addCell(new Phrase("id", f));
+	        table1.addCell(new Phrase("Title", f));
+	        table1.addCell(new Phrase("Price", f));
+	        table1.addCell(new Phrase("Preparation Time",f));
 		        
-		        Enumeration<Integer> enam = result.keys();
+		    Enumeration<Integer> enam = result.keys();
 		      
-		        while(enam.hasMoreElements()) {
-		            Integer k = enam.nextElement();
-		            table1.addCell(k.toString());
-			        table1.addCell(result.get(k).getTitle());
-			        table1.addCell(result.get(k).getPrice().toString());
-			        table1.addCell(result.get(k).getPrep_time().toString());
-	    		}
+		    while(enam.hasMoreElements()) {
+		    	Integer k = enam.nextElement();
+		        table1.addCell(k.toString());
+		        table1.addCell(result.get(k).getTitle());
+		        table1.addCell(result.get(k).getPrice().toString());
+		        table1.addCell(result.get(k).getPrep_time().toString());
+		    }
 		    
-		        document.add(table1);
-		        document.close();
+		    document.add(table1);
+		    document.close();
 		        
-		        File file = new File(dest);
+		    File file = new File(dest);
+		      
+		    if(!Desktop.isDesktopSupported()){
+		       	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
+		       	return;
+		    }
 		        
-		        //first check if Desktop is supported by Platform or not
-		        if(!Desktop.isDesktopSupported()){
-		        	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
-		            return;
-		        }
-		        
-		        Desktop desktop = Desktop.getDesktop();
-		        if(file.exists()) desktop.open(file);
-		        
-		     
+		    Desktop desktop = Desktop.getDesktop();
+		    if(file.exists()) {
+		    	desktop.open(file);
+		    }
+
 		} catch (DocumentException | IOException e) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to create document", e);
 		}

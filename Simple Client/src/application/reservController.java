@@ -174,11 +174,11 @@ public class reservController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to EmployeeRemote", e2);
 		}
         
-        btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+        btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
         
-        btn_back.setOnMouseClicked(e ->{openWindow("reservSearchWindow.fxml",e);});
+        btn_back.setOnMouseClicked(e ->{openWindow("Reservations","reservSearchWindow.fxml",e);});
         
-        btn_save.setOnMouseClicked(e ->{
+        btn_save.setOnMouseClicked(e ->{ //save changes
         	DateTimeFormatter formatte1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         	DateTimeFormatter formatte2 = DateTimeFormatter.ofPattern("HH:mm:ss");
         	Dictionary <String, String> args = new Hashtable<String, String> ();
@@ -261,12 +261,12 @@ public class reservController {
         	args.put("staff", staff);
         	System.out.println(args);
         	ReservRemote.updateReserv(args);
-        	openWindow("reservSearchWindow.fxml",e);
+        	openWindow("Reservations","reservSearchWindow.fxml",e);
         });
         
         btn_delete.setOnMouseClicked(e ->{
         	ReservRemote.deleteReserv(id);
-        	openWindow("reservSearchWindow.fxml",e);
+        	openWindow("Reservations","reservSearchWindow.fxml",e);
         });
         
         btn_undo.setOnMouseClicked(e ->{
@@ -291,9 +291,8 @@ public class reservController {
         	}
         });
         
-        btn_add_emp.setOnMouseClicked(e ->{
+        btn_add_emp.setOnMouseClicked(e ->{ //add employee to the staff for the reservation
         	if(cmb_emp.getSelectionModel().getSelectedItem()!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
         		ObservableList<String> emps = list_emp.getItems();
         		emps.remove(cmb_emp.getSelectionModel().getSelectedItem());
         		emps.add(cmb_emp.getSelectionModel().getSelectedItem());
@@ -301,7 +300,7 @@ public class reservController {
         	}   
         });
         
-        btn_del_emp.setOnMouseClicked(e ->{
+        btn_del_emp.setOnMouseClicked(e ->{ //remove employee from the staff for the reservation
         	String i = list_emp.getSelectionModel().getSelectedItem();
         	if(i!=null) {
         		ObservableList<String> emps = list_emp.getItems();
@@ -316,7 +315,7 @@ public class reservController {
             
     }
     
-private void lang() {
+    private void lang() {
     	
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
@@ -341,7 +340,6 @@ private void lang() {
     	lb_vis.setText(rb.getString("reserv.visit"));
     	lb_emps.setText(rb.getString("emps"));
     	lb_meals.setText(rb.getString("meals"));
-    	
 	
     }
     
@@ -354,13 +352,13 @@ private void lang() {
         fill();
     }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title, String window, MouseEvent e) {
     	
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
@@ -476,7 +474,6 @@ private void lang() {
     		spin_vis.getValueFactory().setValue(reservation.getVisitors());
     		date_start.setValue(LocalDate.parse(reservation.getDate_start().toString().split("T")[0],  formatte1));
     		date_end.setValue(LocalDate.parse(reservation.getDate_end().toString().split("T")[0],  formatte1));
-//    		System.out.println(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2)+ " "+LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2));
     		spin_time_from.getValueFactory().setValue(LocalTime.parse(reservation.getDate_start().toString().split("T")[1], formatte2));
     		spin_time_to.getValueFactory().setValue(LocalTime.parse(reservation.getDate_end().toString().split("T")[1], formatte2));
     		
@@ -494,7 +491,7 @@ private void lang() {
     	
     }
     
-    private void fillLists() {
+    private void fillLists() { //fill listViews of staff and menu for the reservation
     	ObservableList<String> emps = FXCollections.observableArrayList();
     	Dictionary<Integer, Employee> la2 = ReservRemote.getEmpReserv(id);
 		

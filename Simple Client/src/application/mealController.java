@@ -173,11 +173,12 @@ public class mealController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to MealRemote", e2);
 		}
        
+        //add image to the meal
         img_view.setOnMouseClicked(e ->{
         	if(e.getClickCount()==2) {
                 
-            	
-            	FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files", "*.jpg");
+            
+            	FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files", "*.jpg"); //only jpg
             	FileChooser fileChooser = new FileChooser();
             	fileChooser.getExtensionFilters().add(imageFilter);
             	Stage stage = new Stage();
@@ -203,6 +204,7 @@ public class mealController {
 	    			img_view.setImage(n);
 	    			
 	            	MealRemote.setImage(id, b);
+	            	
 				} catch ( IOException e1) {
 					LogTest.LOGGER.log(Level.SEVERE, "Failed to get image", e1);
 				}
@@ -211,76 +213,78 @@ public class mealController {
             }
         });
         
-        btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+        btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
         
-        btn_back.setOnMouseClicked(e ->{openWindow("mealSearchWindow.fxml",e);});
+        btn_back.setOnMouseClicked(e ->{openWindow("Meals", "mealSearchWindow.fxml",e);});
         
-        btn_save.setOnMouseClicked(e ->{
-//        	DateTimeFormatter time_p = DateTimeFormatter.ofPattern("H:mm:ss");
+        btn_save.setOnMouseClicked(e ->{ //save changes -> update
+        	
         	if(!txt_title.getText().isEmpty() &&  spin_price.getValue()!=0) {
-        	Dictionary <String, String>  args = new Hashtable <>();
-        	args.put("id", id.toString());
+        		Dictionary <String, String>  args = new Hashtable <>();
+        		args.put("id", id.toString());
         	
-        	if(meal==null || !txt_title.getText().equals(meal.getTitle())) {
+        		if(meal==null || !txt_title.getText().equals(meal.getTitle())) {
         			args.put("title", "\""+txt_title.getText()+"\"");
-        	}
+        		}
         	
-        	try {
-        		if(meal==null || !((LocalTime)spint_time.getValue()).equals(meal.getPrep_time())) {
+        		try {
+        			if(meal==null || !((LocalTime)spint_time.getValue()).equals(meal.getPrep_time())) {
+        				String time=spint_time.getValue().toString();
+        				if(spint_time.getValue().toString().length()<8) {
+        					time+=":00";
+        				}
+        				args.put("prep_time", "\""+time+"\"");
+        			}
+        		} catch(NumberFormatException ex) { //in case of wrong inputs
+        			if(meal!=null) {
+        				spint_time.getValueFactory().setValue(meal.getPrep_time());
+        			}else {
+        				spint_time.getValueFactory().setValue(LocalTime.now());
+        			}
         			String time=spint_time.getValue().toString();
         			if(spint_time.getValue().toString().length()<8) {
         				time+=":00";
         			}
         			args.put("prep_time", "\""+time+"\"");
         		}
-        	} catch(NumberFormatException ex) {
-        		if(meal!=null) {
-        			spint_time.getValueFactory().setValue(meal.getPrep_time());
-        		}else {
-        			spint_time.getValueFactory().setValue(LocalTime.now());
-        		}
-        		String time=spint_time.getValue().toString();
-        		if(spint_time.getValue().toString().length()<8) {
-    				time+=":00";
-    			}
-    			args.put("prep_time", "\""+time+"\"");
-        	}
         	
-        	try {
-        		if(meal==null || spin_price.getValue()!=meal.getPrice()) {
+        		try {
+        			if(meal==null || spin_price.getValue()!=meal.getPrice()) {
+        				args.put("price", spin_price.getValue().toString());
+        			}
+        		} catch(NumberFormatException ex) { //in case of wrong inputs
+        			if(meal!=null) {
+        				spin_price.getValueFactory().setValue(meal.getPrice());
+        			}else {
+        				spin_price.getValueFactory().setValue(0.0);
+        			}
         			args.put("price", spin_price.getValue().toString());
         		}
-        	} catch(NumberFormatException ex) {
-        		if(meal!=null) {
-        			spin_price.getValueFactory().setValue(meal.getPrice());
-        		}else {
-        			spin_price.getValueFactory().setValue(0.0);
-        		}
-        		args.put("price", spin_price.getValue().toString());
-        	}
         	
-        	ObservableList<String> prods = list_prod.getItems();
-        	String ingr="";
-        	for(int i =0; i<prods.size(); i++) {
-        		ingr+=prods.get(i).split(",")[0]+",";
+        		ObservableList<String> prods = list_prod.getItems();
+        		
+        		String ingr="";
+        		for(int i =0; i<prods.size(); i++) {
+        			ingr+=prods.get(i).split(",")[0]+",";
+        		}
+        		args.put("ingr", ingr);
+        		
+        		MealRemote.updateMeal(args);
         	}
-        	args.put("ingr", ingr);
-        	MealRemote.updateMeal(args);
-        	}
-	        openWindow("mealSearchWindow.fxml",e);
+	        openWindow("Meals","mealSearchWindow.fxml",e);
 			
         });
         
         btn_delete.setOnMouseClicked(e ->{
 			MealRemote.deleteMeal(id);
-	        openWindow("mealSearchWindow.fxml",e);
+	        openWindow("Meals", "mealSearchWindow.fxml",e);
         });
         
         btn_undo.setOnMouseClicked(e ->{
         	fill();
         });
         
-        btn_add_prod.setOnMouseClicked(e ->{
+        btn_add_prod.setOnMouseClicked(e ->{ //add product to the meal recipe
         	if(cmbox_prod.getSelectionModel().getSelectedItem()!=null) {
         		ObservableList<String> prods= list_prod.getItems();
         		prods.remove(cmbox_prod.getSelectionModel().getSelectedItem());
@@ -289,7 +293,7 @@ public class mealController {
         	}   
         });
         
-        btn_del_prod.setOnMouseClicked(e ->{
+        btn_del_prod.setOnMouseClicked(e ->{ //delete product from the meal recipe
         	String i = list_prod.getSelectionModel().getSelectedItem();
         	if(i!=null) {
         		ObservableList<String> prods = list_prod.getItems();
@@ -297,13 +301,14 @@ public class mealController {
         		list_prod.setItems(prods);
         	}
         });
+        
         btn_lang.setText("en");
         btn_lang.setOnMouseClicked(e ->{ lang();});
-        lang();
+        lang(); //multilanguage
             
     }
     
-private void lang() {
+    private void lang() {
     	
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
@@ -341,12 +346,12 @@ private void lang() {
         fill();
     }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
@@ -356,11 +361,10 @@ private void lang() {
     	}
     }
     
-	private void fill() {
-    	SpinnerValueFactory<LocalTime> value = new SpinnerValueFactory<LocalTime>() {
-            {
-            setConverter(new LocalTimeStringConverter(DateTimeFormatter.ofPattern("HH:mm:ss"), DateTimeFormatter.ofPattern("H:mm:ss")));
-            }
+	private void fill() { //fill the window with appropriate data
+    	SpinnerValueFactory<LocalTime> value = new SpinnerValueFactory<LocalTime>() { //value factory for preparation time spinner
+            {setConverter(new LocalTimeStringConverter(DateTimeFormatter.ofPattern("HH:mm:ss"), DateTimeFormatter.ofPattern("H:mm:ss")));}
+            
             @Override
             public void decrement(int steps) {
                 if (getValue() == null)
@@ -385,9 +389,9 @@ private void lang() {
         spint_time.setEditable(true);
         
         ObservableList<String> prods = FXCollections.observableArrayList();
- 	   Dictionary<Integer, Product> la2 = MealRemote.getProdMeal(0);
+ 	   	Dictionary<Integer, Product> la2 = MealRemote.getProdMeal(0);
 		
- 	  Enumeration<Integer>  enam = la2.keys();
+ 	   	Enumeration<Integer>  enam = la2.keys();
         while(enam.hasMoreElements()) {
             Integer k = enam.nextElement();
             String rest = k+", "+la2.get(k).getTitle()+ " "+la2.get(k).getPrice();
@@ -396,7 +400,7 @@ private void lang() {
             
         cmbox_prod.setItems(prods);
         
-    	if(id!=0) {
+    	if(id!=0) {//if we opened a detailed view of a meal, not created new one
     		
     		txt_title.setText(meal.getTitle());
     		spin_price.getValueFactory().setValue(meal.getPrice());
@@ -437,33 +441,30 @@ private void lang() {
     		ObservableList<String> reserv = FXCollections.observableArrayList();
     		Dictionary<Integer, Reservation> la = MealRemote.getReservMeal(id);
     			
-    			enam = la.keys();
-    	        while(enam.hasMoreElements()) {
-    	            Integer k = enam.nextElement();
-    	            String res = k+", rest: "+la.get(k).getRest_id()+ ", "+la.get(k).getDate_start()+"-"+la.get(k).getDate_end();
-    	            reserv.add(res);
-    	            
-        		}
-    	        list_reserv.getItems().addAll(reserv);
+    		enam = la.keys();
+    	    while(enam.hasMoreElements()) {
+    	    	Integer k = enam.nextElement();
+    	        String res = k+", rest: "+la.get(k).getRest_id()+ ", "+la.get(k).getDate_start()+"-"+la.get(k).getDate_end();
+    	        reserv.add(res);
+    	    }
+    	    list_reserv.getItems().addAll(reserv);
 			
-    	   prods = FXCollections.observableArrayList();
-    	   la2 = MealRemote.getProdMeal(id);
+    	    prods = FXCollections.observableArrayList();
+    	    la2 = MealRemote.getProdMeal(id);
     			
-    	   enam = la2.keys();
-    	   while(enam.hasMoreElements()) {
+    	    enam = la2.keys();
+    	    while(enam.hasMoreElements()) {
     	        Integer k = enam.nextElement();
     	        String rest = k+", "+la2.get(k).getTitle()+ " "+la2.get(k).getPrice();
-    	            prods.add(rest);
-    	        }
-    	   list_prod.setItems(prods);
-  
-    			
+    	        prods.add(rest);
+    	    }
+    	    list_prod.setItems(prods);
+  	
     	} else {
     		DateTimeFormatter time_p = DateTimeFormatter.ofPattern("H:mm:ss");
     		spin_price.getValueFactory().setValue(0.00);
     		spint_time.getValueFactory().setValue(LocalTime.parse("0:00:00", time_p));
     	}
-    	
     }
     
 }

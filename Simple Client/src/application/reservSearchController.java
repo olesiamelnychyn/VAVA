@@ -180,45 +180,45 @@ public class reservSearchController {
         table.setEditable(true);
         
         
-        table.setOnMouseClicked(new EventHandler<MouseEvent>() {
-       	 @Override
-       	 public void handle(MouseEvent e) {
-       	  if (e.getClickCount() == 2) {
-       		ObservableList <Reservation> selectedItems = table.getSelectionModel().getSelectedItems();
-         		Dictionary <Integer, Reservation> transferedData = new Hashtable <Integer, Reservation>();
-         		
-         		try {
-         			if(selectedItems.size()>0) {
-         				Reservation res=selectedItems.get(0);
-         				if(result == null) {
-         					//System.out.println("dict is null");
-         				} else {
-         					Enumeration<Integer> enam = result.keys();
-         					while(enam.hasMoreElements()) {
-         						Integer k = enam.nextElement();
-         						if(result.get(k).equals(res)) {
-         							System.out.println("Gonna open this one"+k);
-         							transferedData.put(k, res);
-         							break;
+        table.setOnMouseClicked(new EventHandler<MouseEvent>() { //double click on the reservation -> detailed view
+       	 	@Override
+       	 	public void handle(MouseEvent e) {
+       	 		if (e.getClickCount() == 2) {
+       	 			ObservableList <Reservation> selectedItems = table.getSelectionModel().getSelectedItems();
+       	 			Dictionary <Integer, Reservation> transferedData = new Hashtable <Integer, Reservation>();
+       	 			
+       	 			try {
+       	 				if(selectedItems.size()>0) {
+       	 					Reservation res=selectedItems.get(0);
+         					if(result == null) {
+         						//System.out.println("dict is null");
+         					} else {
+         						Enumeration<Integer> enam = result.keys();
+         						while(enam.hasMoreElements()) {
+         							Integer k = enam.nextElement();
+         							if(result.get(k).equals(res)) {
+         								System.out.println("Gonna open this one"+k);
+         								transferedData.put(k, res);
+         								break;
+         							}
          						}
          					}
-         				}
-         			}
-                   FXMLLoader loader = new FXMLLoader(getClass().getResource("reservWindow.fxml"));
-                   Parent root = loader.load();
-                   reservController scene2Controller = loader.getController();
-                   scene2Controller.setReserv(transferedData);
-                   Stage stage = new Stage();
-                   stage.setScene(new Scene(root));
-                   stage.setTitle("Meal");
-                   stage.show();
-                   ((Node)(e.getSource())).getScene().getWindow().hide(); 
-                 } catch (IOException ex) {
-                	 LogTest.LOGGER.log(Level.SEVERE, "Failed to open reservation", e);
-                	 ex.printStackTrace();;
-                 }
-       	  }
-       	 }
+       	 				}
+       	 				FXMLLoader loader = new FXMLLoader(getClass().getResource("reservWindow.fxml"));
+       	 				Parent root = loader.load();
+       	 				reservController scene2Controller = loader.getController();
+       	 				scene2Controller.setReserv(transferedData);
+       	 				Stage stage = new Stage();
+       	 				stage.setScene(new Scene(root));
+       	 				stage.setTitle("Reservation");
+       	 				stage.show();
+       	 				((Node)(e.getSource())).getScene().getWindow().hide(); 
+       	 			} catch (IOException ex) {
+       	 				LogTest.LOGGER.log(Level.SEVERE, "Failed to open reservation", e);
+       	 				ex.printStackTrace();;
+       	 			}
+       	 		}
+       	 	}
        	});
 
 		try {
@@ -243,39 +243,38 @@ public class reservSearchController {
     	txt_to.setText("100");
     	search();
     	
-        btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
+        btn_home.setOnMouseClicked(e -> {openWindow("Main", "mainWindow.fxml", e);});
     	
     	btn_new.setOnMouseClicked(e -> {
     		Dictionary <Integer, Reservation> transferedData = new Hashtable <Integer, Reservation>();
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("reservWindow.fxml"));
-			Parent root = loader.load();
-			reservController scene2Controller = loader.getController();
-			scene2Controller.setReserv(transferedData);
-			Stage stage = new Stage();
-			stage.setScene(new Scene(root));
-            stage.setTitle("Meal");
-            stage.show();
-            ((Node)(e.getSource())).getScene().getWindow().hide(); 
-        } catch (IOException ex) {
-        	LogTest.LOGGER.log(Level.SEVERE, "Failed to open reservation window", e);
-        }
+    		try {
+    			FXMLLoader loader = new FXMLLoader(getClass().getResource("reservWindow.fxml"));
+    			Parent root = loader.load();
+    			reservController scene2Controller = loader.getController();
+    			scene2Controller.setReserv(transferedData);
+    			Stage stage = new Stage();
+    			stage.setScene(new Scene(root));
+    			stage.setTitle("Reservation");
+    			stage.show();
+    			((Node)(e.getSource())).getScene().getWindow().hide(); 
+    		} catch (IOException ex) {
+    			LogTest.LOGGER.log(Level.SEVERE, "Failed to open reservation window", e);
+    		}
 		});
     	
     	btn_export.setOnMouseClicked(e -> {
-    		TablePrincipale("reservations.pdf");
+    		tablePDF("reservations.pdf");
     	});
     	
     	btn_stat.setOnMouseClicked(e -> {
     		try {
-                //Load second scene
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("statisticsRes.fxml"));
                 Parent root = loader.load();
                 statisticsController scene2Controller = loader.getController();
                 scene2Controller.transferMessage(Integer.valueOf(1));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
-                stage.setTitle("Second Window");
+                stage.setTitle("Statistics - Reservations");
                 stage.show();
                 ((Node)(e.getSource())).getScene().getWindow().hide(); 
             } catch (IOException ex) {
@@ -283,7 +282,7 @@ public class reservSearchController {
             }
     	});
     	
-    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
     	
     	btn_delete.setOnMouseClicked(e->{
     		
@@ -361,7 +360,7 @@ public class reservSearchController {
     	return la;
     }
     
-    private void search() {
+    private void search() {//fill the main ListView with reservations due to the filtrs
     	if(result!=null) {
 			((Hashtable<Integer, Reservation>) result).clear();
 			data.clear();
@@ -428,12 +427,12 @@ public class reservSearchController {
       ReservationRemote.deleteReserv(id);
   }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title,String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
@@ -443,7 +442,7 @@ public class reservSearchController {
     	}
     }
     
-    public void TablePrincipale(String dest) { 	
+    public void tablePDF(String dest) { 	
         try {
         	Document document = new Document();
 			PdfWriter.getInstance(document, new FileOutputStream(dest));
