@@ -275,7 +275,6 @@ public class reservController {
         
         btn_add_meal.setOnMouseClicked(e ->{
         	if(cmb_meal.getSelectionModel().getSelectedItem()!=null) {
-//        		System.out.println(cmb_meal.getSelectionModel().getSelectedItem().split(":")[0]);
         		ObservableList<String> meals = list_meal.getItems();
         		meals.remove(cmb_meal.getSelectionModel().getSelectedItem());
         		meals.add(cmb_meal.getSelectionModel().getSelectedItem());
