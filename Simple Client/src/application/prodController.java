@@ -129,15 +129,15 @@ public class prodController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to EmployeeRemote", e2);
 		}
         
-        btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+        btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
         
-        btn_back.setOnMouseClicked(e ->{openWindow("prodSearchWindow.fxml",e);});
+        btn_back.setOnMouseClicked(e ->{openWindow("Products", "prodSearchWindow.fxml",e);});
         
         btn_delete.setOnMouseClicked(e ->{
         	if (id!=-1) {
         		ProductRemote.deleteProduct(id);
         	}
-	        openWindow("prodSearchWindow.fxml",e);
+	        openWindow("Products", "prodSearchWindow.fxml",e);
         });
         
         btn_save.setOnMouseClicked(e ->{
@@ -157,7 +157,7 @@ public class prodController {
         	if(!txt_title.getText().isEmpty()){
         		ProductRemote.updateProduct(args);
         	}
-	        openWindow("prodSearchWindow.fxml",e);
+	        openWindow("Products", "prodSearchWindow.fxml",e);
 			
         });
         
@@ -173,7 +173,7 @@ public class prodController {
     }
     
     private void lang() {
-    	
+    	//change language
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
     		btn_lang.setText("sk");
@@ -224,6 +224,7 @@ public class prodController {
 		} catch (NamingException e) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get suppliers", e);
 		}
+    	
     	if(prod!=null) {
     		txt_title.setText(prod.getTitle());
     		spin_price.getValueFactory().setValue(prod.getPrice());
@@ -264,12 +265,12 @@ public class prodController {
         fill();
     }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 

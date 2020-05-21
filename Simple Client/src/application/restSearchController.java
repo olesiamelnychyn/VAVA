@@ -136,6 +136,7 @@ public class restSearchController {
         assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'restSearchWindow.fxml'.";
         
+        //table initialize
         TableColumn <Restaurant, Integer> capCol = new TableColumn <Restaurant, Integer> ("Capacity");
         capCol.setCellValueFactory(new PropertyValueFactory<>("capacity"));
         TableColumn <Restaurant, String> zip_codeCol = new TableColumn <Restaurant, String> ("Code");
@@ -146,9 +147,9 @@ public class restSearchController {
         table.getColumns().add(zip_codeCol);
         table.setEditable(true);
         
+        //zip default
         ObservableList<String> zip = FXCollections.observableArrayList();
         zip.add("Choose zip");
-        
         try {
 			for (Zip p : this.getZIP()) { 		      
 				zip.add(p.toString());		
@@ -158,6 +159,8 @@ public class restSearchController {
 		} 
         cmbox_zip.setItems(zip);
         cmbox_zip.getSelectionModel().select(0);
+        
+        //capacity default
     	txt_from.setText("0");
     	int capacity;
 		try {
@@ -173,11 +176,11 @@ public class restSearchController {
 
     	search();
     	
-    	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
+    	btn_home.setOnMouseClicked(e -> {openWindow("Help", "mainWindow.fxml", e);});
     	
-    	btn_new.setOnMouseClicked(e -> {openWindow("restWindow.fxml", e);});
+    	btn_new.setOnMouseClicked(e -> {openWindow("Restaurant", "restWindow.fxml", e);});
     	
-    	btn_export.setOnMouseClicked(e -> {
+    	btn_export.setOnMouseClicked(e -> {  //export table as a pdf
     		try {
             	Document document = new Document();
     			PdfWriter.getInstance(document, new FileOutputStream("restaurants.pdf"));
@@ -192,38 +195,30 @@ public class restSearchController {
     		        table1.addCell(new Phrase("Zip", f));
     		        
     		        Enumeration<Integer> enam = result.keys();
-    		      
     		        while(enam.hasMoreElements()) {
     		            Integer k = enam.nextElement();
     		            table1.addCell(k.toString());
     			        table1.addCell(result.get(k).getCapacity().toString());
     			        table1.addCell(result.get(k).getZip().toString());
     	    		}
-    		    
     		        document.add(table1);
     		        document.close();
     		        
     		        File file = new File("restaurants.pdf");
-    		        
     		        if(!Desktop.isDesktopSupported()){
     		        	LogTest.LOGGER.log(Level.INFO, "Desktop is not supported");
     		            return;
     		        }
-    		        
     		        Desktop desktop = Desktop.getDesktop();
     		        if(file.exists()) desktop.open(file);
-    		        
-    		     
     		} catch (DocumentException | IOException ex) {
     			LogTest.LOGGER.log(Level.SEVERE, "Failed to create document", ex);
     		}
     	});
     	
-    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
     	
     	btn_delete.setOnMouseClicked(e->{
-    		
-    		
     		ObservableList <Restaurant> selectedItems = table.getSelectionModel().getSelectedItems();
     		for (Restaurant Restaurant_del : selectedItems) {
     		int break1=0;
@@ -254,7 +249,7 @@ public class restSearchController {
     	
         btn_search.setOnMouseClicked(e ->{search();});
         
-        btn_stat.setOnMouseClicked(e ->{
+        btn_stat.setOnMouseClicked(e ->{  //open statistics for restaurants
         	try {
                 //Load second scene
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("statisticsRes.fxml"));
@@ -272,13 +267,14 @@ public class restSearchController {
         });
         
         table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
-    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {  //after the cell was clicked twice
     	 @Override
     	 public void handle(MouseEvent e) {
     	  if (e.getClickCount() == 2) {
     		ObservableList <Restaurant> selectedItems = table.getSelectionModel().getSelectedItems();
       		Dictionary <Integer, Restaurant> transferedData = new Hashtable <Integer, Restaurant>();
       		
+      		//get selected item
       		try {
       			if(selectedItems.size()>0) {
       				Restaurant rest=selectedItems.get(0);
@@ -295,6 +291,7 @@ public class restSearchController {
       					}
       				}
       			}
+      			//open restaurant
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("restWindow.fxml"));
                 Parent root = loader.load();
                 restController rC = loader.getController();
@@ -317,7 +314,7 @@ public class restSearchController {
     }
     
     private void lang() {
-    	
+    	//change language
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
     		btn_lang.setText("sk");
@@ -339,7 +336,6 @@ public class restSearchController {
     	lb_to.setText(rb.getString("filt.to"));
     	lb_capacity.setText(rb.getString("rest.cap"));
     	cmbox_zip.getItems().set(0, rb.getString("rest.choose_zip"));
-	
     }
     
     private void search() {
@@ -348,6 +344,8 @@ public class restSearchController {
 			data.clear();
 		}
 		Dictionary <String, String> args = new Hashtable <String, String> ();
+
+		//capacity
     	try {
     		args.put("vis_from", Integer.valueOf(txt_from.getText()).toString());
     		txt_from.setText(Integer.valueOf(txt_from.getText()).toString());
@@ -374,13 +372,15 @@ public class restSearchController {
 				txt_to.setText(String.valueOf(100));
 			}
     	}
+    	
+    	//zip
     	if(cmbox_zip.getValue()!=rb.getString("rest.choose_zip")) {
     		args.put("zip", cmbox_zip.getValue().split(",")[0].split(" ")[1]);
     	}else {
     		args.put("zip", "");
     	}
     	
-       
+    	//get result
     	try {
     		final Dictionary<Integer, Restaurant> result1 = doRequest(args);
     		result=result1;
@@ -399,14 +399,14 @@ public class restSearchController {
     private Dictionary<Integer, Restaurant> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
         
         Context ctx = new InitialContext();
-        RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    
     	Dictionary<Integer, Restaurant> la = RestaurantRemote.searchRestaurant(args);
     	return la;
     }
     
     private int getMaxCap() throws MyExeception, NamingException {
     	Context ctx = new InitialContext();
-    	RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+    	RestaurantRemote RestaurantRemote = (RestaurantRemote) ctx.lookup("ejb:/SimpleEJB2//RestaurantSessionEJB!ejb.RestaurantRemote");    
         int cap = RestaurantRemote.getMaxCapacity();
     	return cap;
     }
@@ -425,12 +425,12 @@ public class restSearchController {
       RestaurantRemote.deleteRestaurant(id);
     }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 

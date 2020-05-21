@@ -130,7 +130,7 @@ public class empSearchController {
         assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'empSearchWindow.fxml'.";
 
-        
+        //initialize table
         TableColumn <Employee, Integer> restCol = new TableColumn <Employee, Integer> ("Restaurant");
         restCol.setCellValueFactory(new PropertyValueFactory<>("rest_id"));
         TableColumn <Employee, String> firstCol = new TableColumn <Employee, String> ("First Name");
@@ -149,6 +149,7 @@ public class empSearchController {
         table.getColumns().add(wageCol);
         table.setEditable(true);
         
+        //get positions
         ObservableList<String> poss = FXCollections.observableArrayList();
         poss.add("Choose position");
         
@@ -159,9 +160,10 @@ public class empSearchController {
 		} catch (MyExeception | NamingException e2) {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get positions", e2);
 		} 
-        
     	cmbox_pos.setItems(poss);
     	cmbox_pos.getSelectionModel().select(0);
+    	
+    	//wage default
     	txt_from.setText("0.0");
     	int wage;
 		try {
@@ -171,13 +173,11 @@ public class empSearchController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get max wage", e);
 		} 
     	
+    	btn_home.setOnMouseClicked(e -> {openWindow("Main", "mainWindow.fxml", e);});
     	
+    	btn_new.setOnMouseClicked(e -> {openWindow("Employee", "empWindow.fxml", e);});
     	
-    	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
-    	
-    	btn_new.setOnMouseClicked(e -> {openWindow("empWindow.fxml", e);});
-    	
-    	btn_export.setOnMouseClicked(e -> {
+    	btn_export.setOnMouseClicked(e -> { //export table as a pdf
     		try {
             	Document document = new Document();
     			PdfWriter.getInstance(document, new FileOutputStream("employees.pdf"));
@@ -225,11 +225,9 @@ public class empSearchController {
     		}
     	});
     	
-    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
     	
     	btn_delete.setOnMouseClicked(e->{
-    		
-    		
     		ObservableList <Employee> selectedItems = table.getSelectionModel().getSelectedItems();
     		for (Employee Employee_del : selectedItems) {
     		int break1=0;
@@ -261,7 +259,7 @@ public class empSearchController {
         btn_search.setOnMouseClicked(e ->{search();});
         
         table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
-    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {  //after the cell was clicked twice
     	 @Override
     	 public void handle(MouseEvent e) {
     	  if (e.getClickCount() == 2) {
@@ -284,6 +282,8 @@ public class empSearchController {
       					}
       				}
       			}
+      			
+      			//open employee window
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("empWindow.fxml"));
                 Parent root = loader.load();
                 empController eC = loader.getController();
@@ -307,7 +307,7 @@ public class empSearchController {
     }
     
     private void lang() {
-    	
+    	//change language
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
     		btn_lang.setText("sk");
@@ -341,9 +341,8 @@ public class empSearchController {
     }
     
     private Dictionary<Integer, Employee> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
-        
         Context ctx = new InitialContext();
-        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    
     	Dictionary<Integer, Employee> la = EmployeeRemote.searchEmployee(args);
     	return la;
     }
@@ -355,6 +354,8 @@ public class empSearchController {
 		}
 		Dictionary <String, String> args = new Hashtable <String, String> ();
     	args.put("name", txt_search.getText());
+    	
+    	//wage from
     	try {
     		args.put("wage_from", Double.valueOf(txt_from.getText()).toString());
     		txt_from.setText(Double.valueOf(txt_from.getText()).toString());
@@ -362,6 +363,8 @@ public class empSearchController {
     		txt_from.setText("0.0");
     		args.put("wage_from", String.valueOf(0.0));
     	}
+
+    	//wage to
     	try {
     		args.put("wage_to", Double.valueOf(txt_to.getText()).toString());
     		txt_to.setText(Double.valueOf(txt_to.getText()).toString());
@@ -379,12 +382,15 @@ public class empSearchController {
 				args.put("wage_to", String.valueOf(50.0));
 			}
     	}
+    	
+    	//position
     	if(!cmbox_pos.getValue().equals(rb.getString("emp.choose_pos"))) {
     		args.put("position", cmbox_pos.getValue());
     	}else {
     		args.put("position", "");
     	}
        
+    	//get result
     	try {
     		final Dictionary<Integer, Employee> result1 = doRequest(args);
     		result=result1;
@@ -402,31 +408,30 @@ public class empSearchController {
     
     private int getMaxWage() throws MyExeception, NamingException {
     	Context ctx = new InitialContext();
-        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    
         int wage = EmployeeRemote.getMaxWage();
     	return wage;
     }
     
     private ArrayList<String> getPositions() throws MyExeception, NamingException {
     	Context ctx = new InitialContext();
-        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+        EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    
         ArrayList<String> pos = EmployeeRemote.getPositions();
     	return pos;
     }
     
     private void delete(Integer id) throws MyExeception, NamingException {
-//      
       Context ctx = new InitialContext();
-      EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    //java:jboss/exported/Calc_ear_exploded/ejb/CalcSessionEJB!com.calc.server.CalcRemote
+      EmployeeRemote EmployeeRemote = (EmployeeRemote) ctx.lookup("ejb:/SimpleEJB2//EmployeeSessionEJB!ejb.EmployeeRemote");    
       EmployeeRemote.deleteEmployee(id);
     }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 

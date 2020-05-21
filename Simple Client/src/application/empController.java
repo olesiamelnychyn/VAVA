@@ -235,15 +235,15 @@ public class empController {
         btn_lang.setOnMouseClicked(e ->{ lang();});
         lang();       
 
-        btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+        btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
         
-        btn_back.setOnMouseClicked(e ->{openWindow("empSearchWindow.fxml",e);});
+        btn_back.setOnMouseClicked(e ->{openWindow("Employees", "empSearchWindow.fxml",e);});
         
         btn_delete.setOnMouseClicked(e ->{
         	if (id!=-1) {
         		EmployeeRemote.deleteEmployee(id);
         	}
-	        openWindow("empSearchWindow.fxml",e);
+	        openWindow("Employees", "empSearchWindow.fxml",e);
         });
         
         rbtn_male.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -304,7 +304,7 @@ public class empController {
         	
         	//update or create employee
         	EmployeeRemote.updateEmployee(args);
-	        openWindow("empSearchWindow.fxml",e);
+	        openWindow("Employees", "empSearchWindow.fxml",e);
 			
         });
         
@@ -458,12 +458,12 @@ public class empController {
     	return pos;
     }
 
-	private void openWindow(String window, MouseEvent e) {
+	private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 

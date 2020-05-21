@@ -132,7 +132,7 @@ public class prodSearchController {
         assert btn_help != null : "fx:id=\"btn_help\" was not injected: check your FXML file 'prodSearchWindow.fxml'.";
         assert tool_tip != null : "fx:id=\"tool_tip\" was not injected: check your FXML file 'prodSearchWindow.fxml'.";
         
-
+        //initialize table
         TableColumn <Product, String> titleCol = new TableColumn <Product, String> ("Title");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
         TableColumn <Product, Double> priceCol = new TableColumn <Product, Double> ("Price");
@@ -146,6 +146,7 @@ public class prodSearchController {
         table.getColumns().add(suppCol);
         table.setEditable(true);
         
+        //supplier default
         ObservableList<String> supps = FXCollections.observableArrayList();
         supps.add("Choose supplier");
 		
@@ -170,6 +171,8 @@ public class prodSearchController {
 		}
 		cmbox_supp.setItems(supps);
 		cmbox_supp.getSelectionModel().select(0);
+
+		//price default
 		txt_from.setText("0.0");
 		double price;
 		try {
@@ -179,13 +182,11 @@ public class prodSearchController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to get max price", e);
 		}
     	
+    	btn_home.setOnMouseClicked(e -> {openWindow("Main", "mainWindow.fxml", e);});
     	
+    	btn_new.setOnMouseClicked(e -> {openWindow("Product", "prodWindow.fxml", e);});
     	
-    	btn_home.setOnMouseClicked(e -> {openWindow("mainWindow.fxml", e);});
-    	
-    	btn_new.setOnMouseClicked(e -> {openWindow("prodWindow.fxml", e);});
-    	
-    	btn_export.setOnMouseClicked(e -> {
+    	btn_export.setOnMouseClicked(e -> {  //export table as a pdf
     		try {
             	Document document = new Document();
     			PdfWriter.getInstance(document, new FileOutputStream("products.pdf"));
@@ -229,10 +230,10 @@ public class prodSearchController {
     		}
     	});
     	
-    	btn_help.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+    	btn_help.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
     	
     	btn_delete.setOnMouseClicked(e->{
-    		
+    		//delete product
     		ObservableList <Product> selectedItems = table.getSelectionModel().getSelectedItems();
     		for (Product Product_del : selectedItems) {
     		int break1=0;
@@ -264,13 +265,14 @@ public class prodSearchController {
         btn_search.setOnMouseClicked(e ->{search();});
         
         table.getSelectionModel().setCellSelectionEnabled(true);  // selects cell only, not the whole row
-    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    	table.setOnMouseClicked(new EventHandler<MouseEvent>() {  //after the cell was clicked twice
     	 @Override
     	 public void handle(MouseEvent e) {
     	  if (e.getClickCount() == 2) {
     		ObservableList <Product> selectedItems = table.getSelectionModel().getSelectedItems();
       		Dictionary <Integer, Product> transferedData = new Hashtable <Integer, Product>();
       		
+      		//get selected item
       		try {
       			if(selectedItems.size()>0) {
       				Product prod=selectedItems.get(0);
@@ -287,6 +289,8 @@ public class prodSearchController {
       					}
       				}
       			}
+      			
+      			//open product window
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("prodWindow.fxml"));
                 Parent root = loader.load();
                 prodController eC = loader.getController();
@@ -310,7 +314,7 @@ public class prodSearchController {
     }
     
     private void lang() {
-    	
+    	//change language
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
     		btn_lang.setText("sk");
@@ -344,6 +348,8 @@ public class prodSearchController {
 		}
 		Dictionary <String, String> args = new Hashtable <String, String> ();
     	args.put("title", txt_search.getText());
+    	
+    	//price
     	try {
     		args.put("price_from", Double.valueOf(txt_from.getText()).toString());
     		txt_from.setText(Double.valueOf(txt_from.getText()).toString());
@@ -368,11 +374,15 @@ public class prodSearchController {
     			args.put("price_to", String.valueOf(50.0));
     		}
     	}
+    	
+    	//supplier
     	if(!cmbox_supp.getValue().equals(rb.getString("prod.choose_supp"))) {
     		args.put("supp_id", cmbox_supp.getValue().split(":")[0]);
     	}else {
     		args.put("supp_id", "");
     	}  
+    	
+    	//get result
     	try {
     		final Dictionary<Integer, Product> result1 = doRequest(args);
     		result=result1;
@@ -389,7 +399,6 @@ public class prodSearchController {
     }
     
     private Dictionary<Integer, Product> doRequest(Dictionary <String, String> args) throws NamingException, MyExeception {
-        
         Context ctx = new InitialContext();
         ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");   
     	Dictionary<Integer, Product> la = ProductRemote.searchProduct(args);
@@ -404,18 +413,17 @@ public class prodSearchController {
     }
     
     private void delete(Integer id) throws MyExeception, NamingException {
-//      
       Context ctx = new InitialContext();
       ProductRemote ProductRemote = (ProductRemote) ctx.lookup("ejb:/SimpleEJB2//ProductSessionEJB!ejb.ProductRemote");   
       ProductRemote.deleteProduct(id);
     }
     
-    private void openWindow(String window, MouseEvent e) {
+    private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 

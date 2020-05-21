@@ -168,15 +168,15 @@ public class restController {
 			LogTest.LOGGER.log(Level.SEVERE, "Failed to connect to RestaurantRemote", e2);
 		}
         
-        btn_help1.setOnMouseClicked(e->{openWindow("helpWindow.fxml", e);});
+        btn_help1.setOnMouseClicked(e->{openWindow("Help", "helpWindow.fxml", e);});
         
-        btn_back.setOnMouseClicked(e ->{openWindow("restSearchWindow.fxml",e);});
+        btn_back.setOnMouseClicked(e ->{openWindow("Restaurants", "restSearchWindow.fxml",e);});
         
         btn_delete.setOnMouseClicked(e ->{
         	if (id!=0) {
         		RestaurantRemote.deleteRestaurant(id);
         	}
-	        openWindow("restSearchWindow.fxml",e);
+	        openWindow("Restaurants", "restSearchWindow.fxml",e);
         });
         
         btn_undo.setOnMouseClicked(e ->{
@@ -192,12 +192,16 @@ public class restController {
         	if(rest==null || spin_cap.getValue()!=rest.getCapacity()) {
         		args.put("capacity", spin_cap.getValue().toString());
         	}
+        	
+        	//meals
         	ObservableList<String> meals = list_meal.getItems();
         	String menu="";
         	for(int i =0; i<meals.size(); i++) {
         			menu+=meals.get(i).split(":")[0]+",";
         	}
         	args.put("menu", menu);
+        	
+        	//employees
         	ObservableList<String> emps = list_emp.getItems();
         	String staff="";
         	for(int i =0; i<emps.size(); i++) {
@@ -207,11 +211,11 @@ public class restController {
        
         	
         	RestaurantRemote.updateRestaurant(args);
-	        openWindow("restSearchWindow.fxml",e);
+	        openWindow("Restaurants", "restSearchWindow.fxml",e);
 			
         });
         
-        btn_add_meal_to_order.setOnMouseClicked(e ->{
+        btn_add_meal_to_order.setOnMouseClicked(e ->{  //add order to list
         	if(cmb_order.getSelectionModel().getSelectedItem()!=null) {
         		ObservableList<String> orders = list_orders.getItems();
         		orders.add(cmb_order.getSelectionModel().getSelectedItem());
@@ -219,7 +223,7 @@ public class restController {
         	}   
         });
         
-        btn_del_meal_to_order.setOnMouseClicked(e ->{
+        btn_del_meal_to_order.setOnMouseClicked(e ->{  //delete order from list
         	if(cmb_order.getSelectionModel().getSelectedItem()!=null) {
 
         		ObservableList<String> orders = list_orders.getItems();
@@ -228,7 +232,7 @@ public class restController {
         	}   
         });
         
-        btn_confirm_order.setOnMouseClicked(e ->{
+        btn_confirm_order.setOnMouseClicked(e ->{  //confirm orders from a list
         	if(rest!=null) {
         		Dictionary <String, String>  args = new Hashtable <>();
         		ObservableList<String> orders = list_orders.getItems();
@@ -244,7 +248,7 @@ public class restController {
         	}   
         });
         
-        btn_add_meal.setOnMouseClicked(e ->{
+        btn_add_meal.setOnMouseClicked(e ->{  //add meal to list
         	if(cmb_meal.getSelectionModel().getSelectedItem()!=null) {
         		ObservableList<String> meals = list_meal.getItems();
         		meals.remove(cmb_meal.getSelectionModel().getSelectedItem());
@@ -254,7 +258,7 @@ public class restController {
         	}   
         });
         
-        btn_del_meal.setOnMouseClicked(e ->{
+        btn_del_meal.setOnMouseClicked(e ->{  //delete meal from list
         	String i = list_meal.getSelectionModel().getSelectedItem();
         	if(i!=null) {
         		ObservableList<String> meals = list_meal.getItems();
@@ -264,7 +268,7 @@ public class restController {
         	}
         });
         
-        btn_add_emp.setOnMouseClicked(e ->{
+        btn_add_emp.setOnMouseClicked(e ->{  //add employee to list
         	if(cmb_emp.getSelectionModel().getSelectedItem()!=null) {
         		ObservableList<String> emps = list_emp.getItems();
         		emps.remove(cmb_emp.getSelectionModel().getSelectedItem());
@@ -273,7 +277,7 @@ public class restController {
         	}   
         });
         
-        btn_del_emp.setOnMouseClicked(e ->{
+        btn_del_emp.setOnMouseClicked(e ->{  //delete employee from list
         	String i = list_emp.getSelectionModel().getSelectedItem();
         	if(i!=null) {
         		ObservableList<String> emps = list_emp.getItems();
@@ -289,7 +293,7 @@ public class restController {
     }
     
     private void lang() {
-    	
+    	//change language
     	if(btn_lang.getText().equals("en")) {
     		rb =	ResourceBundle.getBundle("texts", Locale.forLanguageTag("en"));
     		btn_lang.setText("sk");
@@ -317,7 +321,6 @@ public class restController {
     	lb_orders.setText(rb.getString("rest.orders"));
     	lb_emps.setText(rb.getString("emps"));
     	
-	
     }
     
     public void setRest(Dictionary <Integer, Restaurant> dict) {
@@ -330,6 +333,7 @@ public class restController {
     }
     
     private void fill() {
+    	//capacity
 		spin_cap.getValueFactory().setValue(0);
 		
 		//Zip
@@ -344,7 +348,7 @@ public class restController {
         cmbox_zip.setItems(zip);
         cmbox_zip.getSelectionModel().select(0);
         
-        //Employee
+        //Employees
         ObservableList<String> emps = FXCollections.observableArrayList();
 		Dictionary<Integer, Employee> la2 = RestaurantRemote.getEmpRest(0);
 		Enumeration<Integer> enam = la2.keys();
@@ -373,7 +377,6 @@ public class restController {
         	spin_cap.getValueFactory().setValue(rest.getCapacity());
         	fillLists();
         }
-        
 	}
     
     private ArrayList<Zip> getZIP() throws MyExeception, NamingException {
@@ -381,12 +384,12 @@ public class restController {
     	return zip;
     }
 
-	private void openWindow(String window, MouseEvent e) {
+	private void openWindow(String title, String window, MouseEvent e) {
     	try {
 			Parent root = FXMLLoader.load(getClass().getResource(window));
 	        Scene scene = new Scene(root);
 	        Stage stage = new Stage();
-	        stage.setTitle("New Window");
+	        stage.setTitle(title);
 	        stage.setScene(scene);
 	        stage.show();
 	        ((Node)(e.getSource())).getScene().getWindow().hide(); 
@@ -397,6 +400,7 @@ public class restController {
     }
 	
 	private void fillLists() {
+		//Employees
     	ObservableList<String> emps = FXCollections.observableArrayList();
     	Dictionary<Integer, Employee> la2 = RestaurantRemote.getEmpRest(id);
 		
@@ -408,6 +412,7 @@ public class restController {
         }
         list_emp.setItems(emps);
 		
+        //Meals
         ObservableList<String> meals = FXCollections.observableArrayList();
         Dictionary<Integer, Meal> la3 = RestaurantRemote.getMealRest(id);
 		
